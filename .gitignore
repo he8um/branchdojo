@@ -1,0 +1,24 @@
+# Rust
+/target/
+
+# Private development notes
+_dev/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Generated local exercise workspaces
+branchdojo-*/
+dojo-*/
+
+# Local agent/Rust skill references
+.rust-skills/
+AGENTS.md

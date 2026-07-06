@@ -1,0 +1,32 @@
+{
+  "exercise": "conflict-basic",
+  "status": "failed",
+  "score": 5,
+  "total": 8,
+  "checks": [
+    {
+      "id": "metadata_exists",
+      "label": "Metadata exists",
+      "status": "passed",
+      "severity": "required"
+    },
+    {
+      "id": "current_branch_main",
+      "label": "Current branch is main",
+      "status": "passed",
+      "severity": "required"
+    },
+    {
+      "id": "working_tree_clean",
+      "label": "Working tree is clean",
+      "status": "failed",
+      "severity": "required",
+      "message": "Uncommitted changes are present."
+    }
+  ],
+  "next_steps": [
+    "Run git status.",
+    "Finish the repository state required by the exercise.",
+    "Run branchdojo check --path . again."
+  ]
+}
