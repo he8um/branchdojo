@@ -5,6 +5,9 @@ edition = "2021"
 description = "Practice real Git workflows in safe, disposable local repositories."
 license = "MIT"
 
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+
 [[bin]]
 name = "branchdojo"
 path = "src/main.rs"

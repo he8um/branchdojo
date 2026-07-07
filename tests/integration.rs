@@ -21,6 +21,14 @@ fn run(args: &[&str]) -> std::process::Output {
     Command::new(bin()).args(args).output().unwrap()
 }
 
+fn stdout(output: &std::process::Output) -> String {
+    String::from_utf8_lossy(&output.stdout).to_string()
+}
+
+fn stderr(output: &std::process::Output) -> String {
+    String::from_utf8_lossy(&output.stderr).to_string()
+}
+
 fn git(path: &Path, args: &[&str]) {
     let output = Command::new("git")
         .current_dir(path)
@@ -56,11 +64,60 @@ fn git_output(path: &Path, args: &[&str]) -> String {
 fn list_prints_mvp_exercises() {
     let output = run(&["list"]);
     assert!(output.status.success());
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("Available exercises:"));
-    assert!(stdout.contains("conflict-basic"));
-    assert!(stdout.contains("revert-mistake"));
-    assert!(stdout.contains("wrong-branch-commit"));
+    let output = stdout(&output);
+    assert!(output.contains("Available exercises:"));
+    assert!(output.contains("conflict-basic"));
+    assert!(output.contains("revert-mistake"));
+    assert!(output.contains("wrong-branch-commit"));
+}
+
+#[test]
+fn root_help_succeeds() {
+    let output = run(&["--help"]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Usage:"));
+    assert!(output.contains("Commands:"));
+    assert!(output.contains("list"));
+    assert!(output.contains("new"));
+    assert!(output.contains("check"));
+}
+
+#[test]
+fn subcommand_help_succeeds() {
+    for command in ["list", "new", "check"] {
+        let output = run(&[command, "--help"]);
+        assert!(output.status.success());
+        let output = stdout(&output);
+        assert!(output.contains("Usage:"));
+    }
+}
+
+#[test]
+fn missing_path_for_new_fails_cleanly() {
+    let output = run(&["new", "conflict-basic"]);
+    assert!(!output.status.success());
+    let output = stderr(&output);
+    assert!(output.contains("required"));
+    assert!(output.contains("--path"));
+}
+
+#[test]
+fn missing_path_for_check_fails_cleanly() {
+    let output = run(&["check"]);
+    assert!(!output.status.success());
+    let output = stderr(&output);
+    assert!(output.contains("required"));
+    assert!(output.contains("--path"));
+}
+
+#[test]
+fn unknown_command_fails_cleanly() {
+    let output = run(&["unknown"]);
+    assert!(!output.status.success());
+    let output = stderr(&output);
+    assert!(output.contains("unrecognized subcommand"));
+    assert!(output.contains("Usage:"));
 }
 
 #[test]
@@ -70,10 +127,10 @@ fn unsupported_exercise_returns_useful_error() {
 
     let output = run(&["new", "not-real", "--path", &path_arg]);
     assert!(!output.status.success());
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(stderr.contains("BD006"));
-    assert!(stderr.contains("Unsupported exercise: not-real."));
-    assert!(stderr.contains("branchdojo list"));
+    let output = stderr(&output);
+    assert!(output.contains("BD006"));
+    assert!(output.contains("Unsupported exercise: not-real."));
+    assert!(output.contains("branchdojo list"));
 }
 
 #[test]
@@ -85,7 +142,7 @@ fn new_refuses_non_empty_directory() {
 
     let output = run(&["new", "conflict-basic", "--path", &path_arg]);
     assert!(!output.status.success());
-    assert!(String::from_utf8_lossy(&output.stderr).contains("BD002"));
+    assert!(stderr(&output).contains("BD002"));
     assert!(path.join("file.txt").exists());
 
     fs::remove_dir_all(path).unwrap();
@@ -100,9 +157,9 @@ fn invalid_workspace_metadata_returns_useful_error() {
 
     let output = run(&["check", "--path", &path_arg]);
     assert!(!output.status.success());
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(stderr.contains("BD005"));
-    assert!(stderr.contains(".branchdojo.json is invalid."));
+    let output = stderr(&output);
+    assert!(output.contains("BD005"));
+    assert!(output.contains(".branchdojo.json is invalid."));
 
     fs::remove_dir_all(path).unwrap();
 }

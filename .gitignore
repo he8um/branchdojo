@@ -3,6 +3,8 @@
 
 # Private development notes
 _dev/
+.rust-skills/
+AGENTS.md
 
 # OS/editor files
 .DS_Store

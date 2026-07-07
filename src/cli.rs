@@ -1,7 +1,8 @@
 use std::path::PathBuf;
 
 use crate::app;
-use crate::error::{AppError, AppResult};
+use crate::error::AppResult;
+use clap::{Parser, Subcommand};
 
 pub enum Command {
     List,
@@ -11,56 +12,68 @@ pub enum Command {
     Hint { path: PathBuf },
 }
 
+#[derive(Parser)]
+#[command(
+    name = "branchdojo",
+    about = "Practice real Git workflows in safe, disposable local repositories."
+)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// List available exercises.
+    List,
+    /// Create a disposable exercise workspace.
+    New {
+        /// Supported exercise ID.
+        #[arg(value_name = "exercise-name")]
+        exercise: String,
+        /// Target directory for the generated workspace.
+        #[arg(long, value_name = "path")]
+        path: PathBuf,
+    },
+    /// Validate the final repository state for an exercise workspace.
+    Check {
+        /// BranchDojo workspace path.
+        #[arg(long, value_name = "path")]
+        path: PathBuf,
+        /// Emit structured JSON output.
+        #[arg(long)]
+        json: bool,
+    },
+    /// Recreate the same exercise from scratch.
+    Reset {
+        /// BranchDojo workspace path.
+        #[arg(long, value_name = "path")]
+        path: PathBuf,
+    },
+    /// Print static hints for an exercise.
+    Hint {
+        /// BranchDojo workspace path.
+        #[arg(long, value_name = "path")]
+        path: PathBuf,
+    },
+}
+
 pub fn run(args: Vec<String>) -> AppResult<()> {
-    let command = parse(args)?;
-    app::run(command)
-}
-
-fn parse(args: Vec<String>) -> AppResult<Command> {
-    let Some(command) = args.get(1).map(String::as_str) else {
-        return Err(usage_error());
+    let cli = match Cli::try_parse_from(args) {
+        Ok(cli) => cli,
+        Err(error) => error.exit(),
     };
-    match command {
-        "list" => Ok(Command::List),
-        "new" => {
-            let exercise = args.get(2).cloned().ok_or_else(usage_error)?;
-            let path = parse_path(&args[3..])?;
-            Ok(Command::New { exercise, path })
+    app::run(cli.command.into())
+}
+
+impl From<Commands> for Command {
+    fn from(command: Commands) -> Self {
+        match command {
+            Commands::List => Self::List,
+            Commands::New { exercise, path } => Self::New { exercise, path },
+            Commands::Check { path, json } => Self::Check { path, json },
+            Commands::Reset { path } => Self::Reset { path },
+            Commands::Hint { path } => Self::Hint { path },
         }
-        "check" => {
-            let path = parse_path(&args[2..])?;
-            let json = args.iter().any(|arg| arg == "--json");
-            Ok(Command::Check { path, json })
-        }
-        "reset" => {
-            let path = parse_path(&args[2..])?;
-            Ok(Command::Reset { path })
-        }
-        "hint" => {
-            let path = parse_path(&args[2..])?;
-            Ok(Command::Hint { path })
-        }
-        _ => Err(usage_error()),
     }
-}
-
-fn parse_path(args: &[String]) -> AppResult<PathBuf> {
-    args.windows(2)
-        .find_map(|pair| {
-            if pair[0] == "--path" {
-                Some(PathBuf::from(&pair[1]))
-            } else {
-                None
-            }
-        })
-        .ok_or_else(usage_error)
-}
-
-fn usage_error() -> AppError {
-    AppError::new(
-        "BD006",
-        "Unsupported command or arguments.",
-        "The command does not match the v0.1 command reference.",
-        "Run `branchdojo list` or see README usage examples.",
-    )
 }
