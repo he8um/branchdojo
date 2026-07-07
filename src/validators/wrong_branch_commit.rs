@@ -3,7 +3,7 @@ use std::path::Path;
 use crate::error::AppResult;
 use crate::exercises::wrong_branch_commit::{ACCIDENTAL_CONTENT, ACCIDENTAL_FILE, FEATURE_BRANCH};
 use crate::git;
-use crate::result::{CheckResult, ValidationResult};
+use crate::result::{CheckResult, CheckStatus, Severity, ValidationResult};
 use crate::state::BranchDojoState;
 use crate::validators::common;
 
@@ -42,10 +42,14 @@ pub fn validate(path: &Path, state: &BranchDojoState) -> AppResult<ValidationRes
     )
     .map(|log| log.contains("Add profile page draft"))
     .unwrap_or(false);
+    let required_checks_pass = checks
+        .iter()
+        .filter(|check| check.severity == Severity::Required)
+        .all(|check| check.status == CheckStatus::Passed);
     checks.push(CheckResult::warning(
         "history_shape_expected",
-        "Final branch content is valid, but history shape is unusual",
-        original_bad_commit_on_main || !feature_has_branch_history,
+        "History shape check",
+        required_checks_pass && (original_bad_commit_on_main || !feature_has_branch_history),
     ));
 
     Ok(ValidationResult::new(

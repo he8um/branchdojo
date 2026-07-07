@@ -5,18 +5,23 @@ BranchDojo Result
 
 Exercise: conflict-basic
 Status: FAILED
-Score: 5/8
+Score: 9/11
 
 Checks:
 ✅ Metadata exists
+✅ Git directory exists
 ✅ Current branch is main
-❌ Working tree is clean
+✅ Working tree is clean
+✅ No merge/rebase/cherry-pick/revert state is active
 ✅ app.txt exists
-❌ Conflict markers removed
+✅ Conflict markers removed
 ✅ Expected headline exists
 ❌ Expected CTA exists
-✅ feature/landing-copy branch exists
+✅ Branch `feature/landing-copy` exists
+❌ History includes feature work
+✅ Merge commit check
 
 Next:
-Run git status, finish the merge resolution, remove conflict markers from app.txt, preserve both required lines, then run branchdojo check --path . again.
+Open app.txt, remove conflict markers, preserve both required lines, then run branchdojo check --path . again.
+If the result is a warning, try solving it again with a merge commit.
 ```

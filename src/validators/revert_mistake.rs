@@ -3,7 +3,7 @@ use std::path::Path;
 use crate::error::AppResult;
 use crate::exercises::revert_mistake::{BAD_COMMIT_MESSAGE, CONFIG_FILE, SAFE_VALUE, UNSAFE_VALUE};
 use crate::git;
-use crate::result::{CheckResult, ValidationResult};
+use crate::result::{CheckResult, CheckStatus, Severity, ValidationResult};
 use crate::state::BranchDojoState;
 use crate::validators::common;
 
@@ -47,10 +47,14 @@ pub fn validate(path: &Path, state: &BranchDojoState) -> AppResult<ValidationRes
         "Fix commit exists after bad commit",
         fix_commit_after_bad,
     ));
+    let required_checks_pass = checks
+        .iter()
+        .filter(|check| check.severity == Severity::Required)
+        .all(|check| check.status == CheckStatus::Passed);
     checks.push(CheckResult::warning(
         "revert_style_detected",
-        "Final state is valid, but no revert-style commit was detected",
-        !revert_style,
+        "Revert-style workflow check",
+        required_checks_pass && !revert_style,
     ));
 
     Ok(ValidationResult::new(

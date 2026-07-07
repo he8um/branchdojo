@@ -3,7 +3,7 @@ use std::path::Path;
 use crate::error::AppResult;
 use crate::exercises::conflict_basic::{EXPECTED_CTA, EXPECTED_HEADLINE, FEATURE_BRANCH};
 use crate::git;
-use crate::result::{CheckResult, ValidationResult};
+use crate::result::{CheckResult, CheckStatus, Severity, ValidationResult};
 use crate::state::BranchDojoState;
 use crate::validators::common;
 
@@ -37,10 +37,14 @@ pub fn validate(path: &Path, state: &BranchDojoState) -> AppResult<ValidationRes
         history_includes_feature,
     ));
 
-    let no_merge_commit = !git::merge_commit_exists(path).unwrap_or(false);
+    let required_checks_pass = checks
+        .iter()
+        .filter(|check| check.severity == Severity::Required)
+        .all(|check| check.status == CheckStatus::Passed);
+    let no_merge_commit = required_checks_pass && !git::merge_commit_exists(path).unwrap_or(false);
     checks.push(CheckResult::warning(
         "merge_commit_detected",
-        "Final state is valid, but no merge commit was detected",
+        "Merge commit check",
         no_merge_commit,
     ));
 

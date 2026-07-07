@@ -38,17 +38,21 @@ BranchDojo Result
 
 Exercise: conflict-basic
 Status: PASSED
-Score: 8/8
+Score: 11/11
 
 Checks:
 ✅ Metadata exists
+✅ Git directory exists
 ✅ Current branch is main
 ✅ Working tree is clean
-✅ No merge state is active
+✅ No merge/rebase/cherry-pick/revert state is active
 ✅ app.txt exists
 ✅ Conflict markers removed
 ✅ Expected headline exists
 ✅ Expected CTA exists
+✅ Branch `feature/landing-copy` exists
+✅ History includes feature work
+✅ Merge commit check
 ```
 
 ## Warning Example
@@ -56,19 +60,26 @@ Checks:
 ```text
 BranchDojo Result
 
-Exercise: conflict-basic
+Exercise: revert-mistake
 Status: WARNING
-Score: 8/8
+Score: 10/10
 
 Checks:
 ✅ Metadata exists
+✅ Git directory exists
 ✅ Current branch is main
 ✅ Working tree is clean
-✅ Required content exists
-⚠️ Final state is valid, but no merge commit was detected
+✅ No merge/rebase/cherry-pick/revert state is active
+✅ config.txt exists
+✅ Unsafe config is absent
+✅ Safe config exists
+✅ Bad commit still exists
+✅ Fix commit exists after bad commit
+⚠️ Revert-style workflow check
 
 Next:
-Your solution is acceptable. For the intended workflow, try solving it again with a merge commit.
+Restore config.txt to the safe value while keeping the bad commit in history, then run branchdojo check --path . again.
+If the result is a warning, try solving this again using git revert.
 ```
 
 ## Failed Example
@@ -78,15 +89,22 @@ BranchDojo Result
 
 Exercise: conflict-basic
 Status: FAILED
-Score: 5/8
+Score: 9/11
 
 Checks:
 ✅ Metadata exists
+✅ Git directory exists
 ✅ Current branch is main
-❌ Working tree is clean
-❌ Conflict markers removed
+✅ Working tree is clean
+✅ No merge/rebase/cherry-pick/revert state is active
 ✅ app.txt exists
+✅ Conflict markers removed
+✅ Expected headline exists
+❌ Expected CTA exists
+✅ Branch `feature/landing-copy` exists
+❌ History includes feature work
+✅ Merge commit check
 
 Next:
-Run git status, finish the merge resolution, remove conflict markers from app.txt, then run branchdojo check --path . again.
+Open app.txt, remove conflict markers, preserve both required lines, then run branchdojo check --path . again.
 ```

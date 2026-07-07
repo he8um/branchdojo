@@ -6,27 +6,20 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
-### Planned for v0.1.0
+No unreleased changes.
 
-- Add Rust CLI skeleton.
-- Add `branchdojo list`.
-- Add `branchdojo new <exercise> --path <path>`.
-- Add `branchdojo check --path <path>`.
-- Add `branchdojo check --path <path> --json`.
-- Add `branchdojo reset --path <path>`.
-- Add `branchdojo hint --path <path>`.
-- Add `.branchdojo.json` workspace state file.
-- Add safe path and workspace guards.
-- Add local Git identity setup.
-- Add `conflict-basic` exercise.
-- Add `revert-mistake` exercise.
-- Add `wrong-branch-commit` exercise.
-- Add human-readable result output.
-- Add structured JSON result output.
-- Add unit and integration tests.
-- Add GitHub Actions CI.
-- Add public documentation.
+## [0.1.0] - 2026-07-08
 
-## [0.1.0] - TBD
+### Added
 
-Initial public MVP.
+- Rust CLI with `branchdojo list`, `new`, `check`, `reset`, and `hint`.
+- Beginner exercises: `conflict-basic`, `revert-mistake`, and `wrong-branch-commit`.
+- Disposable local Git repository generation with local-only Git identity setup.
+- `.branchdojo.json` workspace state file.
+- Final-state validation with `PASSED`, `WARNING`, and `FAILED` results.
+- Human-readable and JSON check output.
+- Static hints for each exercise.
+- Safe reset guarded by BranchDojo workspace metadata.
+- Safety guards for unsafe paths, non-empty target directories, and non-BranchDojo workspaces.
+- Unit and integration tests.
+- GitHub Actions CI.

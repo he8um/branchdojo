@@ -5,18 +5,22 @@ BranchDojo Result
 
 Exercise: revert-mistake
 Status: WARNING
-Score: 7/7
+Score: 10/10
 
 Checks:
 ✅ Metadata exists
+✅ Git directory exists
 ✅ Current branch is main
 ✅ Working tree is clean
+✅ No merge/rebase/cherry-pick/revert state is active
 ✅ config.txt exists
-✅ Unsafe value is absent
-✅ Safe value exists
-✅ Bad commit still exists in history
-⚠️ Final content is correct, but the fix does not look like a revert-style workflow
+✅ Unsafe config is absent
+✅ Safe config exists
+✅ Bad commit still exists
+✅ Fix commit exists after bad commit
+⚠️ Revert-style workflow check
 
 Next:
-Your final state is acceptable. For the intended workflow, try solving the exercise again using a history-preserving revert.
+Restore config.txt to the safe value while keeping the bad commit in history, then run branchdojo check --path . again.
+If the result is a warning, try solving this again using git revert.
 ```

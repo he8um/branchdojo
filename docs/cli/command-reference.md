@@ -21,9 +21,9 @@ branchdojo list
 ```text
 Available exercises:
 
-- conflict-basic       Beginner   Merge conflict resolution
-- revert-mistake       Beginner   Safe bad commit recovery
-- wrong-branch-commit  Beginner   Move work to the correct branch
+- conflict-basic       Beginner   5 to 10 minutes  Branch awareness, Merge conflict resolution, Clean merge completion (Resolve a small merge conflict and keep both intended changes.)
+- revert-mistake       Beginner   5 to 10 minutes  Reading log history, Safe recovery, Preserving history (Restore safe file content while preserving the bad commit in history.)
+- wrong-branch-commit  Beginner   10 to 15 minutes Branch inspection, Moving work between branches, Restoring main (Move accidental work from main to the intended feature branch.)
 ```
 
 ## `branchdojo new <exercise-name> --path <path>`

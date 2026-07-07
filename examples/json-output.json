@@ -1,8 +1,8 @@
 {
   "exercise": "conflict-basic",
   "status": "failed",
-  "score": 5,
-  "total": 8,
+  "score": 9,
+  "total": 11,
   "checks": [
     {
       "id": "metadata_exists",
@@ -17,16 +17,20 @@
       "severity": "required"
     },
     {
-      "id": "working_tree_clean",
-      "label": "Working tree is clean",
+      "id": "file_contains:cta",
+      "label": "Expected CTA exists",
       "status": "failed",
-      "severity": "required",
-      "message": "Uncommitted changes are present."
+      "severity": "required"
+    },
+    {
+      "id": "merge_commit_detected",
+      "label": "Merge commit check",
+      "status": "passed",
+      "severity": "warning"
     }
   ],
   "next_steps": [
-    "Run git status.",
-    "Finish the repository state required by the exercise.",
-    "Run branchdojo check --path . again."
+    "Open app.txt, remove conflict markers, preserve both required lines, then run branchdojo check --path . again.",
+    "If the result is a warning, try solving it again with a merge commit."
   ]
 }

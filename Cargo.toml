@@ -3,7 +3,12 @@ name = "branchdojo"
 version = "0.1.0"
 edition = "2021"
 description = "Practice real Git workflows in safe, disposable local repositories."
+authors = ["AmirHesam Piri <amirhesum@gmail.com>"]
 license = "MIT"
+repository = "https://github.com/he8um/branchdojo"
+readme = "README.md"
+keywords = ["git", "cli", "kata", "training", "workflow"]
+categories = ["command-line-utilities", "development-tools"]
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }

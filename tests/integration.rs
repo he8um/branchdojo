@@ -188,7 +188,9 @@ fn conflict_basic_fails_before_solving_and_json_is_valid_shape() {
 
     let check_output = run(&["check", "--path", &path_arg]);
     assert!(check_output.status.success());
-    assert!(String::from_utf8_lossy(&check_output.stdout).contains("Status: FAILED"));
+    let human_output = stdout(&check_output);
+    assert!(human_output.contains("Status: FAILED"));
+    assert!(!human_output.contains("⚠️"));
 
     let json_output = run(&["check", "--path", &path_arg, "--json"]);
     assert!(json_output.status.success());
