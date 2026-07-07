@@ -2,13 +2,16 @@ use std::fs;
 use std::path::Path;
 
 use crate::error::{AppError, AppResult};
+use serde::{Deserialize, Serialize};
+use time::format_description::well_known::Rfc3339;
+use time::OffsetDateTime;
 
 pub const STATE_FILE: &str = ".branchdojo.json";
 pub const TOOL_NAME: &str = "branchdojo";
 pub const SCHEMA_VERSION: &str = "0.1.0";
 pub const VALIDATION_POLICY: &str = "final-state";
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct BranchDojoState {
     pub tool: String,
     pub schema_version: String,
@@ -25,7 +28,7 @@ impl BranchDojoState {
             tool: TOOL_NAME.to_string(),
             schema_version: SCHEMA_VERSION.to_string(),
             exercise: exercise.into(),
-            created_at: "2026-07-07T00:00:00Z".to_string(),
+            created_at: created_at_now(),
             expected_branch: "main".to_string(),
             expected_files,
             validation_policy: VALIDATION_POLICY.to_string(),
@@ -60,131 +63,18 @@ pub fn read_state(path: &Path) -> AppResult<BranchDojoState> {
 
     let content = fs::read_to_string(&state_path)
         .map_err(|error| AppError::io("Could not read .branchdojo.json.", error))?;
-    let state = parse_state(&content)?;
+    let state: BranchDojoState = serde_json::from_str(&content)
+        .map_err(|error| invalid_state(format!("Could not parse state JSON: {error}")))?;
     state.validate()?;
     Ok(state)
 }
 
 pub fn write_state(path: &Path, state: &BranchDojoState) -> AppResult<()> {
     state.validate()?;
-    fs::write(path.join(STATE_FILE), to_json(state))
+    let content = serde_json::to_string_pretty(state)
+        .map_err(|error| invalid_state(format!("Could not serialize state JSON: {error}")))?;
+    fs::write(path.join(STATE_FILE), format!("{content}\n"))
         .map_err(|error| AppError::io("Could not write .branchdojo.json.", error))
-}
-
-pub fn to_json(state: &BranchDojoState) -> String {
-    let files = state
-        .expected_files
-        .iter()
-        .map(|file| format!("\"{}\"", escape_json(file)))
-        .collect::<Vec<_>>()
-        .join(", ");
-    format!(
-        "{{\n  \"tool\": \"{}\",\n  \"schema_version\": \"{}\",\n  \"exercise\": \"{}\",\n  \"created_at\": \"{}\",\n  \"expected_branch\": \"{}\",\n  \"expected_files\": [{}],\n  \"validation_policy\": \"{}\"\n}}\n",
-        escape_json(&state.tool),
-        escape_json(&state.schema_version),
-        escape_json(&state.exercise),
-        escape_json(&state.created_at),
-        escape_json(&state.expected_branch),
-        files,
-        escape_json(&state.validation_policy)
-    )
-}
-
-fn parse_state(content: &str) -> AppResult<BranchDojoState> {
-    let state = BranchDojoState {
-        tool: extract_string(content, "tool")?,
-        schema_version: extract_string(content, "schema_version")?,
-        exercise: extract_string(content, "exercise")?,
-        created_at: extract_string(content, "created_at")?,
-        expected_branch: extract_string(content, "expected_branch")?,
-        expected_files: extract_string_array(content, "expected_files")?,
-        validation_policy: extract_string(content, "validation_policy")?,
-    };
-    Ok(state)
-}
-
-fn extract_string(content: &str, key: &str) -> AppResult<String> {
-    let marker = format!("\"{key}\"");
-    let start = content
-        .find(&marker)
-        .ok_or_else(|| invalid_state(format!("Missing `{key}`.")))?;
-    let after_key = &content[start + marker.len()..];
-    let colon = after_key
-        .find(':')
-        .ok_or_else(|| invalid_state(format!("Missing value for `{key}`.")))?;
-    let after_colon = after_key[colon + 1..].trim_start();
-    if !after_colon.starts_with('"') {
-        return Err(invalid_state(format!("`{key}` must be a string.")));
-    }
-    read_json_string(after_colon).ok_or_else(|| invalid_state(format!("Invalid `{key}` string.")))
-}
-
-fn extract_string_array(content: &str, key: &str) -> AppResult<Vec<String>> {
-    let marker = format!("\"{key}\"");
-    let start = content
-        .find(&marker)
-        .ok_or_else(|| invalid_state(format!("Missing `{key}`.")))?;
-    let after_key = &content[start + marker.len()..];
-    let colon = after_key
-        .find(':')
-        .ok_or_else(|| invalid_state(format!("Missing value for `{key}`.")))?;
-    let after_colon = after_key[colon + 1..].trim_start();
-    if !after_colon.starts_with('[') {
-        return Err(invalid_state(format!("`{key}` must be an array.")));
-    }
-    let end = after_colon
-        .find(']')
-        .ok_or_else(|| invalid_state(format!("Invalid `{key}` array.")))?;
-    let inner = &after_colon[1..end];
-    let mut values = Vec::new();
-    for raw in inner.split(',') {
-        let value = raw.trim();
-        if value.is_empty() {
-            continue;
-        }
-        if !value.starts_with('"') {
-            return Err(invalid_state(format!("`{key}` entries must be strings.")));
-        }
-        values.push(
-            read_json_string(value)
-                .ok_or_else(|| invalid_state(format!("Invalid `{key}` entry.")))?,
-        );
-    }
-    Ok(values)
-}
-
-fn read_json_string(input: &str) -> Option<String> {
-    let mut value = String::new();
-    let mut escaped = false;
-    for character in input[1..].chars() {
-        if escaped {
-            value.push(match character {
-                '"' => '"',
-                '\\' => '\\',
-                'n' => '\n',
-                'r' => '\r',
-                't' => '\t',
-                other => other,
-            });
-            escaped = false;
-        } else if character == '\\' {
-            escaped = true;
-        } else if character == '"' {
-            return Some(value);
-        } else {
-            value.push(character);
-        }
-    }
-    None
-}
-
-pub fn escape_json(value: &str) -> String {
-    value
-        .replace('\\', "\\\\")
-        .replace('"', "\\\"")
-        .replace('\n', "\\n")
-        .replace('\r', "\\r")
-        .replace('\t', "\\t")
 }
 
 fn invalid_state(detail: impl Into<String>) -> AppError {
@@ -196,6 +86,12 @@ fn invalid_state(detail: impl Into<String>) -> AppError {
     )
 }
 
+fn created_at_now() -> String {
+    OffsetDateTime::now_utc()
+        .format(&Rfc3339)
+        .unwrap_or_else(|_| "1970-01-01T00:00:00Z".to_string())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -203,7 +99,8 @@ mod tests {
     #[test]
     fn state_round_trip_works() {
         let state = BranchDojoState::new("conflict-basic", vec!["app.txt".to_string()]);
-        let parsed = parse_state(&to_json(&state)).unwrap();
+        let json = serde_json::to_string(&state).unwrap();
+        let parsed: BranchDojoState = serde_json::from_str(&json).unwrap();
         assert_eq!(parsed, state);
     }
 

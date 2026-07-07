@@ -1,36 +1,22 @@
-#[derive(Clone, Debug, Eq, PartialEq)]
+use serde::Serialize;
+
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum CheckStatus {
     Passed,
     Failed,
     Warning,
 }
 
-impl CheckStatus {
-    pub fn as_json(&self) -> &'static str {
-        match self {
-            Self::Passed => "passed",
-            Self::Failed => "failed",
-            Self::Warning => "warning",
-        }
-    }
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Severity {
     Required,
     Warning,
 }
 
-impl Severity {
-    pub fn as_json(&self) -> &'static str {
-        match self {
-            Self::Required => "required",
-            Self::Warning => "warning",
-        }
-    }
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum OverallStatus {
     Passed,
     Warning,
@@ -45,22 +31,15 @@ impl OverallStatus {
             Self::Failed => "FAILED",
         }
     }
-
-    pub fn as_json(&self) -> &'static str {
-        match self {
-            Self::Passed => "passed",
-            Self::Warning => "warning",
-            Self::Failed => "failed",
-        }
-    }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct CheckResult {
     pub id: String,
     pub label: String,
     pub status: CheckStatus,
     pub severity: Severity,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
 }
 
@@ -94,7 +73,7 @@ impl CheckResult {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 pub struct ValidationResult {
     pub exercise: String,
     pub status: OverallStatus,

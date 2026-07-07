@@ -165,6 +165,21 @@ fn invalid_workspace_metadata_returns_useful_error() {
 }
 
 #[test]
+fn missing_workspace_metadata_returns_useful_error() {
+    let path = temp_path("missing-metadata");
+    fs::create_dir_all(&path).unwrap();
+    let path_arg = path.to_string_lossy().to_string();
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(!output.status.success());
+    let output = stderr(&output);
+    assert!(output.contains("BD004"));
+    assert!(output.contains(".branchdojo.json is missing."));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
 fn conflict_basic_fails_before_solving_and_json_is_valid_shape() {
     let path = temp_path("conflict");
     let path_arg = path.to_string_lossy().to_string();
@@ -188,8 +203,14 @@ fn conflict_basic_fails_before_solving_and_json_is_valid_shape() {
     let first_check = &json["checks"][0];
     assert!(first_check["id"].is_string());
     assert!(first_check["label"].is_string());
-    assert!(first_check["status"].is_string());
-    assert!(first_check["severity"].is_string());
+    assert_eq!(first_check["status"], "passed");
+    assert_eq!(first_check["severity"], "required");
+    for check in json["checks"].as_array().unwrap() {
+        let status = check["status"].as_str().unwrap();
+        assert!(matches!(status, "passed" | "warning" | "failed"));
+        let severity = check["severity"].as_str().unwrap();
+        assert!(matches!(severity, "required" | "warning"));
+    }
 
     fs::remove_dir_all(path).unwrap();
 }
@@ -206,10 +227,18 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
         assert!(path.join(".branchdojo.json").exists());
         assert!(path.join("README.branchdojo.md").exists());
         let state = fs::read_to_string(path.join(".branchdojo.json")).unwrap();
-        assert!(state.contains("\"tool\": \"branchdojo\""));
-        assert!(state.contains("\"schema_version\": \"0.1.0\""));
-        assert!(state.contains(&format!("\"exercise\": \"{exercise}\"")));
-        assert!(state.contains("\"validation_policy\": \"final-state\""));
+        let state: Value = serde_json::from_str(&state).unwrap();
+        assert_eq!(state["tool"], "branchdojo");
+        assert_eq!(state["schema_version"], "0.1.0");
+        assert_eq!(state["exercise"], exercise);
+        assert_eq!(state["expected_branch"], "main");
+        assert!(state["expected_files"].as_array().unwrap().len() == 1);
+        assert_eq!(state["validation_policy"], "final-state");
+        let created_at = state["created_at"].as_str().unwrap();
+        assert!(!created_at.is_empty());
+        assert_ne!(created_at, "2026-07-07T00:00:00Z");
+        assert!(created_at.contains('T'));
+        assert!(created_at.ends_with('Z'));
         assert_eq!(git_output(&path, &["config", "user.name"]), "BranchDojo");
         assert_eq!(
             git_output(&path, &["config", "user.email"]),

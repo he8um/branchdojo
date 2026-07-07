@@ -1,5 +1,5 @@
+use crate::error::{AppError, AppResult};
 use crate::result::{CheckStatus, OverallStatus, ValidationResult};
-use crate::state::escape_json;
 
 pub fn print_human_result(result: &ValidationResult) {
     println!("BranchDojo Result\n");
@@ -26,41 +26,18 @@ pub fn print_human_result(result: &ValidationResult) {
     }
 }
 
-pub fn print_json_result(result: &ValidationResult) {
-    println!("{}", json_result(result));
+pub fn print_json_result(result: &ValidationResult) -> AppResult<()> {
+    println!("{}", json_result(result)?);
+    Ok(())
 }
 
-pub fn json_result(result: &ValidationResult) -> String {
-    let checks = result
-        .checks
-        .iter()
-        .map(|check| {
-            let mut fields = vec![
-                format!("      \"id\": \"{}\"", escape_json(&check.id)),
-                format!("      \"label\": \"{}\"", escape_json(&check.label)),
-                format!("      \"status\": \"{}\"", check.status.as_json()),
-                format!("      \"severity\": \"{}\"", check.severity.as_json()),
-            ];
-            if let Some(message) = &check.message {
-                fields.push(format!("      \"message\": \"{}\"", escape_json(message)));
-            }
-            format!("    {{\n{}\n    }}", fields.join(",\n"))
-        })
-        .collect::<Vec<_>>()
-        .join(",\n");
-    let next_steps = result
-        .next_steps
-        .iter()
-        .map(|step| format!("    \"{}\"", escape_json(step)))
-        .collect::<Vec<_>>()
-        .join(",\n");
-    format!(
-        "{{\n  \"exercise\": \"{}\",\n  \"status\": \"{}\",\n  \"score\": {},\n  \"total\": {},\n  \"checks\": [\n{}\n  ],\n  \"next_steps\": [\n{}\n  ]\n}}",
-        escape_json(&result.exercise),
-        result.status.as_json(),
-        result.score,
-        result.total,
-        checks,
-        next_steps
-    )
+pub fn json_result(result: &ValidationResult) -> AppResult<String> {
+    serde_json::to_string_pretty(result).map_err(|error| {
+        AppError::new(
+            "BD007",
+            "Could not serialize validation result.",
+            error.to_string(),
+            "Run the command again. If this continues, recreate the exercise workspace.",
+        )
+    })
 }

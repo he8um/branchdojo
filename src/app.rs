@@ -43,7 +43,7 @@ pub fn run(command: Command) -> AppResult<()> {
             let state = safety::ensure_branchdojo_workspace(&path)?;
             let result = validators::validate(&path, &state)?;
             if json {
-                output::print_json_result(&result);
+                output::print_json_result(&result)?;
             } else {
                 output::print_human_result(&result);
             }
