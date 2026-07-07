@@ -11,11 +11,11 @@ use crate::validators;
 pub fn run(command: Command) -> AppResult<()> {
     match command {
         Command::List => {
+            println!("Available exercises:\n");
             for exercise in exercises::all() {
                 println!(
-                    "{}\t{}\t{}\t{}\t{}\t{}",
+                    "- {:<20} {:<10} {:<16} {} ({})",
                     exercise.id,
-                    exercise.title,
                     exercise.difficulty,
                     exercise.estimated_time,
                     exercise.skills.join(", "),

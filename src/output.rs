@@ -1,4 +1,4 @@
-use crate::result::{CheckStatus, ValidationResult};
+use crate::result::{CheckStatus, OverallStatus, ValidationResult};
 use crate::state::escape_json;
 
 pub fn print_human_result(result: &ValidationResult) {
@@ -18,7 +18,7 @@ pub fn print_human_result(result: &ValidationResult) {
             None => println!("{icon} {}", check.label),
         }
     }
-    if !result.next_steps.is_empty() {
+    if result.status != OverallStatus::Passed && !result.next_steps.is_empty() {
         println!("\nNext:");
         for step in &result.next_steps {
             println!("{step}");
