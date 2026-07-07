@@ -18,7 +18,3 @@ Thumbs.db
 # Generated local exercise workspaces
 branchdojo-*/
 dojo-*/
-
-# Local agent/Rust skill references
-.rust-skills/
-AGENTS.md

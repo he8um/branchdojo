@@ -10,7 +10,9 @@ pub fn ensure_safe_new_path(path: &Path) -> AppResult<()> {
     ensure_path_not_unsafe(path)?;
     if path.exists() {
         if path.join(".git").exists() {
-            return Err(unsafe_path("Existing Git repositories are out of scope for v0.1."));
+            return Err(unsafe_path(
+                "Existing Git repositories are out of scope for v0.1.",
+            ));
         }
         let is_empty = fs::read_dir(path)
             .map_err(|error| AppError::io("Could not inspect target path.", error))?
@@ -68,13 +70,21 @@ pub fn ensure_path_not_unsafe(path: &Path) -> AppResult<()> {
     if path.as_os_str().is_empty() {
         return Err(unsafe_path("The path is empty."));
     }
-    if path.components().any(|component| component == Component::ParentDir) {
+    if path
+        .components()
+        .any(|component| component == Component::ParentDir)
+    {
         return Err(unsafe_path("Parent directory references are not allowed."));
     }
     if path.parent().is_none() && path.has_root() {
-        return Err(unsafe_path("Filesystem roots are not valid exercise paths."));
+        return Err(unsafe_path(
+            "Filesystem roots are not valid exercise paths.",
+        ));
     }
-    if matches!(path.file_name().and_then(|name| name.to_str()), Some("") | None) {
+    if matches!(
+        path.file_name().and_then(|name| name.to_str()),
+        Some("") | None
+    ) {
         return Err(unsafe_path("The path must include a directory name."));
     }
 
@@ -82,8 +92,14 @@ pub fn ensure_path_not_unsafe(path: &Path) -> AppResult<()> {
     if let Ok(home) = env::var("HOME") {
         let home_path = PathBuf::from(home);
         if absolute == home_path {
-            return Err(unsafe_path("The home directory is not a valid exercise path."));
+            return Err(unsafe_path(
+                "The home directory is not a valid exercise path.",
+            ));
         }
+    }
+
+    if absolute.starts_with(env::temp_dir()) {
+        return Ok(());
     }
 
     let absolute_text = absolute.to_string_lossy().to_lowercase();
@@ -106,7 +122,9 @@ pub fn ensure_path_not_unsafe(path: &Path) -> AppResult<()> {
             || absolute_text.starts_with(&slash_prefix)
             || absolute_text.starts_with(&backslash_prefix)
     }) {
-        return Err(unsafe_path("System directories are not valid exercise paths."));
+        return Err(unsafe_path(
+            "System directories are not valid exercise paths.",
+        ));
     }
 
     Ok(())

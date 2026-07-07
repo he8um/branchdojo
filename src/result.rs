@@ -92,6 +92,7 @@ impl CheckResult {
             message: None,
         }
     }
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ValidationResult {

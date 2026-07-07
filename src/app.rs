@@ -52,8 +52,8 @@ pub fn run(command: Command) -> AppResult<()> {
         Command::Reset { path } => {
             git::ensure_git_available()?;
             let state = safety::ensure_reset_allowed(&path)?;
-            let definition = exercises::get(&state.exercise)
-                .ok_or_else(|| unsupported(&state.exercise))?;
+            let definition =
+                exercises::get(&state.exercise).ok_or_else(|| unsupported(&state.exercise))?;
             fs::remove_dir_all(&path)
                 .map_err(|error| AppError::io("Could not remove workspace contents.", error))?;
             fs::create_dir_all(&path)
@@ -67,8 +67,8 @@ pub fn run(command: Command) -> AppResult<()> {
         }
         Command::Hint { path } => {
             let state = safety::ensure_branchdojo_workspace(&path)?;
-            let definition = exercises::get(&state.exercise)
-                .ok_or_else(|| unsupported(&state.exercise))?;
+            let definition =
+                exercises::get(&state.exercise).ok_or_else(|| unsupported(&state.exercise))?;
             println!("Hints for {}:", definition.id);
             for (index, hint) in definition.hints.iter().enumerate() {
                 println!("{}. {}", index + 1, hint);

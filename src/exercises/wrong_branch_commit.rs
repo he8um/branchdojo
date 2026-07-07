@@ -15,7 +15,11 @@ pub static EXERCISE: Exercise = Exercise {
     title: "Wrong Branch Commit",
     difficulty: "Beginner",
     estimated_time: "10 to 15 minutes",
-    skills: &["Branch inspection", "Moving work between branches", "Restoring main"],
+    skills: &[
+        "Branch inspection",
+        "Moving work between branches",
+        "Restoring main",
+    ],
     description: "Move accidental work from main to the intended feature branch.",
     goal: "Practice moving committed work to the right branch while keeping main clean.",
     hints: &[
@@ -37,17 +41,6 @@ pub fn setup(path: &Path) -> AppResult<()> {
     git::add_all(path)?;
     git::commit(path, "Add demo app readme")?;
 
-    git::checkout_new_branch(path, FEATURE_BRANCH)?;
-    git::checkout_branch(path, "main")?;
-
-    fs::write(
-        path.join(ACCIDENTAL_FILE),
-        format!("{ACCIDENTAL_CONTENT}\nOwner: feature/profile-page\n"),
-    )
-    .map_err(|error| AppError::io("Could not write profile.md.", error))?;
-    git::add_all(path)?;
-    git::commit(path, "Add profile page draft")?;
-
     write_state(
         path,
         &BranchDojoState::new(EXERCISE.id, vec![ACCIDENTAL_FILE.to_string()]),
@@ -65,5 +58,18 @@ pub fn setup(path: &Path) -> AppResult<()> {
         ),
     )
     .map_err(|error| AppError::io("Could not write README.branchdojo.md.", error))?;
+    git::add_all(path)?;
+    git::commit(path, "Add BranchDojo exercise instructions")?;
+
+    git::checkout_new_branch(path, FEATURE_BRANCH)?;
+    git::checkout_branch(path, "main")?;
+
+    fs::write(
+        path.join(ACCIDENTAL_FILE),
+        format!("{ACCIDENTAL_CONTENT}\nOwner: feature/profile-page\n"),
+    )
+    .map_err(|error| AppError::io("Could not write profile.md.", error))?;
+    git::add_all(path)?;
+    git::commit(path, "Add profile page draft")?;
     Ok(())
 }

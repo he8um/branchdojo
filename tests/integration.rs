@@ -68,7 +68,9 @@ fn conflict_basic_fails_before_solving_and_json_is_valid_shape() {
 fn conflict_basic_valid_merge_passes() {
     let path = temp_path("conflict-pass");
     let path_arg = path.to_string_lossy().to_string();
-    assert!(run(&["new", "conflict-basic", "--path", &path_arg]).status.success());
+    assert!(run(&["new", "conflict-basic", "--path", &path_arg])
+        .status
+        .success());
 
     let merge = Command::new("git")
         .current_dir(&path)
@@ -110,9 +112,15 @@ fn reset_refuses_non_branchdojo_folder() {
 fn revert_mistake_history_preserving_fix_warns_without_revert_message() {
     let path = temp_path("revert");
     let path_arg = path.to_string_lossy().to_string();
-    assert!(run(&["new", "revert-mistake", "--path", &path_arg]).status.success());
+    assert!(run(&["new", "revert-mistake", "--path", &path_arg])
+        .status
+        .success());
 
-    fs::write(path.join("config.txt"), "mode=safe\nfeature_flags=basic,search\n").unwrap();
+    fs::write(
+        path.join("config.txt"),
+        "mode=safe\nfeature_flags=basic,search\n",
+    )
+    .unwrap();
     git(&path, &["add", "config.txt"]);
     git(&path, &["commit", "-m", "Restore safe production config"]);
 
@@ -127,7 +135,9 @@ fn revert_mistake_history_preserving_fix_warns_without_revert_message() {
 fn wrong_branch_commit_can_be_solved_by_cherry_pick_and_reset() {
     let path = temp_path("wrong-branch");
     let path_arg = path.to_string_lossy().to_string();
-    assert!(run(&["new", "wrong-branch-commit", "--path", &path_arg]).status.success());
+    assert!(run(&["new", "wrong-branch-commit", "--path", &path_arg])
+        .status
+        .success());
 
     let hash_output = Command::new("git")
         .current_dir(&path)
@@ -135,7 +145,9 @@ fn wrong_branch_commit_can_be_solved_by_cherry_pick_and_reset() {
         .output()
         .unwrap();
     assert!(hash_output.status.success());
-    let hash = String::from_utf8_lossy(&hash_output.stdout).trim().to_string();
+    let hash = String::from_utf8_lossy(&hash_output.stdout)
+        .trim()
+        .to_string();
     git(&path, &["checkout", "feature/profile-page"]);
     git(&path, &["cherry-pick", &hash]);
     git(&path, &["checkout", "main"]);

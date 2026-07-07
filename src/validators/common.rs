@@ -55,13 +55,7 @@ pub fn file_exists(path: &Path, file: &str) -> CheckResult {
     )
 }
 
-pub fn file_contains(
-    path: &Path,
-    file: &str,
-    id: &str,
-    text: &str,
-    label: &str,
-) -> CheckResult {
+pub fn file_contains(path: &Path, file: &str, id: &str, text: &str, label: &str) -> CheckResult {
     let passed = fs::read_to_string(path.join(file))
         .map(|content| normalize(&content).contains(text))
         .unwrap_or(false);
@@ -135,5 +129,9 @@ pub fn no_conflict_markers(path: &Path, file: &str) -> CheckResult {
                 && !normalized.contains(">>>>>>>")
         })
         .unwrap_or(false);
-    CheckResult::required("conflict_markers_removed", "Conflict markers removed", passed)
+    CheckResult::required(
+        "conflict_markers_removed",
+        "Conflict markers removed",
+        passed,
+    )
 }

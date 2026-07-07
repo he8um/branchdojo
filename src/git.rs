@@ -111,9 +111,14 @@ pub fn merge_commit_exists(path: &Path) -> AppResult<bool> {
 
 pub fn active_operation(path: &Path) -> bool {
     let git_dir = path.join(".git");
-    ["MERGE_HEAD", "REBASE_HEAD", "CHERRY_PICK_HEAD", "REVERT_HEAD"]
-        .iter()
-        .any(|file| git_dir.join(file).exists())
+    [
+        "MERGE_HEAD",
+        "REBASE_HEAD",
+        "CHERRY_PICK_HEAD",
+        "REVERT_HEAD",
+    ]
+    .iter()
+    .any(|file| git_dir.join(file).exists())
 }
 
 pub fn run_git<I, S>(path: &Path, args: I) -> AppResult<String>

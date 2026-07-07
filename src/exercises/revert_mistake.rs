@@ -37,14 +37,6 @@ pub fn setup(path: &Path) -> AppResult<()> {
     git::add_all(path)?;
     git::commit(path, "Add safe production config")?;
 
-    write_config(path, "mode=safe\nfeature_flags=basic,search\n")?;
-    git::add_all(path)?;
-    git::commit(path, "Enable search feature flag")?;
-
-    write_config(path, "mode=unsafe\nfeature_flags=basic,search\n")?;
-    git::add_all(path)?;
-    git::commit(path, BAD_COMMIT_MESSAGE)?;
-
     write_state(
         path,
         &BranchDojoState::new(EXERCISE.id, vec![CONFIG_FILE.to_string()]),
@@ -62,6 +54,16 @@ pub fn setup(path: &Path) -> AppResult<()> {
         ),
     )
     .map_err(|error| AppError::io("Could not write README.branchdojo.md.", error))?;
+    git::add_all(path)?;
+    git::commit(path, "Add BranchDojo exercise instructions")?;
+
+    write_config(path, "mode=safe\nfeature_flags=basic,search\n")?;
+    git::add_all(path)?;
+    git::commit(path, "Enable search feature flag")?;
+
+    write_config(path, "mode=unsafe\nfeature_flags=basic,search\n")?;
+    git::add_all(path)?;
+    git::commit(path, BAD_COMMIT_MESSAGE)?;
     Ok(())
 }
 

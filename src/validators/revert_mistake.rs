@@ -1,9 +1,7 @@
 use std::path::Path;
 
 use crate::error::AppResult;
-use crate::exercises::revert_mistake::{
-    BAD_COMMIT_MESSAGE, CONFIG_FILE, SAFE_VALUE, UNSAFE_VALUE,
-};
+use crate::exercises::revert_mistake::{BAD_COMMIT_MESSAGE, CONFIG_FILE, SAFE_VALUE, UNSAFE_VALUE};
 use crate::git;
 use crate::result::{CheckResult, ValidationResult};
 use crate::state::BranchDojoState;

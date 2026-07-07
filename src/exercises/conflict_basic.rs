@@ -16,7 +16,11 @@ pub static EXERCISE: Exercise = Exercise {
     title: "Basic Merge Conflict",
     difficulty: "Beginner",
     estimated_time: "5 to 10 minutes",
-    skills: &["Branch awareness", "Merge conflict resolution", "Clean merge completion"],
+    skills: &[
+        "Branch awareness",
+        "Merge conflict resolution",
+        "Clean merge completion",
+    ],
     description: "Resolve a small merge conflict and keep both intended changes.",
     goal: "Practice resolving a real merge conflict on main.",
     hints: &[
@@ -38,16 +42,6 @@ pub fn setup(path: &Path) -> AppResult<()> {
     git::add_all(path)?;
     git::commit(path, "Add initial landing copy")?;
 
-    git::checkout_new_branch(path, FEATURE_BRANCH)?;
-    write_file(path, "Hero: Welcome | CTA: Start practicing\n")?;
-    git::add_all(path)?;
-    git::commit(path, "Update landing CTA")?;
-
-    git::checkout_branch(path, "main")?;
-    write_file(path, "Headline: Build better Git habits | CTA: Learn more\n")?;
-    git::add_all(path)?;
-    git::commit(path, "Update landing headline")?;
-
     write_state(
         path,
         &BranchDojoState::new(EXERCISE.id, vec![APP_FILE.to_string()]),
@@ -65,6 +59,21 @@ pub fn setup(path: &Path) -> AppResult<()> {
         ),
     )
     .map_err(|error| AppError::io("Could not write README.branchdojo.md.", error))?;
+    git::add_all(path)?;
+    git::commit(path, "Add BranchDojo exercise instructions")?;
+
+    git::checkout_new_branch(path, FEATURE_BRANCH)?;
+    write_file(path, "Hero: Welcome | CTA: Start practicing\n")?;
+    git::add_all(path)?;
+    git::commit(path, "Update landing CTA")?;
+
+    git::checkout_branch(path, "main")?;
+    write_file(
+        path,
+        "Headline: Build better Git habits | CTA: Learn more\n",
+    )?;
+    git::add_all(path)?;
+    git::commit(path, "Update landing headline")?;
     Ok(())
 }
 

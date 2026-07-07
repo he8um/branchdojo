@@ -1,9 +1,7 @@
 use std::path::Path;
 
 use crate::error::AppResult;
-use crate::exercises::wrong_branch_commit::{
-    ACCIDENTAL_CONTENT, ACCIDENTAL_FILE, FEATURE_BRANCH,
-};
+use crate::exercises::wrong_branch_commit::{ACCIDENTAL_CONTENT, ACCIDENTAL_FILE, FEATURE_BRANCH};
 use crate::git;
 use crate::result::{CheckResult, ValidationResult};
 use crate::state::BranchDojoState;
