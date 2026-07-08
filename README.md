@@ -29,7 +29,7 @@ The tool generates the exercise. The user solves it. The tool validates the fina
 
 ## Release State
 
-v0.1.0 is the first released version. v0.2.0 is release-candidate ready on `main` and adds intermediate Git workflow exercises.
+v0.1.0 and v0.2.0 are released. v0.3 is planned around better hints, optional reports, exercise metadata, and onboarding polish.
 
 ## Available Exercises
 
@@ -102,9 +102,9 @@ Detailed design docs are available under `docs/`:
 ## Roadmap
 
 - v0.1: beginner exercises, state file, final-state validation, reset, hints, JSON output, CI.
-- v0.2 release candidate: stash switching, basic cherry-pick, detached HEAD recovery, final-state validation, warnings for valid but unusual workflow shapes.
-- v0.3: rebase, squash, rename conflict, generated reports.
-- v0.4: bisect, classroom mode, exercise packs, custom definitions.
+- v0.2: stash switching, basic cherry-pick, detached HEAD recovery, final-state validation, warnings for valid but unusual workflow shapes.
+- v0.3 planned: progress-aware hints, optional check reports, richer exercise metadata, onboarding polish.
+- v0.4: advanced exercises, classroom foundations, exercise packs, custom definitions.
 - v0.5: GitHub Action mode, binaries, Homebrew, release automation.
 
 ## License

@@ -46,3 +46,14 @@ branchdojo reset --path ./branchdojo-smoke-conflict
 ```
 
 Repeat `new`, `check`, `check --json`, `hint`, and `reset` for every implemented exercise, then remove all smoke workspaces.
+
+## Planned v0.3 Coverage
+
+v0.3 planning adds these test areas:
+
+- State-aware hint tests for dirty working trees, wrong branches, conflict markers, active Git operations, and detached HEAD.
+- Report output tests for explicit Markdown file creation.
+- Report file safety tests for unsafe paths, existing files, and `.git` paths.
+- Metadata listing tests for richer exercise metadata.
+- No-regression integration tests for all six released exercises.
+- Output compatibility tests for existing human and JSON check output.

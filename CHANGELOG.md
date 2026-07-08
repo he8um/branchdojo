@@ -6,7 +6,9 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
-No unreleased changes.
+### Planning
+
+- Started v0.3 planning around progress-aware hints, optional check reports, exercise metadata improvements, and onboarding polish.
 
 ## [0.2.0] - 2026-07-08
 

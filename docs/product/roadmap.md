@@ -2,6 +2,8 @@
 
 ## v0.1: Local Beginner MVP
 
+Released:
+
 - Rust CLI.
 - `conflict-basic`.
 - `revert-mistake`.
@@ -17,7 +19,7 @@
 
 ## v0.2: Intermediate Recovery Exercises
 
-Release-candidate scope:
+Released:
 
 - `stash-switch`: implemented; practice saving local work before switching branches.
 - `cherry-pick-basic`: implemented; practice moving one specific commit onto the intended branch.
@@ -40,21 +42,49 @@ Out of scope for v0.2:
 - Release automation.
 - Progress-aware hints.
 
-## v0.3: Better Feedback
+## v0.3: Better Feedback and Practice Artifacts
 
-- `rebase-linear-history`.
-- `squash-before-pr`.
-- `rename-conflict`.
-- Improved scoring.
-- Generated result reports.
-- Optional Markdown result output.
+Candidate scope:
 
-## v0.4: Packs and Classroom Foundations
+- Progress-aware hints based on current repository state.
+- Optional Markdown check reports written only when requested.
+- Richer exercise metadata for listings, hints, reports, and docs.
+- README and onboarding polish, including a recommended learning path.
 
-- `bisect-bug-hunt`.
+Non-goals:
+
+- GUI or TUI.
+- GitHub integration or remote repository workflows.
+- External exercise pack loading.
+- Command-history or shell-history tracking.
+- Analytics or telemetry.
+- Release automation.
+
+Implementation order:
+
+1. Exercise metadata improvements.
+2. Progress-aware hints.
+3. Check report output.
+4. Documentation and release polish.
+
+Release criteria:
+
+- All six released exercises still pass regression tests.
+- State-aware hints are deterministic and tested.
+- Report writing is explicit, safe, and tested.
+- Metadata shown in output and docs matches exercise definitions.
+- `cargo fmt --check`, `cargo clippy -- -D warnings`, and `cargo test` pass.
+
+## v0.4: Advanced Practice and Packs
+
+Future ideas:
+
+- `interactive-rebase-basic`.
+- `bisect-basic`.
+- `merge-vs-rebase`.
+- `tag-release-fix`.
 - Classroom mode foundations.
-- Exercise packs.
-- Custom exercise definitions.
+- Exercise packs and custom definitions.
 - Exercise metadata versioning.
 
 ## v0.5: Distribution and Automation
