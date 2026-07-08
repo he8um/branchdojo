@@ -10,7 +10,7 @@ Beginner.
 
 ## Estimated Time
 
-5 to 10 minutes.
+10 to 15 minutes.
 
 ## Skills
 

@@ -2,7 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::error::{AppError, AppResult};
-use crate::exercises::{generated_readme, Exercise};
+use crate::exercises::{generated_readme, metadata, Exercise};
 use crate::git;
 use crate::state::{write_state, BranchDojoState};
 
@@ -14,16 +14,7 @@ pub const DETACHED_COMMIT_MESSAGE: &str = "Add detached work note";
 const APP_FILE: &str = "app.txt";
 
 pub static EXERCISE: Exercise = Exercise {
-    id: "detached-head-recovery",
-    title: "Detached HEAD Recovery",
-    difficulty: "Intermediate",
-    estimated_time: "10 to 15 minutes",
-    skills: &[
-        "Detached HEAD recovery",
-        "Branch creation",
-        "Reachability inspection",
-    ],
-    description: "Recover useful work committed while HEAD is detached.",
+    metadata: &metadata::DETACHED_HEAD_RECOVERY,
     goal: "Practice making detached HEAD work reachable from a named branch.",
     hints: &[
         "Run `git status` and notice the detached HEAD state.",
@@ -43,15 +34,16 @@ pub fn setup(path: &Path) -> AppResult<()> {
     write_state(
         path,
         &BranchDojoState::new_with_branch(
-            EXERCISE.id,
-            RECOVERY_BRANCH,
+            EXERCISE.metadata.name,
+            metadata::expected_final_branch_for(EXERCISE.metadata.name)
+                .expect("exercise metadata should define expected final branch"),
             vec![RECOVERED_FILE.to_string()],
         ),
     )?;
     fs::write(
         path.join("README.branchdojo.md"),
         generated_readme(
-            EXERCISE.title,
+            EXERCISE.metadata.title,
             EXERCISE.goal,
             "main, detached HEAD",
             "app.txt, recovered-note.txt",

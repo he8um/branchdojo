@@ -72,6 +72,11 @@ fn list_prints_available_exercises() {
     assert!(output.contains("revert-mistake"));
     assert!(output.contains("stash-switch"));
     assert!(output.contains("wrong-branch-commit"));
+    assert!(output.contains("beginner"));
+    assert!(output.contains("intermediate"));
+    assert!(output.contains("Merge conflicts"));
+    assert!(output.contains("Selective history"));
+    assert!(output.contains("Recovery"));
 }
 
 #[test]

@@ -2,7 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::error::{AppError, AppResult};
-use crate::exercises::{generated_readme, Exercise};
+use crate::exercises::{generated_readme, metadata, Exercise};
 use crate::git;
 use crate::state::{write_state, BranchDojoState};
 
@@ -12,12 +12,7 @@ pub const UNSAFE_VALUE: &str = "mode=unsafe";
 pub const BAD_COMMIT_MESSAGE: &str = "Enable unsafe production mode";
 
 pub static EXERCISE: Exercise = Exercise {
-    id: "revert-mistake",
-    title: "Revert a Mistake",
-    difficulty: "Beginner",
-    estimated_time: "5 to 10 minutes",
-    skills: &["Reading log history", "Safe recovery", "Preserving history"],
-    description: "Restore safe file content while preserving the bad commit in history.",
+    metadata: &metadata::REVERT_MISTAKE,
     goal: "Practice fixing a bad commit without destroying history.",
     hints: &[
         "Run `git log --oneline`.",
@@ -39,12 +34,12 @@ pub fn setup(path: &Path) -> AppResult<()> {
 
     write_state(
         path,
-        &BranchDojoState::new(EXERCISE.id, vec![CONFIG_FILE.to_string()]),
+        &BranchDojoState::new(EXERCISE.metadata.name, vec![CONFIG_FILE.to_string()]),
     )?;
     fs::write(
         path.join("README.branchdojo.md"),
         generated_readme(
-            EXERCISE.title,
+            EXERCISE.metadata.title,
             EXERCISE.goal,
             "main",
             "config.txt",

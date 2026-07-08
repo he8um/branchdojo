@@ -2,7 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::error::{AppError, AppResult};
-use crate::exercises::{generated_readme, Exercise};
+use crate::exercises::{generated_readme, metadata, Exercise};
 use crate::git;
 use crate::state::{write_state, BranchDojoState};
 
@@ -11,16 +11,7 @@ pub const ACCIDENTAL_FILE: &str = "profile.md";
 pub const ACCIDENTAL_CONTENT: &str = "Profile page draft";
 
 pub static EXERCISE: Exercise = Exercise {
-    id: "wrong-branch-commit",
-    title: "Wrong Branch Commit",
-    difficulty: "Beginner",
-    estimated_time: "10 to 15 minutes",
-    skills: &[
-        "Branch inspection",
-        "Moving work between branches",
-        "Restoring main",
-    ],
-    description: "Move accidental work from main to the intended feature branch.",
+    metadata: &metadata::WRONG_BRANCH_COMMIT,
     goal: "Practice moving committed work to the right branch while keeping main clean.",
     hints: &[
         "Run `git branch`.",
@@ -43,12 +34,12 @@ pub fn setup(path: &Path) -> AppResult<()> {
 
     write_state(
         path,
-        &BranchDojoState::new(EXERCISE.id, vec![ACCIDENTAL_FILE.to_string()]),
+        &BranchDojoState::new(EXERCISE.metadata.name, vec![ACCIDENTAL_FILE.to_string()]),
     )?;
     fs::write(
         path.join("README.branchdojo.md"),
         generated_readme(
-            EXERCISE.title,
+            EXERCISE.metadata.title,
             EXERCISE.goal,
             "main, feature/profile-page",
             "README.md, profile.md",

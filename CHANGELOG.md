@@ -6,6 +6,14 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
+### Added
+
+- Added a shared exercise metadata model for the released exercise catalog.
+
+### Changed
+
+- Updated `branchdojo list` to show metadata-backed difficulty, category, and estimated time columns.
+
 ### Planning
 
 - Started v0.3 planning around progress-aware hints, optional check reports, exercise metadata improvements, and onboarding polish.

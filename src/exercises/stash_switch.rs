@@ -2,7 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::error::{AppError, AppResult};
-use crate::exercises::{generated_readme, Exercise};
+use crate::exercises::{generated_readme, metadata, Exercise};
 use crate::git;
 use crate::state::{write_state, BranchDojoState};
 
@@ -12,16 +12,7 @@ pub const SETTINGS_COPY: &str = "Settings: Save preferences with confidence.";
 pub const PRESERVED_WORK: &str = "Local note: Keep dark mode feedback for follow-up.";
 
 pub static EXERCISE: Exercise = Exercise {
-    id: "stash-switch",
-    title: "Stash Before Switching",
-    difficulty: "Intermediate",
-    estimated_time: "10 to 15 minutes",
-    skills: &[
-        "Preserving local work",
-        "Branch switching",
-        "Clean final state",
-    ],
-    description: "Preserve uncommitted work before switching branches.",
+    metadata: &metadata::STASH_SWITCH,
     goal: "Practice saving local work, completing feature branch work, and returning to a clean main branch.",
     hints: &[
         "Start with `git status`.",
@@ -50,12 +41,12 @@ Settings: Preferences are ready.
 
     write_state(
         path,
-        &BranchDojoState::new(EXERCISE.id, vec![APP_FILE.to_string()]),
+        &BranchDojoState::new(EXERCISE.metadata.name, vec![APP_FILE.to_string()]),
     )?;
     fs::write(
         path.join("README.branchdojo.md"),
         generated_readme(
-            EXERCISE.title,
+            EXERCISE.metadata.title,
             EXERCISE.goal,
             "main, feature/settings-copy",
             "app.txt",

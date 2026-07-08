@@ -10,7 +10,7 @@ Intermediate.
 
 ## Estimated Time
 
-10 to 15 minutes.
+15 to 20 minutes.
 
 ## Skills
 

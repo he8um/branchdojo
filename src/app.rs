@@ -12,14 +12,13 @@ pub fn run(command: Command) -> AppResult<()> {
     match command {
         Command::List => {
             println!("Available exercises:\n");
-            for exercise in exercises::all() {
+            for metadata in exercises::metadata::all_metadata() {
                 println!(
-                    "- {:<20} {:<10} {:<16} {} ({})",
-                    exercise.id,
-                    exercise.difficulty,
-                    exercise.estimated_time,
-                    exercise.skills.join(", "),
-                    exercise.description
+                    "  {:<28} {:<13} {:<20} {}",
+                    metadata.name,
+                    metadata.difficulty.as_str(),
+                    metadata.category,
+                    metadata.estimated_time
                 );
             }
             Ok(())
@@ -33,7 +32,7 @@ pub fn run(command: Command) -> AppResult<()> {
                     .map_err(|error| AppError::io("Could not create target path.", error))?;
             }
             (definition.setup)(&path)?;
-            println!("Exercise created: {}", definition.id);
+            println!("Exercise created: {}", definition.metadata.name);
             println!("\nNext:");
             println!("cd {}", path.display());
             println!("cat README.branchdojo.md");
@@ -69,7 +68,7 @@ pub fn run(command: Command) -> AppResult<()> {
             let state = safety::ensure_branchdojo_workspace(&path)?;
             let definition =
                 exercises::get(&state.exercise).ok_or_else(|| unsupported(&state.exercise))?;
-            println!("Hints for {}:", definition.id);
+            println!("Hints for {}:", definition.metadata.name);
             for (index, hint) in definition.hints.iter().enumerate() {
                 println!("{}. {}", index + 1, hint);
             }

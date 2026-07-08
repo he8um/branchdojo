@@ -5,17 +5,15 @@ use crate::error::AppResult;
 pub mod cherry_pick_basic;
 pub mod conflict_basic;
 pub mod detached_head_recovery;
+pub mod metadata;
 pub mod revert_mistake;
 pub mod stash_switch;
 pub mod wrong_branch_commit;
 
+use metadata::ExerciseMetadata;
+
 pub struct Exercise {
-    pub id: &'static str,
-    pub title: &'static str,
-    pub difficulty: &'static str,
-    pub estimated_time: &'static str,
-    pub skills: &'static [&'static str],
-    pub description: &'static str,
+    pub metadata: &'static ExerciseMetadata,
     pub goal: &'static str,
     pub hints: &'static [&'static str],
     pub setup: fn(&Path) -> AppResult<()>,
@@ -23,17 +21,19 @@ pub struct Exercise {
 
 pub fn all() -> Vec<&'static Exercise> {
     vec![
-        &cherry_pick_basic::EXERCISE,
         &conflict_basic::EXERCISE,
-        &detached_head_recovery::EXERCISE,
         &revert_mistake::EXERCISE,
-        &stash_switch::EXERCISE,
         &wrong_branch_commit::EXERCISE,
+        &stash_switch::EXERCISE,
+        &cherry_pick_basic::EXERCISE,
+        &detached_head_recovery::EXERCISE,
     ]
 }
 
 pub fn get(id: &str) -> Option<&'static Exercise> {
-    all().into_iter().find(|exercise| exercise.id == id)
+    all()
+        .into_iter()
+        .find(|exercise| exercise.metadata.name == id)
 }
 
 fn generated_readme(

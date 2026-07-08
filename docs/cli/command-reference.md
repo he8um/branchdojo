@@ -10,7 +10,7 @@ None.
 
 ### Output
 
-Human-readable list of exercise IDs, difficulty, and skill focus.
+Human-readable list of exercise IDs, difficulty, category, and estimated time.
 
 ### Example
 
@@ -21,12 +21,12 @@ branchdojo list
 ```text
 Available exercises:
 
-- cherry-pick-basic   Intermediate 10 to 15 minutes Commit selection, Cherry-pick workflow, Avoiding unrelated changes (Apply one specific bugfix commit without merging unrelated support work.)
-- conflict-basic       Beginner   5 to 10 minutes  Branch awareness, Merge conflict resolution, Clean merge completion (Resolve a small merge conflict and keep both intended changes.)
-- detached-head-recovery Intermediate 10 to 15 minutes Detached HEAD recovery, Branch creation, Reachability inspection (Recover useful work committed while HEAD is detached.)
-- revert-mistake       Beginner   5 to 10 minutes  Reading log history, Safe recovery, Preserving history (Restore safe file content while preserving the bad commit in history.)
-- stash-switch         Intermediate 10 to 15 minutes Preserving local work, Branch switching, Clean final state (Preserve uncommitted work before switching branches.)
-- wrong-branch-commit  Beginner   10 to 15 minutes Branch inspection, Moving work between branches, Restoring main (Move accidental work from main to the intended feature branch.)
+  conflict-basic               beginner      Merge conflicts      10-15 min
+  revert-mistake               beginner      History repair       10-15 min
+  wrong-branch-commit          beginner      Branch recovery      10-15 min
+  stash-switch                 intermediate  Local changes        10-15 min
+  cherry-pick-basic            intermediate  Selective history    15-20 min
+  detached-head-recovery       intermediate  Recovery             15-20 min
 ```
 
 ## `branchdojo new <exercise-name> --path <path>`

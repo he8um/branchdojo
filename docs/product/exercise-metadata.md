@@ -2,26 +2,24 @@
 
 ## Status
 
-Design proposal for v0.3. Not implemented.
+Metadata foundation implemented for v0.3. Progress-aware hints and reports are still planned.
 
 ## Goal
 
 Make exercise definitions richer and more consistent across CLI listing, generated READMEs, hints, reports, and documentation.
 
-## Proposed Fields
+## Implemented Fields
 
-- `id`
+- `name`
 - `title`
+- `summary`
 - `difficulty`
 - `category`
 - `estimated_time`
 - `skills`
-- `description`
 - `starting_branch`
 - `expected_final_branch`
 - `introduced_in`
-- `files`
-- `branches`
 
 ## Internal Representation
 
@@ -30,7 +28,7 @@ Metadata can remain hardcoded in Rust for v0.3. External exercise definitions an
 ## Expected Uses
 
 - Better `branchdojo list` output.
-- More consistent generated `README.branchdojo.md`.
+- More consistent generated `README.branchdojo.md` titles.
 - Shared context for progress-aware hints.
 - Report headers and summaries.
 - Documentation consistency checks.

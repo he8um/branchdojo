@@ -2,7 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::error::{AppError, AppResult};
-use crate::exercises::{generated_readme, Exercise};
+use crate::exercises::{generated_readme, metadata, Exercise};
 use crate::git;
 use crate::state::{write_state, BranchDojoState};
 
@@ -16,16 +16,7 @@ pub const BUGFIX_COMMIT_MESSAGE: &str = "Fix empty checkout cart";
 pub const LEGACY_COMMIT_MESSAGE: &str = "Enable legacy support mode";
 
 pub static EXERCISE: Exercise = Exercise {
-    id: "cherry-pick-basic",
-    title: "Basic Cherry-Pick",
-    difficulty: "Intermediate",
-    estimated_time: "10 to 15 minutes",
-    skills: &[
-        "Commit selection",
-        "Cherry-pick workflow",
-        "Avoiding unrelated changes",
-    ],
-    description: "Apply one specific bugfix commit without merging unrelated support work.",
+    metadata: &metadata::CHERRY_PICK_BASIC,
     goal: "Practice moving a single useful commit onto the intended release branch.",
     hints: &[
         "Inspect the graph with `git log --oneline --decorate --graph --all`.",
@@ -52,12 +43,17 @@ Checkout: standard cart flow
 
     write_state(
         path,
-        &BranchDojoState::new_with_branch(EXERCISE.id, RELEASE_BRANCH, vec![APP_FILE.to_string()]),
+        &BranchDojoState::new_with_branch(
+            EXERCISE.metadata.name,
+            metadata::expected_final_branch_for(EXERCISE.metadata.name)
+                .expect("exercise metadata should define expected final branch"),
+            vec![APP_FILE.to_string()],
+        ),
     )?;
     fs::write(
         path.join("README.branchdojo.md"),
         generated_readme(
-            EXERCISE.title,
+            EXERCISE.metadata.title,
             EXERCISE.goal,
             "main, support/legacy-fix, release/current",
             "app.txt, legacy.txt",

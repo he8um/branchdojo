@@ -78,10 +78,20 @@ Exercise setup modules.
 
 Each module should:
 
-- Provide metadata.
+- Reference shared metadata.
 - Create repository state.
 - Write exercise README.
 - Provide hints.
+
+## `src/exercises/metadata.rs`
+
+Exercise catalog metadata.
+
+Responsibilities:
+
+- Define exercise name, title, summary, difficulty, category, estimated time, skills, starting branch, expected final branch, and introduced version.
+- Provide stable metadata lookup helpers.
+- Provide the metadata source for `branchdojo list`.
 
 ## `src/validators/`
 
@@ -97,11 +107,11 @@ Each module should:
 
 Likely modules touched by v0.3 work:
 
-- `src/exercises/`: richer metadata fields may be added to exercise definitions.
+- `src/exercises/metadata.rs`: richer metadata fields support listing output and may support future hints and reports.
 - `src/validators/`: existing final-state facts may be reused by state-aware hints and reports.
 - `src/cli.rs`: `check --report <file>` may be added if report output is implemented.
 - `src/output.rs`: Markdown report rendering may share formatting concepts with human and JSON output.
 - Future `src/hints.rs`: shared progress-aware hint analysis may live here if it grows beyond exercise-local logic.
 - Future `src/reports.rs`: report file rendering and write safety may live here if implemented.
 
-These modules are planning targets only; v0.3 features are not implemented yet.
+Progress-aware hints and reports are planning targets only; exercise metadata foundation is implemented.

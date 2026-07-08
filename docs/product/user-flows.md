@@ -9,7 +9,7 @@
 branchdojo list
 ```
 
-3. BranchDojo prints available exercises with difficulty and skill focus.
+3. BranchDojo prints available exercises with difficulty, category, and estimated time.
 4. User chooses an exercise.
 
 Expected output style:
@@ -17,9 +17,9 @@ Expected output style:
 ```text
 Available exercises:
 
-- conflict-basic       Beginner   Merge conflict resolution
-- revert-mistake       Beginner   Safe recovery from a bad commit
-- wrong-branch-commit  Beginner   Move work to the correct branch
+  conflict-basic               beginner      Merge conflicts      10-15 min
+  revert-mistake               beginner      History repair       10-15 min
+  wrong-branch-commit          beginner      Branch recovery      10-15 min
 ```
 
 ## Flow 2: Create an Exercise

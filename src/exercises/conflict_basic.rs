@@ -2,7 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::error::{AppError, AppResult};
-use crate::exercises::{generated_readme, Exercise};
+use crate::exercises::{generated_readme, metadata, Exercise};
 use crate::git;
 use crate::state::{write_state, BranchDojoState};
 
@@ -12,16 +12,7 @@ pub const FEATURE_BRANCH: &str = "feature/landing-copy";
 const APP_FILE: &str = "app.txt";
 
 pub static EXERCISE: Exercise = Exercise {
-    id: "conflict-basic",
-    title: "Basic Merge Conflict",
-    difficulty: "Beginner",
-    estimated_time: "5 to 10 minutes",
-    skills: &[
-        "Branch awareness",
-        "Merge conflict resolution",
-        "Clean merge completion",
-    ],
-    description: "Resolve a small merge conflict and keep both intended changes.",
+    metadata: &metadata::CONFLICT_BASIC,
     goal: "Practice resolving a real merge conflict on main.",
     hints: &[
         "Start with `git status`.",
@@ -44,12 +35,12 @@ pub fn setup(path: &Path) -> AppResult<()> {
 
     write_state(
         path,
-        &BranchDojoState::new(EXERCISE.id, vec![APP_FILE.to_string()]),
+        &BranchDojoState::new(EXERCISE.metadata.name, vec![APP_FILE.to_string()]),
     )?;
     fs::write(
         path.join("README.branchdojo.md"),
         generated_readme(
-            EXERCISE.title,
+            EXERCISE.metadata.title,
             EXERCISE.goal,
             "main, feature/landing-copy",
             "app.txt",

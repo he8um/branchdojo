@@ -48,7 +48,7 @@ Candidate scope:
 
 - Progress-aware hints based on current repository state.
 - Optional Markdown check reports written only when requested.
-- Richer exercise metadata for listings, hints, reports, and docs.
+- Richer exercise metadata for listings, hints, reports, and docs. Listing metadata foundation is implemented.
 - README and onboarding polish, including a recommended learning path.
 
 Non-goals:
@@ -62,7 +62,7 @@ Non-goals:
 
 Implementation order:
 
-1. Exercise metadata improvements.
+1. Exercise metadata improvements. Foundation implemented.
 2. Progress-aware hints.
 3. Check report output.
 4. Documentation and release polish.
