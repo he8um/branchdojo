@@ -4,6 +4,7 @@ use crate::error::AppResult;
 
 pub mod cherry_pick_basic;
 pub mod conflict_basic;
+pub mod detached_head_recovery;
 pub mod revert_mistake;
 pub mod stash_switch;
 pub mod wrong_branch_commit;
@@ -24,6 +25,7 @@ pub fn all() -> Vec<&'static Exercise> {
     vec![
         &cherry_pick_basic::EXERCISE,
         &conflict_basic::EXERCISE,
+        &detached_head_recovery::EXERCISE,
         &revert_mistake::EXERCISE,
         &stash_switch::EXERCISE,
         &wrong_branch_commit::EXERCISE,

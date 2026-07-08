@@ -183,3 +183,27 @@ This catalog defines stable check IDs.
 - Exercise: cherry-pick-basic
 - Severity: warning
 - Warning: final state is valid, but history shape includes a merge commit on `release/current`.
+
+### `current_branch_recovery_detached_work`
+
+- Exercise: detached-head-recovery
+- Severity: required
+- Pass: current branch is `recovery/detached-work`.
+
+### `recovered_work_exists`
+
+- Exercise: detached-head-recovery
+- Severity: required
+- Pass: recovered work content is present on `recovery/detached-work`.
+
+### `not_detached_head`
+
+- Exercise: detached-head-recovery
+- Severity: required
+- Pass: repository is on a named branch, not detached HEAD.
+
+### `detached_commit_preserved`
+
+- Exercise: detached-head-recovery
+- Severity: warning
+- Warning: final state is valid, but the original detached commit subject is not reachable from `recovery/detached-work`.

@@ -23,6 +23,7 @@ Available exercises:
 
 - cherry-pick-basic   Intermediate 10 to 15 minutes Commit selection, Cherry-pick workflow, Avoiding unrelated changes (Apply one specific bugfix commit without merging unrelated support work.)
 - conflict-basic       Beginner   5 to 10 minutes  Branch awareness, Merge conflict resolution, Clean merge completion (Resolve a small merge conflict and keep both intended changes.)
+- detached-head-recovery Intermediate 10 to 15 minutes Detached HEAD recovery, Branch creation, Reachability inspection (Recover useful work committed while HEAD is detached.)
 - revert-mistake       Beginner   5 to 10 minutes  Reading log history, Safe recovery, Preserving history (Restore safe file content while preserving the bad commit in history.)
 - stash-switch         Intermediate 10 to 15 minutes Preserving local work, Branch switching, Clean final state (Preserve uncommitted work before switching branches.)
 - wrong-branch-commit  Beginner   10 to 15 minutes Branch inspection, Moving work between branches, Restoring main (Move accidental work from main to the intended feature branch.)

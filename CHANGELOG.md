@@ -9,6 +9,7 @@ This project follows a simple release log format and uses semantic versioning af
 ### Added
 
 - Added `cherry-pick-basic`, an intermediate exercise for applying one specific commit to a release branch.
+- Added `detached-head-recovery`, an intermediate exercise for preserving work committed on detached HEAD.
 - Added `stash-switch`, an intermediate exercise for preserving local work before switching branches.
 
 ## [0.1.0] - 2026-07-08

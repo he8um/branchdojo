@@ -68,6 +68,7 @@ fn list_prints_available_exercises() {
     assert!(output.contains("Available exercises:"));
     assert!(output.contains("cherry-pick-basic"));
     assert!(output.contains("conflict-basic"));
+    assert!(output.contains("detached-head-recovery"));
     assert!(output.contains("revert-mistake"));
     assert!(output.contains("stash-switch"));
     assert!(output.contains("wrong-branch-commit"));
@@ -224,6 +225,7 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
     for exercise in [
         "cherry-pick-basic",
         "conflict-basic",
+        "detached-head-recovery",
         "revert-mistake",
         "stash-switch",
         "wrong-branch-commit",
@@ -243,6 +245,8 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
         assert_eq!(state["exercise"], exercise);
         let expected_branch = if exercise == "cherry-pick-basic" {
             "release/current"
+        } else if exercise == "detached-head-recovery" {
+            "recovery/detached-work"
         } else {
             "main"
         };
@@ -262,6 +266,167 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
 
         fs::remove_dir_all(path).unwrap();
     }
+}
+
+#[test]
+fn detached_head_recovery_new_creates_expected_starting_state() {
+    let path = temp_path("detached-new");
+    let path_arg = path.to_string_lossy().to_string();
+    let output = run(&["new", "detached-head-recovery", "--path", &path_arg]);
+    assert!(output.status.success());
+
+    assert!(path.join(".git").exists());
+    assert!(path.join(".branchdojo.json").exists());
+    assert!(path.join("README.branchdojo.md").exists());
+    assert!(path.join("recovered-note.txt").exists());
+    assert!(git_output(&path, &["branch", "--show-current"]).is_empty());
+    assert!(!git_output(&path, &["rev-parse", "--verify", "main"]).is_empty());
+    assert_eq!(
+        git_output(&path, &["log", "-1", "--format=%s"]),
+        "Add detached work note"
+    );
+    assert!(fs::read_to_string(path.join("recovered-note.txt"))
+        .unwrap()
+        .contains("Recovered detached HEAD work"));
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn detached_head_recovery_fails_before_solving_and_json_is_valid_shape() {
+    let path = temp_path("detached-unsolved");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "detached-head-recovery", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: FAILED"));
+
+    let json_output = run(&["check", "--path", &path_arg, "--json"]);
+    assert!(json_output.status.success());
+    let json: Value = serde_json::from_slice(&json_output.stdout).unwrap();
+    assert_eq!(json["exercise"], "detached-head-recovery");
+    assert_eq!(json["status"], "failed");
+    for check in json["checks"].as_array().unwrap() {
+        let status = check["status"].as_str().unwrap();
+        assert!(matches!(status, "passed" | "warning" | "failed"));
+        let severity = check["severity"].as_str().unwrap();
+        assert!(matches!(severity, "required" | "warning"));
+    }
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn detached_head_recovery_branch_preserving_solution_passes() {
+    let path = temp_path("detached-pass");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "detached-head-recovery", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["switch", "-c", "recovery/detached-work"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: PASSED"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn detached_head_recovery_manual_content_equivalent_solution_warns() {
+    let path = temp_path("detached-warning");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "detached-head-recovery", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["switch", "main"]);
+    git(&path, &["switch", "-c", "recovery/detached-work"]);
+    fs::write(
+        path.join("recovered-note.txt"),
+        "Recovered detached HEAD work\n",
+    )
+    .unwrap();
+    git(&path, &["add", "recovered-note.txt"]);
+    git(&path, &["commit", "-m", "Recreate recovered work"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: WARNING"));
+    assert!(output.contains("Detached commit preservation check"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn detached_head_recovery_missing_recovered_work_fails() {
+    let path = temp_path("detached-missing-work");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "detached-head-recovery", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["switch", "main"]);
+    git(&path, &["switch", "-c", "recovery/detached-work"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Recovered work exists on recovery branch"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn detached_head_recovery_still_detached_fails() {
+    let path = temp_path("detached-still-detached");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "detached-head-recovery", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["branch", "recovery/detached-work"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Current branch is recovery/detached-work"));
+    assert!(output.contains("Repository is not in detached HEAD"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn detached_head_recovery_reset_and_hint_work() {
+    let path = temp_path("detached-reset");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "detached-head-recovery", "--path", &path_arg])
+        .status
+        .success());
+
+    let hint = run(&["hint", "--path", &path_arg]);
+    assert!(hint.status.success());
+    assert!(stdout(&hint).contains("Hints for detached-head-recovery:"));
+
+    git(&path, &["switch", "-c", "recovery/detached-work"]);
+    let reset = run(&["reset", "--path", &path_arg]);
+    assert!(reset.status.success());
+    assert!(git_output(&path, &["branch", "--show-current"]).is_empty());
+    assert_eq!(
+        git_output(&path, &["log", "-1", "--format=%s"]),
+        "Add detached work note"
+    );
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
 }
 
 #[test]
