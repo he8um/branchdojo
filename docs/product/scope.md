@@ -32,6 +32,31 @@ BranchDojo v0.1 includes:
 - `revert-mistake`
 - `wrong-branch-commit`
 
+## v0.2 Scope
+
+BranchDojo v0.2 adds intermediate local Git workflow exercises while preserving the v0.1 CLI, safety model, and final-state validation model.
+
+## v0.2 Exercises
+
+- `stash-switch`
+- `cherry-pick-basic`
+- `detached-head-recovery`
+
+## Out of Scope for v0.2
+
+- Custom exercise definitions.
+- Exercise packs.
+- Classroom dashboard.
+- GitHub API integration.
+- GitHub Action mode.
+- TUI or GUI.
+- Remote repository operations.
+- Running inside existing user repositories.
+- Exact command sequence validation.
+- Progress-aware hints.
+- File report generation.
+- Release automation.
+
 ## Out of Scope for v0.1
 
 - Custom exercise definitions.

@@ -6,11 +6,22 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [0.2.0] - 2026-07-08
+
 ### Added
 
 - Added `cherry-pick-basic`, an intermediate exercise for applying one specific commit to a release branch.
 - Added `detached-head-recovery`, an intermediate exercise for preserving work committed on detached HEAD.
 - Added `stash-switch`, an intermediate exercise for preserving local work before switching branches.
+
+### Changed
+
+- Expanded BranchDojo from beginner-only drills into intermediate Git workflow practice.
+- Preserved final-state validation for all v0.2 exercises.
+- Documented warning behavior for valid final states with unusual workflow or history shape.
+- Updated public exercise, validation, CLI, and testing docs for the v0.2 exercise catalog.
 
 ## [0.1.0] - 2026-07-08
 

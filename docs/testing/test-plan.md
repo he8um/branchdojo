@@ -1,6 +1,6 @@
 # Test Plan
 
-BranchDojo v0.1 is tested with a mix of pure unit tests and integration tests that create real temporary Git repositories.
+BranchDojo is tested with a mix of pure unit tests and integration tests that create real temporary Git repositories.
 
 ## Required Local Checks
 
@@ -19,7 +19,7 @@ cargo test
 ## Integration Coverage
 
 - `branchdojo list` and help output.
-- Exercise creation for all v0.1 exercises.
+- Exercise creation for all implemented exercises.
 - Generated `.branchdojo.json` and `README.branchdojo.md`.
 - Local Git identity in generated repositories.
 - Human and JSON check output.
@@ -27,11 +27,12 @@ cargo test
 - Non-empty target directory refusal.
 - Invalid and missing workspace metadata errors.
 - Dirty working tree and conflict marker failures.
-- Simulated valid solutions for the v0.1 exercises.
+- Simulated valid solutions for implemented exercises.
+- Warning behavior for valid but unusual workflow shapes.
 
-## Release Smoke Checks
+## v0.2 Release Smoke Checks
 
-Before tagging v0.1.0, install locally and run:
+Before tagging v0.2.0, install locally and run:
 
 ```bash
 cargo install --path . --locked --force
@@ -40,8 +41,8 @@ branchdojo list
 branchdojo new conflict-basic --path ./branchdojo-smoke-conflict
 branchdojo check --path ./branchdojo-smoke-conflict
 branchdojo check --path ./branchdojo-smoke-conflict --json
-branchdojo reset --path ./branchdojo-smoke-conflict
 branchdojo hint --path ./branchdojo-smoke-conflict
+branchdojo reset --path ./branchdojo-smoke-conflict
 ```
 
-Remove the smoke workspace after the check.
+Repeat `new`, `check`, `check --json`, `hint`, and `reset` for every implemented exercise, then remove all smoke workspaces.

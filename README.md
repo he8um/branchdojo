@@ -27,6 +27,10 @@ branchdojo check --path .
 
 The tool generates the exercise. The user solves it. The tool validates the final repository state.
 
+## Release State
+
+v0.1.0 is the first released version. v0.2.0 is release-candidate ready on `main` and adds intermediate Git workflow exercises.
+
 ## Available Exercises
 
 | Exercise | Difficulty | Skill focus |
@@ -98,7 +102,7 @@ Detailed design docs are available under `docs/`:
 ## Roadmap
 
 - v0.1: beginner exercises, state file, final-state validation, reset, hints, JSON output, CI.
-- v0.2 in progress: stash switching, basic cherry-pick, and detached HEAD recovery implemented; validation refinements planned.
+- v0.2 release candidate: stash switching, basic cherry-pick, detached HEAD recovery, final-state validation, warnings for valid but unusual workflow shapes.
 - v0.3: rebase, squash, rename conflict, generated reports.
 - v0.4: bisect, classroom mode, exercise packs, custom definitions.
 - v0.5: GitHub Action mode, binaries, Homebrew, release automation.

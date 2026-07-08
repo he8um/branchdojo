@@ -17,7 +17,7 @@
 
 ## v0.2: Intermediate Recovery Exercises
 
-Planned scope:
+Release-candidate scope:
 
 - `stash-switch`: implemented; practice saving local work before switching branches.
 - `cherry-pick-basic`: implemented; practice moving one specific commit onto the intended branch.
@@ -38,7 +38,7 @@ Out of scope for v0.2:
 - Custom external exercise packs.
 - Generated result reports.
 - Release automation.
-- Progress-aware hints until the new exercise validation rules are stable.
+- Progress-aware hints.
 
 ## v0.3: Better Feedback
 
