@@ -87,6 +87,13 @@ fn root_help_succeeds() {
 }
 
 #[test]
+fn root_version_succeeds() {
+    let output = run(&["--version"]);
+    assert!(output.status.success());
+    assert_eq!(stdout(&output), "branchdojo 0.2.0\n");
+}
+
+#[test]
 fn subcommand_help_succeeds() {
     for command in ["list", "new", "check"] {
         let output = run(&[command, "--help"]);

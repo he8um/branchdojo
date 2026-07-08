@@ -19,6 +19,7 @@ No unreleased changes.
 ### Changed
 
 - Expanded BranchDojo from beginner-only drills into intermediate Git workflow practice.
+- Exposed CLI version output for release verification.
 - Preserved final-state validation for all v0.2 exercises.
 - Documented warning behavior for valid final states with unusual workflow or history shape.
 - Updated public exercise, validation, CLI, and testing docs for the v0.2 exercise catalog.

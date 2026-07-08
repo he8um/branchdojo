@@ -15,6 +15,7 @@ pub enum Command {
 #[derive(Parser)]
 #[command(
     name = "branchdojo",
+    version,
     about = "Practice real Git workflows in safe, disposable local repositories."
 )]
 struct Cli {
