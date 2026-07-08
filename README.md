@@ -95,7 +95,7 @@ Detailed design docs are available under `docs/`:
 ## Roadmap
 
 - v0.1: beginner exercises, state file, final-state validation, reset, hints, JSON output, CI.
-- v0.2: stash, cherry-pick, detached HEAD, progress-aware hints.
+- v0.2 planned: stash switching, basic cherry-pick, detached HEAD recovery, validation refinements.
 - v0.3: rebase, squash, rename conflict, generated reports.
 - v0.4: bisect, classroom mode, exercise packs, custom definitions.
 - v0.5: GitHub Action mode, binaries, Homebrew, release automation.

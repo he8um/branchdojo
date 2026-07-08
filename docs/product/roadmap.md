@@ -15,13 +15,30 @@
 - Unit and integration tests.
 - GitHub Actions CI.
 
-## v0.2: More Recovery Exercises
+## v0.2: Intermediate Recovery Exercises
 
-- `stash-switch`.
-- `cherry-pick-hotfix`.
-- `detached-head-recovery`.
-- `accidental-delete-restore`.
-- Progress-aware hints.
+Planned scope:
+
+- `stash-switch`: practice saving local work before switching branches.
+- `cherry-pick-basic`: practice moving one specific commit onto the intended branch.
+- `detached-head-recovery`: practice making detached HEAD work reachable from a branch.
+
+Expected validation approach:
+
+- Preserve final-state validation instead of command sequence validation.
+- Require clean working trees, intact metadata, expected branches, and expected file content.
+- Use `WARNING` for valid final states with unusual history shape when the exercise allows it.
+- Keep validators deterministic and independent of shell history.
+
+Out of scope for v0.2:
+
+- Network features.
+- GitHub API integration.
+- TUI or GUI.
+- Custom external exercise packs.
+- Generated result reports.
+- Release automation.
+- Progress-aware hints until the new exercise validation rules are stable.
 
 ## v0.3: Better Feedback
 
