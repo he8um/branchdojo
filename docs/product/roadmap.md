@@ -19,7 +19,7 @@
 
 Planned scope:
 
-- `stash-switch`: practice saving local work before switching branches.
+- `stash-switch`: implemented; practice saving local work before switching branches.
 - `cherry-pick-basic`: practice moving one specific commit onto the intended branch.
 - `detached-head-recovery`: practice making detached HEAD work reachable from a branch.
 

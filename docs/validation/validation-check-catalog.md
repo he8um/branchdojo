@@ -117,3 +117,27 @@ This catalog defines stable check IDs.
 - Exercise: wrong-branch-commit
 - Severity: required
 - Pass: accidental content is present on feature branch.
+
+### `feature_settings_copy_exists`
+
+- Exercise: stash-switch
+- Severity: required
+- Pass: expected settings copy is present on `feature/settings-copy`.
+
+### `preserved_work_exists`
+
+- Exercise: stash-switch
+- Severity: required
+- Pass: preserved local work is present on `main`.
+
+### `wip_commit_detected`
+
+- Exercise: stash-switch
+- Severity: warning
+- Warning: final state is valid, but history includes a WIP-style commit subject.
+
+### `feature_copy_on_main`
+
+- Exercise: stash-switch
+- Severity: warning
+- Warning: final state is valid, but feature copy appears on `main` too.

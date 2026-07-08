@@ -27,17 +27,18 @@ branchdojo check --path .
 
 The tool generates the exercise. The user solves it. The tool validates the final repository state.
 
-## MVP Exercises
+## Available Exercises
 
 | Exercise | Difficulty | Skill focus |
 |---|---:|---|
 | `conflict-basic` | Beginner | Merge conflicts, branch awareness, clean working tree |
 | `revert-mistake` | Beginner | Safe history-preserving recovery from a bad commit |
 | `wrong-branch-commit` | Beginner | Moving accidental work to the correct branch |
+| `stash-switch` | Intermediate | Preserving local work before switching branches |
 
 ## Installation
 
-For v0.1, install locally from the repository:
+Install locally from the repository:
 
 ```bash
 cargo install --path .
@@ -95,7 +96,7 @@ Detailed design docs are available under `docs/`:
 ## Roadmap
 
 - v0.1: beginner exercises, state file, final-state validation, reset, hints, JSON output, CI.
-- v0.2 planned: stash switching, basic cherry-pick, detached HEAD recovery, validation refinements.
+- v0.2 in progress: stash switching implemented; basic cherry-pick, detached HEAD recovery, and validation refinements planned.
 - v0.3: rebase, squash, rename conflict, generated reports.
 - v0.4: bisect, classroom mode, exercise packs, custom definitions.
 - v0.5: GitHub Action mode, binaries, Homebrew, release automation.

@@ -61,13 +61,14 @@ fn git_output(path: &Path, args: &[&str]) -> String {
 }
 
 #[test]
-fn list_prints_mvp_exercises() {
+fn list_prints_available_exercises() {
     let output = run(&["list"]);
     assert!(output.status.success());
     let output = stdout(&output);
     assert!(output.contains("Available exercises:"));
     assert!(output.contains("conflict-basic"));
     assert!(output.contains("revert-mistake"));
+    assert!(output.contains("stash-switch"));
     assert!(output.contains("wrong-branch-commit"));
 }
 
@@ -219,7 +220,12 @@ fn conflict_basic_fails_before_solving_and_json_is_valid_shape() {
 
 #[test]
 fn generated_exercises_include_metadata_readme_and_local_identity() {
-    for exercise in ["conflict-basic", "revert-mistake", "wrong-branch-commit"] {
+    for exercise in [
+        "conflict-basic",
+        "revert-mistake",
+        "stash-switch",
+        "wrong-branch-commit",
+    ] {
         let path = temp_path(exercise);
         let path_arg = path.to_string_lossy().to_string();
         let output = run(&["new", exercise, "--path", &path_arg]);
@@ -249,6 +255,145 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
 
         fs::remove_dir_all(path).unwrap();
     }
+}
+
+#[test]
+fn stash_switch_new_creates_expected_starting_state() {
+    let path = temp_path("stash-new");
+    let path_arg = path.to_string_lossy().to_string();
+    let output = run(&["new", "stash-switch", "--path", &path_arg]);
+    assert!(output.status.success());
+
+    assert!(path.join(".git").exists());
+    assert!(path.join(".branchdojo.json").exists());
+    assert!(path.join("README.branchdojo.md").exists());
+    assert!(path.join("app.txt").exists());
+    assert_eq!(git_output(&path, &["branch", "--show-current"]), "main");
+    let feature_hash = git_output(&path, &["rev-parse", "--verify", "feature/settings-copy"]);
+    assert!(!feature_hash.is_empty());
+    assert!(fs::read_to_string(path.join("app.txt"))
+        .unwrap()
+        .contains("Local note: Keep dark mode feedback for follow-up."));
+    assert!(!git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    let checkout = Command::new("git")
+        .current_dir(&path)
+        .args(["checkout", "feature/settings-copy"])
+        .output()
+        .unwrap();
+    assert!(!checkout.status.success());
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn stash_switch_fails_before_solving_and_json_is_valid_shape() {
+    let path = temp_path("stash-unsolved");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "stash-switch", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: FAILED"));
+
+    let json_output = run(&["check", "--path", &path_arg, "--json"]);
+    assert!(json_output.status.success());
+    let json: Value = serde_json::from_slice(&json_output.stdout).unwrap();
+    assert_eq!(json["exercise"], "stash-switch");
+    assert_eq!(json["status"], "failed");
+    for check in json["checks"].as_array().unwrap() {
+        let status = check["status"].as_str().unwrap();
+        assert!(matches!(status, "passed" | "warning" | "failed"));
+        let severity = check["severity"].as_str().unwrap();
+        assert!(matches!(severity, "required" | "warning"));
+    }
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn stash_switch_valid_stash_style_solution_passes() {
+    let path = temp_path("stash-pass");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "stash-switch", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["stash", "push", "-m", "preserve local notes"]);
+    git(&path, &["checkout", "feature/settings-copy"]);
+    fs::write(
+        path.join("app.txt"),
+        "Welcome: BranchDojo demo app\nSettings: Save preferences with confidence.\n",
+    )
+    .unwrap();
+    git(&path, &["add", "app.txt"]);
+    git(&path, &["commit", "-m", "Update settings copy"]);
+    git(&path, &["checkout", "main"]);
+    git(&path, &["stash", "pop"]);
+    git(&path, &["add", "app.txt"]);
+    git(&path, &["commit", "-m", "Preserve local follow-up note"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: PASSED"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn stash_switch_commit_before_switch_warns() {
+    let path = temp_path("stash-warning");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "stash-switch", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["add", "app.txt"]);
+    git(&path, &["commit", "-m", "WIP preserve local notes"]);
+    git(&path, &["checkout", "feature/settings-copy"]);
+    fs::write(
+        path.join("app.txt"),
+        "Welcome: BranchDojo demo app\nSettings: Save preferences with confidence.\n",
+    )
+    .unwrap();
+    git(&path, &["add", "app.txt"]);
+    git(&path, &["commit", "-m", "Update settings copy"]);
+    git(&path, &["checkout", "main"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: WARNING"));
+    assert!(output.contains("WIP commit check"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn stash_switch_reset_and_hint_work() {
+    let path = temp_path("stash-reset");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "stash-switch", "--path", &path_arg])
+        .status
+        .success());
+
+    let hint = run(&["hint", "--path", &path_arg]);
+    assert!(hint.status.success());
+    assert!(stdout(&hint).contains("Hints for stash-switch:"));
+
+    git(&path, &["add", "app.txt"]);
+    git(&path, &["commit", "-m", "WIP preserve local notes"]);
+    let reset = run(&["reset", "--path", &path_arg]);
+    assert!(reset.status.success());
+    assert_eq!(git_output(&path, &["branch", "--show-current"]), "main");
+    assert!(fs::read_to_string(path.join("app.txt"))
+        .unwrap()
+        .contains("Local note: Keep dark mode feedback for follow-up."));
+    assert!(!git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
 }
 
 #[test]

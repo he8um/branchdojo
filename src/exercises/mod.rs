@@ -4,6 +4,7 @@ use crate::error::AppResult;
 
 pub mod conflict_basic;
 pub mod revert_mistake;
+pub mod stash_switch;
 pub mod wrong_branch_commit;
 
 pub struct Exercise {
@@ -22,6 +23,7 @@ pub fn all() -> Vec<&'static Exercise> {
     vec![
         &conflict_basic::EXERCISE,
         &revert_mistake::EXERCISE,
+        &stash_switch::EXERCISE,
         &wrong_branch_commit::EXERCISE,
     ]
 }
