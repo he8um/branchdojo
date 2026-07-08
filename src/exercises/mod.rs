@@ -2,6 +2,7 @@ use std::path::Path;
 
 use crate::error::AppResult;
 
+pub mod cherry_pick_basic;
 pub mod conflict_basic;
 pub mod revert_mistake;
 pub mod stash_switch;
@@ -21,6 +22,7 @@ pub struct Exercise {
 
 pub fn all() -> Vec<&'static Exercise> {
     vec![
+        &cherry_pick_basic::EXERCISE,
         &conflict_basic::EXERCISE,
         &revert_mistake::EXERCISE,
         &stash_switch::EXERCISE,

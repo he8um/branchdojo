@@ -66,6 +66,7 @@ fn list_prints_available_exercises() {
     assert!(output.status.success());
     let output = stdout(&output);
     assert!(output.contains("Available exercises:"));
+    assert!(output.contains("cherry-pick-basic"));
     assert!(output.contains("conflict-basic"));
     assert!(output.contains("revert-mistake"));
     assert!(output.contains("stash-switch"));
@@ -221,6 +222,7 @@ fn conflict_basic_fails_before_solving_and_json_is_valid_shape() {
 #[test]
 fn generated_exercises_include_metadata_readme_and_local_identity() {
     for exercise in [
+        "cherry-pick-basic",
         "conflict-basic",
         "revert-mistake",
         "stash-switch",
@@ -239,7 +241,12 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
         assert_eq!(state["tool"], "branchdojo");
         assert_eq!(state["schema_version"], "0.1.0");
         assert_eq!(state["exercise"], exercise);
-        assert_eq!(state["expected_branch"], "main");
+        let expected_branch = if exercise == "cherry-pick-basic" {
+            "release/current"
+        } else {
+            "main"
+        };
+        assert_eq!(state["expected_branch"], expected_branch);
         assert!(state["expected_files"].as_array().unwrap().len() == 1);
         assert_eq!(state["validation_policy"], "final-state");
         let created_at = state["created_at"].as_str().unwrap();
@@ -255,6 +262,169 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
 
         fs::remove_dir_all(path).unwrap();
     }
+}
+
+#[test]
+fn cherry_pick_basic_new_creates_expected_starting_state() {
+    let path = temp_path("cherry-new");
+    let path_arg = path.to_string_lossy().to_string();
+    let output = run(&["new", "cherry-pick-basic", "--path", &path_arg]);
+    assert!(output.status.success());
+
+    assert!(path.join(".git").exists());
+    assert!(path.join(".branchdojo.json").exists());
+    assert!(path.join("README.branchdojo.md").exists());
+    assert!(path.join("app.txt").exists());
+    assert_eq!(
+        git_output(&path, &["branch", "--show-current"]),
+        "release/current"
+    );
+    assert!(!git_output(&path, &["rev-parse", "--verify", "support/legacy-fix"]).is_empty());
+    assert!(!git_output(&path, &["rev-parse", "--verify", "release/current"]).is_empty());
+    assert!(
+        git_output(&path, &["log", "support/legacy-fix", "--format=%s"])
+            .contains("Fix empty checkout cart")
+    );
+    assert!(
+        git_output(&path, &["show", "support/legacy-fix:legacy.txt"])
+            .contains("Legacy support mode enabled")
+    );
+    assert!(git_output(&path, &["show", "support/legacy-fix:app.txt"])
+        .contains("Fix: handle empty checkout cart"));
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn cherry_pick_basic_fails_before_solving_and_json_is_valid_shape() {
+    let path = temp_path("cherry-unsolved");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "cherry-pick-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: FAILED"));
+
+    let json_output = run(&["check", "--path", &path_arg, "--json"]);
+    assert!(json_output.status.success());
+    let json: Value = serde_json::from_slice(&json_output.stdout).unwrap();
+    assert_eq!(json["exercise"], "cherry-pick-basic");
+    assert_eq!(json["status"], "failed");
+    for check in json["checks"].as_array().unwrap() {
+        let status = check["status"].as_str().unwrap();
+        assert!(matches!(status, "passed" | "warning" | "failed"));
+        let severity = check["severity"].as_str().unwrap();
+        assert!(matches!(severity, "required" | "warning"));
+    }
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn cherry_pick_basic_valid_cherry_pick_solution_passes() {
+    let path = temp_path("cherry-pass");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "cherry-pick-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let hash = git_output(
+        &path,
+        &[
+            "log",
+            "support/legacy-fix",
+            "--format=%H",
+            "--grep",
+            "^Fix empty checkout cart$",
+            "-n",
+            "1",
+        ],
+    );
+    git(&path, &["cherry-pick", &hash]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: PASSED"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn cherry_pick_basic_manual_final_state_warns() {
+    let path = temp_path("cherry-warning");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "cherry-pick-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    fs::write(
+        path.join("app.txt"),
+        "Checkout: standard cart flow\nFix: handle empty checkout cart\n",
+    )
+    .unwrap();
+    git(&path, &["add", "app.txt"]);
+    git(&path, &["commit", "-m", "Apply checkout fix manually"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: WARNING"));
+    assert!(output.contains("Cherry-pick-style workflow check"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn cherry_pick_basic_rejects_unrelated_legacy_content_on_release() {
+    let path = temp_path("cherry-legacy-fail");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "cherry-pick-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["merge", "support/legacy-fix"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Release branch excludes legacy-only content"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn cherry_pick_basic_reset_and_hint_work() {
+    let path = temp_path("cherry-reset");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "cherry-pick-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let hint = run(&["hint", "--path", &path_arg]);
+    assert!(hint.status.success());
+    assert!(stdout(&hint).contains("Hints for cherry-pick-basic:"));
+
+    fs::write(
+        path.join("app.txt"),
+        "Checkout: standard cart flow\nFix: handle empty checkout cart\n",
+    )
+    .unwrap();
+    git(&path, &["add", "app.txt"]);
+    git(&path, &["commit", "-m", "Apply checkout fix manually"]);
+    let reset = run(&["reset", "--path", &path_arg]);
+    assert!(reset.status.success());
+    assert_eq!(
+        git_output(&path, &["branch", "--show-current"]),
+        "release/current"
+    );
+    assert!(!git_output(&path, &["rev-parse", "--verify", "support/legacy-fix"]).is_empty());
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
 }
 
 #[test]

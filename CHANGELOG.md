@@ -6,13 +6,9 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
-### Planning
-
-- Started v0.2 development planning for intermediate Git workflow exercises.
-- Documented candidate scope for stash, cherry-pick, and detached HEAD recovery practice.
-
 ### Added
 
+- Added `cherry-pick-basic`, an intermediate exercise for applying one specific commit to a release branch.
 - Added `stash-switch`, an intermediate exercise for preserving local work before switching branches.
 
 ## [0.1.0] - 2026-07-08

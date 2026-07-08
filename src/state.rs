@@ -24,12 +24,20 @@ pub struct BranchDojoState {
 
 impl BranchDojoState {
     pub fn new(exercise: impl Into<String>, expected_files: Vec<String>) -> Self {
+        Self::new_with_branch(exercise, "main", expected_files)
+    }
+
+    pub fn new_with_branch(
+        exercise: impl Into<String>,
+        expected_branch: impl Into<String>,
+        expected_files: Vec<String>,
+    ) -> Self {
         Self {
             tool: TOOL_NAME.to_string(),
             schema_version: SCHEMA_VERSION.to_string(),
             exercise: exercise.into(),
             created_at: created_at_now(),
-            expected_branch: "main".to_string(),
+            expected_branch: expected_branch.into(),
             expected_files,
             validation_policy: VALIDATION_POLICY.to_string(),
         }
@@ -40,7 +48,7 @@ impl BranchDojoState {
             || self.schema_version != SCHEMA_VERSION
             || self.exercise.trim().is_empty()
             || self.created_at.trim().is_empty()
-            || self.expected_branch != "main"
+            || self.expected_branch.trim().is_empty()
             || self.expected_files.is_empty()
             || self.validation_policy != VALIDATION_POLICY
         {

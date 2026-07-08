@@ -4,6 +4,7 @@ use crate::error::{AppError, AppResult};
 use crate::result::ValidationResult;
 use crate::state::BranchDojoState;
 
+mod cherry_pick_basic;
 mod common;
 mod conflict_basic;
 mod revert_mistake;
@@ -12,6 +13,7 @@ mod wrong_branch_commit;
 
 pub fn validate(path: &Path, state: &BranchDojoState) -> AppResult<ValidationResult> {
     match state.exercise.as_str() {
+        "cherry-pick-basic" => cherry_pick_basic::validate(path, state),
         "conflict-basic" => conflict_basic::validate(path, state),
         "revert-mistake" => revert_mistake::validate(path, state),
         "stash-switch" => stash_switch::validate(path, state),

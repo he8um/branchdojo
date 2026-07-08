@@ -35,6 +35,7 @@ The tool generates the exercise. The user solves it. The tool validates the fina
 | `revert-mistake` | Beginner | Safe history-preserving recovery from a bad commit |
 | `wrong-branch-commit` | Beginner | Moving accidental work to the correct branch |
 | `stash-switch` | Intermediate | Preserving local work before switching branches |
+| `cherry-pick-basic` | Intermediate | Applying one specific commit without unrelated changes |
 
 ## Installation
 
@@ -96,7 +97,7 @@ Detailed design docs are available under `docs/`:
 ## Roadmap
 
 - v0.1: beginner exercises, state file, final-state validation, reset, hints, JSON output, CI.
-- v0.2 in progress: stash switching implemented; basic cherry-pick, detached HEAD recovery, and validation refinements planned.
+- v0.2 in progress: stash switching and basic cherry-pick implemented; detached HEAD recovery and validation refinements planned.
 - v0.3: rebase, squash, rename conflict, generated reports.
 - v0.4: bisect, classroom mode, exercise packs, custom definitions.
 - v0.5: GitHub Action mode, binaries, Homebrew, release automation.

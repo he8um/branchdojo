@@ -141,3 +141,45 @@ This catalog defines stable check IDs.
 - Exercise: stash-switch
 - Severity: warning
 - Warning: final state is valid, but feature copy appears on `main` too.
+
+### `current_branch_release_current`
+
+- Exercise: cherry-pick-basic
+- Severity: required
+- Pass: current branch is `release/current`.
+
+### `bugfix_exists_on_release`
+
+- Exercise: cherry-pick-basic
+- Severity: required
+- Pass: expected checkout bugfix content is present on `release/current`.
+
+### `legacy_content_absent_on_release`
+
+- Exercise: cherry-pick-basic
+- Severity: required
+- Pass: legacy-only support content is absent from `release/current`.
+
+### `source_commit_still_exists`
+
+- Exercise: cherry-pick-basic
+- Severity: required
+- Pass: original `Fix empty checkout cart` commit remains reachable from `support/legacy-fix`.
+
+### `bugfix_remains_on_support`
+
+- Exercise: cherry-pick-basic
+- Severity: required
+- Pass: bugfix content remains present on `support/legacy-fix`.
+
+### `cherry_pick_style_detected`
+
+- Exercise: cherry-pick-basic
+- Severity: warning
+- Warning: final state is valid, but no cherry-pick-style commit subject is detected on `release/current`.
+
+### `broad_merge_shape_detected`
+
+- Exercise: cherry-pick-basic
+- Severity: warning
+- Warning: final state is valid, but history shape includes a merge commit on `release/current`.

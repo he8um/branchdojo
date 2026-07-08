@@ -1,79 +1,105 @@
-# Exercise Design: cherry-pick-basic
+# Exercise: cherry-pick-basic
 
-## Purpose
+## Summary
 
-`cherry-pick-basic` teaches the user to move one specific commit from a source branch onto the intended target branch without bringing unrelated commits.
+`cherry-pick-basic` teaches the user to apply one specific bugfix commit from a support branch onto the intended release branch without bringing unrelated support work.
+
+## Difficulty
+
+Intermediate.
+
+## Estimated Time
+
+10 to 15 minutes.
+
+## Skills
+
+- Commit selection.
+- Cherry-pick workflow.
+- Avoiding unrelated branch changes.
 
 ## Starting Repository State
 
-BranchDojo should create:
+BranchDojo creates:
 
 - `main` branch.
-- `release/1.0` branch.
-- `feature/payment-copy` branch.
-- A source branch containing one useful fix commit and one unrelated follow-up commit.
-- A target branch that needs only the useful fix.
+- `support/legacy-fix` branch.
+- `release/current` branch.
+- `app.txt` with committed baseline checkout copy.
+- `legacy.txt` on `support/legacy-fix` with legacy-only content.
+- A target bugfix commit on `support/legacy-fix`.
 
-The repository should start on `release/1.0`.
+The repository starts on `release/current`. The release branch does not contain either support branch change.
 
 ## User Task
 
-Apply the specific useful commit from `feature/payment-copy` onto `release/1.0` without bringing unrelated work.
+Find the `Fix empty checkout cart` commit on `support/legacy-fix` and apply only that bugfix to `release/current`. Do not bring the unrelated legacy support change onto the release branch.
 
 ## Expected Final State
 
-- User is on `release/1.0`.
+- User is on `release/current`.
 - Working tree is clean.
 - No merge, rebase, cherry-pick, or revert operation is active.
-- `release/1.0` contains the expected useful fix content.
-- `release/1.0` does not contain unrelated feature content.
-- `feature/payment-copy` still exists.
-- The useful source commit remains reachable from `feature/payment-copy`.
+- `support/legacy-fix` exists.
+- `release/current` exists.
+- `release/current` contains `Fix: handle empty checkout cart`.
+- `release/current` does not contain `Legacy support mode enabled`.
+- The original `Fix empty checkout cart` commit still exists on `support/legacy-fix`.
+- The bugfix content still exists on `support/legacy-fix`.
+- `.git` directory is intact.
+- `.branchdojo.json` is intact and valid.
 
 ## Required Validation Checks
 
 - `metadata_exists`.
 - `git_directory_exists`.
+- `current_branch_release_current`.
 - `working_tree_clean`.
 - `no_active_git_operation`.
-- `branch_exists:release/1.0`.
-- `branch_exists:feature/payment-copy`.
-- `file_contains:useful_fix_on_release`.
-- `file_not_contains:unrelated_feature_content_on_release`.
+- `branch_exists:support/legacy-fix`.
+- `branch_exists:release/current`.
+- `bugfix_exists_on_release`.
+- `legacy_content_absent_on_release`.
 - `source_commit_still_exists`.
+- `bugfix_remains_on_support`.
 
 ## Warning Conditions
 
-- Final content is correct, but the target branch does not contain a cherry-pick-style commit signal.
-- Final content is correct through a patch-based fix commit.
+- Final state is valid, but no cherry-pick-style commit subject is detected on `release/current`.
+- Final state is valid, but history shape shows a broader merge.
 
-Warnings must not be used when unrelated feature content is present on the release branch.
+Do not fail just because the cherry-picked commit hash differs from the original. A real cherry-pick normally creates a new commit hash.
+
+Warnings must not be used when the bugfix is missing, unrelated legacy content is present on `release/current`, the working tree is dirty, a Git operation is active, or required branches are missing.
 
 ## Hints
 
 1. Inspect the graph with `git log --oneline --decorate --graph --all`.
-2. Identify the single commit that contains the useful fix.
-3. Make sure you are on `release/1.0`.
-4. Apply only that commit.
-5. Confirm unrelated feature content is absent.
+2. Find the commit named `Fix empty checkout cart` on `support/legacy-fix`.
+3. Make sure you are on `release/current`.
+4. Apply only that bugfix commit.
+5. Confirm legacy-only content is absent from `release/current`.
 6. Run `branchdojo check --path .`.
 
 ## Edge Cases
 
-- User merges the entire feature branch.
+- User merges the entire support branch.
 - User cherry-picks the wrong commit.
-- User cherry-picks both useful and unrelated commits.
+- User cherry-picks both support branch commits.
 - User leaves an active cherry-pick operation unresolved.
 - User recreates content manually with a valid final state.
 - User deletes the source branch.
+- User leaves the repository on the wrong branch.
 
 ## Test Cases
 
 - New exercise creates source and target branches.
 - Initial check fails before solving.
 - Valid cherry-pick solution passes.
-- Patch-based solution returns `WARNING` if accepted.
-- Merging unrelated content fails.
+- Manual final-state solution returns `WARNING` if accepted.
+- Merging unrelated legacy content fails.
 - Active cherry-pick operation fails.
 - Missing source branch fails.
 - JSON check output includes expected status and checks.
+- Reset recreates the starting state.
+- Hint prints static guidance for the exercise.
