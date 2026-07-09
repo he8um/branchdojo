@@ -24,6 +24,7 @@ cargo test
 - Generated `.branchdojo.json` and `README.branchdojo.md`.
 - Local Git identity in generated repositories.
 - Human and JSON check output.
+- Optional Markdown check report output.
 - Progress-aware hint output and static general hint fallback.
 - Safe reset refusal for non-BranchDojo directories.
 - Non-empty target directory refusal.
@@ -57,11 +58,12 @@ Implemented v0.3 coverage:
 - Hint refusal for missing workspace metadata.
 - Hint command regression coverage for all six released exercises.
 - Catalog drift prevention between exercise definitions and metadata.
+- Markdown report creation and content.
+- Report file safety for existing files, directories, missing parents, and `.git` paths.
+- `--json --report` compatibility with parseable JSON stdout.
 
 Planned v0.3 coverage:
 
-- Report output tests for explicit Markdown file creation.
-- Report file safety tests for unsafe paths, existing files, and `.git` paths.
 - Additional metadata usage tests for future hints and reports.
 - No-regression integration tests for all six released exercises.
 - Output compatibility tests for existing human and JSON check output.

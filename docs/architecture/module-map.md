@@ -72,6 +72,17 @@ Responsibilities:
 - JSON output.
 - Error formatting.
 
+## `src/reports.rs`
+
+Markdown check report rendering and writing.
+
+Responsibilities:
+
+- Render validation results as Markdown.
+- Include exercise metadata in report summaries.
+- Escape Markdown table cells.
+- Refuse unsafe report paths, existing files, directories, missing parent directories, and paths inside `.git`.
+
 ## `src/hints.rs`
 
 Progress-aware hint analysis.
@@ -118,11 +129,8 @@ Each module should:
 
 Likely modules touched by v0.3 work:
 
-- `src/exercises/metadata.rs`: richer metadata fields support listing output and may support future reports.
+- `src/exercises/metadata.rs`: richer metadata fields support listing output and check reports.
 - `src/hints.rs`: progress-aware hints use shared repository-state analysis and exercise-specific routing.
-- `src/validators/`: existing final-state facts may be reused by state-aware hints and reports.
-- `src/cli.rs`: `check --report <file>` may be added if report output is implemented.
-- `src/output.rs`: Markdown report rendering may share formatting concepts with human and JSON output.
-- Future `src/reports.rs`: report file rendering and write safety may live here if implemented.
+- `src/reports.rs`: report file rendering and write safety.
 
-Report output remains a planning target; exercise metadata foundation and progress-aware hints are implemented.
+Exercise metadata foundation, progress-aware hints, and Markdown report output are implemented.

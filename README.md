@@ -57,6 +57,7 @@ branchdojo list
 branchdojo new <exercise-name> --path <path>
 branchdojo check --path <path>
 branchdojo check --path <path> --json
+branchdojo check --path <path> --report <file>
 branchdojo reset --path <path>
 branchdojo hint --path <path>
 ```
@@ -79,6 +80,12 @@ This means multiple valid solutions can pass. If the final state is correct but 
 
 Hints use observable Git state such as the current branch, dirty working tree, active Git operation, conflict markers, missing branches, and expected exercise files. They do not inspect command history or shell history, and they do not modify the repository.
 
+## Reports
+
+`branchdojo check --path <path> --report <file>` writes an optional Markdown report for the same final-state validation result shown in the terminal.
+
+Reports are created only when `--report` is provided. Existing files are not overwritten, unsafe paths are refused, and `branchdojo check --json --report <file>` keeps stdout as valid JSON.
+
 ## Safety Model
 
 BranchDojo only works with disposable repositories it creates. It refuses to reset or check unknown directories without a valid `.branchdojo.json` state file.
@@ -89,6 +96,7 @@ Safety rules:
 - Never reset a path without a valid `.branchdojo.json` file.
 - Refuse to create an exercise inside a non-empty directory.
 - Refuse unsafe paths such as home, root, system, or parent directories.
+- Refuse unsafe report paths and refuse to overwrite existing report files.
 - Do not modify global Git config.
 - Do not use shell scripts for Git operations.
 

@@ -10,6 +10,7 @@ This project follows a simple release log format and uses semantic versioning af
 
 - Added a shared exercise metadata model for the released exercise catalog.
 - Added deterministic progress-aware hints for all released exercises.
+- Added optional Markdown check reports with explicit `--report <file>` output.
 
 ### Changed
 

@@ -13,10 +13,11 @@ BranchDojo may only modify workspaces it created.
 3. Non-empty target rejection for `new`.
 4. `.branchdojo.json` workspace guard.
 5. Reset guard.
-6. Local Git config only.
-7. No shell execution.
-8. No network access.
-9. No existing repository support in v0.1.
+6. Report path guard.
+7. Local Git config only.
+8. No shell execution.
+9. No network access.
+10. No existing repository support in v0.1.
 
 ## Safe Workspace
 
@@ -28,6 +29,20 @@ A safe workspace is:
 - Not a parent directory reference.
 - Not a system directory.
 - Contains valid BranchDojo metadata for check/reset.
+
+## Safe Report Path
+
+A safe report path is:
+
+- Explicitly provided with `--report <file>`.
+- A regular file path, not a directory.
+- Not an existing file.
+- Not inside `.git`.
+- Not root or the home directory itself.
+- Not a parent-directory traversal path.
+- Inside an existing parent directory.
+
+BranchDojo does not create report parent directories and does not provide report overwrite or `--force` behavior.
 
 ## Dangerous Operations
 

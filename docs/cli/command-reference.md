@@ -81,6 +81,30 @@ Same validation as `check`, but outputs structured JSON.
 branchdojo check --path ./dojo-conflict-basic --json
 ```
 
+## `branchdojo check --path <path> --report <file>`
+
+Runs the same validation as `check` and writes a Markdown report to `<file>`.
+
+### Behavior
+
+- Report output is optional and explicit.
+- Existing files are not overwritten.
+- Unsafe report paths are refused.
+- Parent directories must already exist.
+- Reports summarize final-state validation and do not track command history.
+
+### Example
+
+```bash
+branchdojo check --path ./dojo-conflict-basic --report ./conflict-report.md
+```
+
+## `branchdojo check --path <path> --json --report <file>`
+
+Prints JSON to stdout and writes the Markdown report to `<file>`.
+
+Stdout remains valid JSON and does not include report confirmation text.
+
 ## `branchdojo reset --path <path>`
 
 Recreates the same exercise from scratch.

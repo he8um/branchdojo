@@ -31,6 +31,23 @@ Use simple icons in human output only:
 
 JSON output must not contain icons.
 
+## Markdown Report Output
+
+`branchdojo check --path <path> --report <file>` writes a Markdown report only when explicitly requested.
+
+The report includes:
+
+- Exercise metadata.
+- Overall status.
+- Score.
+- Check table.
+- Next steps.
+- A note that BranchDojo validates final repository state, not the exact command sequence.
+
+`branchdojo check --path <path> --json --report <file>` keeps stdout valid JSON and writes the report file separately.
+
+BranchDojo does not write JSON report files, HTML reports, PDF reports, or template-based reports.
+
 ## Passed Example
 
 ```text
