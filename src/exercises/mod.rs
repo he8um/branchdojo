@@ -36,24 +36,6 @@ pub fn get(id: &str) -> Option<&'static Exercise> {
         .find(|exercise| exercise.metadata.name == id)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn exercise_catalog_matches_metadata_catalog() {
-        let exercise_names: Vec<_> = all()
-            .into_iter()
-            .map(|exercise| exercise.metadata.name)
-            .collect();
-        let metadata_names: Vec<_> = metadata::all_metadata()
-            .iter()
-            .map(|metadata| metadata.name)
-            .collect();
-        assert_eq!(exercise_names, metadata_names);
-    }
-}
-
 fn generated_readme(
     title: &str,
     goal: &str,
@@ -123,4 +105,22 @@ branchdojo hint --path .
 ```
 "
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn exercise_catalog_matches_metadata_catalog() {
+        let exercise_names: Vec<_> = all()
+            .into_iter()
+            .map(|exercise| exercise.metadata.name)
+            .collect();
+        let metadata_names: Vec<_> = metadata::all_metadata()
+            .iter()
+            .map(|metadata| metadata.name)
+            .collect();
+        assert_eq!(exercise_names, metadata_names);
+    }
 }
