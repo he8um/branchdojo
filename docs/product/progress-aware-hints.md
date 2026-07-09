@@ -2,22 +2,19 @@
 
 ## Status
 
-Design proposal for v0.3. Not implemented.
+Implemented for v0.3 development.
 
 ## Goal
 
 Make hints more useful by reflecting current repository state while keeping BranchDojo deterministic and practice-first.
 
-## Current Behavior
+## Behavior
 
-`branchdojo hint --path <path>` prints static exercise hints from the exercise definition.
-
-## Proposed Behavior
-
-Hints should combine:
+`branchdojo hint --path <path>` combines:
 
 - Shared state-aware guidance for common blockers.
 - Exercise-specific guidance for the intended workflow.
+- Static exercise hints as a general fallback.
 
 Examples:
 
@@ -37,7 +34,7 @@ Examples:
 
 ## Possible Design
 
-Add a shared hint-state analyzer that reads repository facts already used by validators:
+The shared hint-state analyzer reads repository facts already used by validators:
 
 - current branch
 - working tree status
@@ -46,14 +43,16 @@ Add a shared hint-state analyzer that reads repository facts already used by val
 - expected files
 - conflict marker presence where relevant
 
-Each exercise can then map these facts to a small ordered hint list.
+Each exercise maps these facts to a small ordered hint list. Hints are intentionally lightweight and do not duplicate every validator rule.
 
 ## Safety Impact
 
 Hint generation must remain read-only. Any Git calls must use explicit arguments and the workspace path as `current_dir`.
 
+Hints require a valid BranchDojo workspace. Missing or invalid `.branchdojo.json` is refused before any hint analysis.
+
 ## Testing
 
-- Unit-test hint-state analysis.
+- Unit-test catalog drift between exercise definitions and metadata.
 - Integration-test state-aware output for representative exercise states.
-- Regression-test static fallback hints for all released exercises.
+- Regression-test general fallback hints for all released exercises.

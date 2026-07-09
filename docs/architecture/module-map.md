@@ -72,6 +72,17 @@ Responsibilities:
 - JSON output.
 - Error formatting.
 
+## `src/hints.rs`
+
+Progress-aware hint analysis.
+
+Responsibilities:
+
+- Read current repository state without mutating it.
+- Detect common blockers such as wrong branch, dirty working tree, active Git operation, conflict markers, missing expected branch, and missing expected files.
+- Route lightweight exercise-specific hint guidance.
+- Preserve static exercise hints as the general fallback.
+
 ## `src/exercises/`
 
 Exercise setup modules.
@@ -107,11 +118,11 @@ Each module should:
 
 Likely modules touched by v0.3 work:
 
-- `src/exercises/metadata.rs`: richer metadata fields support listing output and may support future hints and reports.
+- `src/exercises/metadata.rs`: richer metadata fields support listing output and may support future reports.
+- `src/hints.rs`: progress-aware hints use shared repository-state analysis and exercise-specific routing.
 - `src/validators/`: existing final-state facts may be reused by state-aware hints and reports.
 - `src/cli.rs`: `check --report <file>` may be added if report output is implemented.
 - `src/output.rs`: Markdown report rendering may share formatting concepts with human and JSON output.
-- Future `src/hints.rs`: shared progress-aware hint analysis may live here if it grows beyond exercise-local logic.
 - Future `src/reports.rs`: report file rendering and write safety may live here if implemented.
 
-Progress-aware hints and reports are planning targets only; exercise metadata foundation is implemented.
+Report output remains a planning target; exercise metadata foundation and progress-aware hints are implemented.

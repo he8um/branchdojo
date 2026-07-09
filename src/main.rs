@@ -3,6 +3,7 @@ mod cli;
 mod error;
 mod exercises;
 mod git;
+mod hints;
 mod output;
 mod result;
 mod safety;

@@ -100,10 +100,23 @@ branchdojo reset --path ./dojo-conflict-basic
 
 ## `branchdojo hint --path <path>`
 
-Prints static hints for the exercise.
+Prints progress-aware hints and general static hints for the exercise.
+
+Progress-aware hints are deterministic and read only observable repository state in a valid BranchDojo workspace. They do not inspect command history or shell history, and they do not modify the repository.
 
 ### Example
 
 ```bash
 branchdojo hint --path ./dojo-conflict-basic
+```
+
+```text
+Hints for conflict-basic:
+
+Progress-aware hints:
+1. No obvious blocker detected from the current repository state.
+
+General hints:
+1. Start with `git status`.
+2. Make sure you are on `main`.
 ```

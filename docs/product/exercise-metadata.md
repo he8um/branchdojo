@@ -2,7 +2,7 @@
 
 ## Status
 
-Metadata foundation implemented for v0.3. Progress-aware hints and reports are still planned.
+Metadata foundation implemented for v0.3. Progress-aware hints are implemented; reports are still planned.
 
 ## Goal
 

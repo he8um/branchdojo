@@ -24,6 +24,7 @@ cargo test
 - Generated `.branchdojo.json` and `README.branchdojo.md`.
 - Local Git identity in generated repositories.
 - Human and JSON check output.
+- Progress-aware hint output and static general hint fallback.
 - Safe reset refusal for non-BranchDojo directories.
 - Non-empty target directory refusal.
 - Invalid and missing workspace metadata errors.
@@ -48,11 +49,17 @@ branchdojo reset --path ./branchdojo-smoke-conflict
 
 Repeat `new`, `check`, `check --json`, `hint`, and `reset` for every implemented exercise, then remove all smoke workspaces.
 
-## Planned v0.3 Coverage
+## v0.3 Coverage
 
-v0.3 planning adds these test areas:
+Implemented v0.3 coverage:
 
 - State-aware hint tests for dirty working trees, wrong branches, conflict markers, active Git operations, and detached HEAD.
+- Hint refusal for missing workspace metadata.
+- Hint command regression coverage for all six released exercises.
+- Catalog drift prevention between exercise definitions and metadata.
+
+Planned v0.3 coverage:
+
 - Report output tests for explicit Markdown file creation.
 - Report file safety tests for unsafe paths, existing files, and `.git` paths.
 - Additional metadata usage tests for future hints and reports.

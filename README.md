@@ -73,6 +73,12 @@ This means multiple valid solutions can pass. If the final state is correct but 
 | `WARNING` | All required checks passed but the workflow/history shape is not ideal. |
 | `FAILED` | At least one required check failed. |
 
+## Hints
+
+`branchdojo hint --path <path>` reads the current repository state in a valid BranchDojo workspace and prints deterministic progress-aware hints before the general exercise hints.
+
+Hints use observable Git state such as the current branch, dirty working tree, active Git operation, conflict markers, missing branches, and expected exercise files. They do not inspect command history or shell history, and they do not modify the repository.
+
 ## Safety Model
 
 BranchDojo only works with disposable repositories it creates. It refuses to reset or check unknown directories without a valid `.branchdojo.json` state file.

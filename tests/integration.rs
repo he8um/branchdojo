@@ -44,6 +44,14 @@ fn git(path: &Path, args: &[&str]) {
     );
 }
 
+fn git_may_fail(path: &Path, args: &[&str]) -> std::process::Output {
+    Command::new("git")
+        .current_dir(path)
+        .args(args)
+        .output()
+        .unwrap()
+}
+
 fn git_output(path: &Path, args: &[&str]) -> String {
     let output = Command::new("git")
         .current_dir(path)
@@ -146,6 +154,125 @@ fn unsupported_exercise_returns_useful_error() {
     assert!(output.contains("BD006"));
     assert!(output.contains("Unsupported exercise: not-real."));
     assert!(output.contains("branchdojo list"));
+}
+
+#[test]
+fn hint_prints_progress_aware_and_general_sections_for_all_exercises() {
+    for exercise in [
+        "conflict-basic",
+        "revert-mistake",
+        "wrong-branch-commit",
+        "stash-switch",
+        "cherry-pick-basic",
+        "detached-head-recovery",
+    ] {
+        let path = temp_path(&format!("hint-{exercise}"));
+        let path_arg = path.to_string_lossy().to_string();
+        assert!(run(&["new", exercise, "--path", &path_arg])
+            .status
+            .success());
+
+        let output = run(&["hint", "--path", &path_arg]);
+        assert!(output.status.success());
+        let output = stdout(&output);
+        assert!(output.contains(&format!("Hints for {exercise}:")));
+        assert!(output.contains("Progress-aware hints:"));
+        assert!(output.contains("General hints:"));
+
+        fs::remove_dir_all(path).unwrap();
+    }
+}
+
+#[test]
+fn hint_refuses_missing_workspace_metadata() {
+    let path = temp_path("hint-missing-metadata");
+    fs::create_dir_all(&path).unwrap();
+    let path_arg = path.to_string_lossy().to_string();
+
+    let output = run(&["hint", "--path", &path_arg]);
+    assert!(!output.status.success());
+    let output = stderr(&output);
+    assert!(output.contains("BD004"));
+    assert!(output.contains(".branchdojo.json is missing."));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn conflict_basic_hint_mentions_unresolved_conflict_markers() {
+    let path = temp_path("hint-conflict-markers");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "conflict-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let merge = git_may_fail(&path, &["merge", "feature/landing-copy"]);
+    assert!(!merge.status.success());
+
+    let output = run(&["hint", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Progress-aware hints:"));
+    assert!(output.contains("Conflict markers"));
+    assert!(output.contains("remove conflict markers"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn stash_switch_hint_mentions_preserving_dirty_local_work() {
+    let path = temp_path("hint-stash-dirty");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "stash-switch", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["hint", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Progress-aware hints:"));
+    assert!(output.contains("local work"));
+    assert!(output.contains("Preserve"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn cherry_pick_basic_hint_mentions_release_branch_and_target_bugfix() {
+    let path = temp_path("hint-cherry");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "cherry-pick-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["switch", "main"]);
+
+    let output = run(&["hint", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Progress-aware hints:"));
+    assert!(output.contains("release/current"));
+    assert!(output.contains("target bugfix"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn detached_head_recovery_hint_mentions_detached_head_and_recovery_branch() {
+    let path = temp_path("hint-detached");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "detached-head-recovery", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["hint", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Progress-aware hints:"));
+    assert!(output.contains("detached HEAD"));
+    assert!(output.contains("recovery/detached-work"));
+
+    fs::remove_dir_all(path).unwrap();
 }
 
 #[test]

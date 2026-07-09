@@ -63,7 +63,8 @@ branchdojo hint --path .
 ```
 
 3. BranchDojo reads `.branchdojo.json`.
-4. BranchDojo prints static hints for that exercise.
+4. BranchDojo prints progress-aware hints based on repository state.
+5. BranchDojo prints general static hints for that exercise.
 
 ## Flow 5: Reset Exercise
 

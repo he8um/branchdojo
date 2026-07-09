@@ -4,6 +4,7 @@ use crate::cli::Command;
 use crate::error::{AppError, AppResult};
 use crate::exercises;
 use crate::git;
+use crate::hints;
 use crate::output;
 use crate::safety;
 use crate::validators;
@@ -68,7 +69,13 @@ pub fn run(command: Command) -> AppResult<()> {
             let state = safety::ensure_branchdojo_workspace(&path)?;
             let definition =
                 exercises::get(&state.exercise).ok_or_else(|| unsupported(&state.exercise))?;
-            println!("Hints for {}:", definition.metadata.name);
+            let progress_hints = hints::hints_for(&path, &state)?;
+            println!("Hints for {}:\n", definition.metadata.name);
+            println!("Progress-aware hints:");
+            for (index, hint) in progress_hints.iter().enumerate() {
+                println!("{}. {}", index + 1, hint);
+            }
+            println!("\nGeneral hints:");
             for (index, hint) in definition.hints.iter().enumerate() {
                 println!("{}. {}", index + 1, hint);
             }

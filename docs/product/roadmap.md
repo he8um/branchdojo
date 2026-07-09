@@ -46,7 +46,7 @@ Out of scope for v0.2:
 
 Candidate scope:
 
-- Progress-aware hints based on current repository state.
+- Progress-aware hints based on current repository state. Implemented.
 - Optional Markdown check reports written only when requested.
 - Richer exercise metadata for listings, hints, reports, and docs. Listing metadata foundation is implemented.
 - README and onboarding polish, including a recommended learning path.
@@ -63,7 +63,7 @@ Non-goals:
 Implementation order:
 
 1. Exercise metadata improvements. Foundation implemented.
-2. Progress-aware hints.
+2. Progress-aware hints. Implemented.
 3. Check report output.
 4. Documentation and release polish.
 
