@@ -360,6 +360,163 @@ fn conflict_basic_fails_before_solving_and_json_is_valid_shape() {
 }
 
 #[test]
+fn check_report_creates_markdown_and_keeps_human_output() {
+    let path = temp_path("report-human");
+    let report = temp_path("report-human-md").with_extension("md");
+    let path_arg = path.to_string_lossy().to_string();
+    let report_arg = report.to_string_lossy().to_string();
+    assert!(run(&["new", "conflict-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg, "--report", &report_arg]);
+    assert!(output.status.success());
+    let output_text = stdout(&output);
+    assert!(output_text.contains("BranchDojo Result"));
+    assert!(output_text.contains("Status: FAILED"));
+    assert!(output_text.contains("Report written:"));
+
+    let report_text = fs::read_to_string(&report).unwrap();
+    assert!(report_text.contains("# BranchDojo Check Report"));
+    assert!(report_text.contains("- Exercise: `conflict-basic`"));
+    assert!(report_text.contains("- Title: Resolve a basic merge conflict"));
+    assert!(report_text.contains("- Status: FAILED"));
+    assert!(report_text.contains("- Score:"));
+    assert!(report_text.contains("| Severity | Status | Check | Details |"));
+    assert!(report_text.contains("## Next Steps"));
+
+    fs::remove_dir_all(path).unwrap();
+    fs::remove_file(report).unwrap();
+}
+
+#[test]
+fn check_without_report_does_not_create_report_file() {
+    let path = temp_path("report-absent");
+    let report = temp_path("report-absent-md").with_extension("md");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "conflict-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(!report.exists());
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn check_json_with_report_keeps_stdout_parseable_json() {
+    let path = temp_path("report-json");
+    let report = temp_path("report-json-md").with_extension("md");
+    let path_arg = path.to_string_lossy().to_string();
+    let report_arg = report.to_string_lossy().to_string();
+    assert!(run(&["new", "conflict-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&[
+        "check",
+        "--path",
+        &path_arg,
+        "--json",
+        "--report",
+        &report_arg,
+    ]);
+    assert!(output.status.success());
+    let output_text = stdout(&output);
+    let json: Value = serde_json::from_str(&output_text).unwrap();
+    assert_eq!(json["exercise"], "conflict-basic");
+    assert!(!output_text.contains("Report written"));
+    assert!(report.exists());
+
+    fs::remove_dir_all(path).unwrap();
+    fs::remove_file(report).unwrap();
+}
+
+#[test]
+fn check_report_refuses_existing_file() {
+    let path = temp_path("report-existing");
+    let report = temp_path("report-existing-md").with_extension("md");
+    fs::write(&report, "existing").unwrap();
+    let path_arg = path.to_string_lossy().to_string();
+    let report_arg = report.to_string_lossy().to_string();
+    assert!(run(&["new", "conflict-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg, "--report", &report_arg]);
+    assert!(!output.status.success());
+    let error = stderr(&output);
+    assert!(error.contains("BD007"));
+    assert!(error.contains("Report file already exists."));
+
+    fs::remove_dir_all(path).unwrap();
+    fs::remove_file(report).unwrap();
+}
+
+#[test]
+fn check_report_refuses_directory_path() {
+    let path = temp_path("report-directory-workspace");
+    let report_dir = temp_path("report-directory");
+    fs::create_dir_all(&report_dir).unwrap();
+    let path_arg = path.to_string_lossy().to_string();
+    let report_arg = report_dir.to_string_lossy().to_string();
+    assert!(run(&["new", "conflict-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg, "--report", &report_arg]);
+    assert!(!output.status.success());
+    let error = stderr(&output);
+    assert!(error.contains("BD008"));
+    assert!(error.contains("Unsafe report path."));
+
+    fs::remove_dir_all(path).unwrap();
+    fs::remove_dir_all(report_dir).unwrap();
+}
+
+#[test]
+fn check_report_refuses_path_inside_git() {
+    let path = temp_path("report-git");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "conflict-basic", "--path", &path_arg])
+        .status
+        .success());
+    let report = path.join(".git").join("branchdojo-report.md");
+    let report_arg = report.to_string_lossy().to_string();
+
+    let output = run(&["check", "--path", &path_arg, "--report", &report_arg]);
+    assert!(!output.status.success());
+    let error = stderr(&output);
+    assert!(error.contains("BD008"));
+    assert!(error.contains("Unsafe report path."));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn check_report_refuses_missing_parent_directory() {
+    let path = temp_path("report-missing-parent");
+    let report = temp_path("report-missing-parent-dir")
+        .join("missing")
+        .join("report.md");
+    let path_arg = path.to_string_lossy().to_string();
+    let report_arg = report.to_string_lossy().to_string();
+    assert!(run(&["new", "conflict-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg, "--report", &report_arg]);
+    assert!(!output.status.success());
+    let error = stderr(&output);
+    assert!(error.contains("BD009"));
+    assert!(error.contains("Report parent directory does not exist."));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
 fn generated_exercises_include_metadata_readme_and_local_identity() {
     for exercise in [
         "cherry-pick-basic",

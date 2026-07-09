@@ -5,6 +5,7 @@ mod exercises;
 mod git;
 mod hints;
 mod output;
+mod reports;
 mod result;
 mod safety;
 mod state;

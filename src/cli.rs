@@ -6,10 +6,21 @@ use clap::{Parser, Subcommand};
 
 pub enum Command {
     List,
-    New { exercise: String, path: PathBuf },
-    Check { path: PathBuf, json: bool },
-    Reset { path: PathBuf },
-    Hint { path: PathBuf },
+    New {
+        exercise: String,
+        path: PathBuf,
+    },
+    Check {
+        path: PathBuf,
+        json: bool,
+        report: Option<PathBuf>,
+    },
+    Reset {
+        path: PathBuf,
+    },
+    Hint {
+        path: PathBuf,
+    },
 }
 
 #[derive(Parser)]
@@ -44,6 +55,9 @@ enum Commands {
         /// Emit structured JSON output.
         #[arg(long)]
         json: bool,
+        /// Write a Markdown report to this file.
+        #[arg(long, value_name = "file")]
+        report: Option<PathBuf>,
     },
     /// Recreate the same exercise from scratch.
     Reset {
@@ -72,7 +86,7 @@ impl From<Commands> for Command {
         match command {
             Commands::List => Self::List,
             Commands::New { exercise, path } => Self::New { exercise, path },
-            Commands::Check { path, json } => Self::Check { path, json },
+            Commands::Check { path, json, report } => Self::Check { path, json, report },
             Commands::Reset { path } => Self::Reset { path },
             Commands::Hint { path } => Self::Hint { path },
         }
