@@ -44,12 +44,12 @@ Out of scope for v0.2:
 
 ## v0.3: Better Feedback and Practice Artifacts
 
-Candidate scope:
+Release-candidate ready:
 
 - Progress-aware hints based on current repository state. Implemented.
 - Optional Markdown check reports written only when requested. Implemented.
 - Richer exercise metadata for listings, hints, reports, and docs. Listing metadata foundation is implemented.
-- README and onboarding polish, including a recommended learning path.
+- README and onboarding polish.
 
 Non-goals:
 

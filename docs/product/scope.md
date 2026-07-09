@@ -42,6 +42,37 @@ BranchDojo v0.2 adds intermediate local Git workflow exercises while preserving 
 - `cherry-pick-basic`
 - `detached-head-recovery`
 
+## v0.3 Scope
+
+BranchDojo v0.3 improves feedback and practice artifacts while preserving the v0.2 exercise catalog.
+
+- Shared exercise metadata.
+- Metadata-backed `branchdojo list` output.
+- Progress-aware hints based on observable repository state.
+- Static/general hint fallback.
+- Optional Markdown check reports.
+- Report path safety.
+
+## v0.3 Commands
+
+v0.3 preserves the v0.2 commands and adds:
+
+- `branchdojo check --path <path> --report <file>`
+- `branchdojo check --path <path> --json --report <file>`
+
+## Out of Scope for v0.3
+
+- JSON report files.
+- HTML or PDF reports.
+- Report templates.
+- `--force` report overwrite.
+- New exercises.
+- External exercise packs.
+- Classroom dashboards.
+- GitHub integration.
+- TUI or GUI.
+- Release automation.
+
 ## Out of Scope for v0.2
 
 - Custom exercise definitions.

@@ -2,6 +2,8 @@
 
 `branchdojo check --path <path> --json` returns structured output for automation and future integrations.
 
+`branchdojo check --path <path> --json --report <file>` uses the same stdout JSON shape. The Markdown report is written separately and does not add fields to JSON output.
+
 ## Top-Level Shape
 
 ```json

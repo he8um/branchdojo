@@ -6,20 +6,32 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [0.3.0] - 2026-07-09
+
 ### Added
 
 - Added a shared exercise metadata model for the released exercise catalog.
+- Added metadata-backed `branchdojo list` output with difficulty, category, and estimated time.
 - Added deterministic progress-aware hints for all released exercises.
 - Added optional Markdown check reports with explicit `--report <file>` output.
 
 ### Changed
 
-- Updated `branchdojo list` to show metadata-backed difficulty, category, and estimated time columns.
 - Updated `branchdojo hint` to show repository-state guidance before the static general hints.
+- Improved release documentation and v0.3 product documentation.
 
-### Planning
+### Safety
 
-- Started v0.3 planning around progress-aware hints, optional check reports, exercise metadata improvements, and onboarding polish.
+- Report files are written only when explicitly requested.
+- Existing report files are not overwritten.
+- Unsafe report paths, directories, missing parent directories, and `.git` paths are refused.
+- `--json --report` keeps stdout valid JSON.
+
+### Deferred
+
+- JSON report files, HTML/PDF reports, report templates, dashboards, `--force`, new exercises, external exercise packs, and release automation remain out of scope.
 
 ## [0.2.0] - 2026-07-08
 

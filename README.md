@@ -29,7 +29,7 @@ The tool generates the exercise. The user solves it. The tool validates the fina
 
 ## Release State
 
-v0.1.0 and v0.2.0 are released. v0.3 is in development around better hints, optional reports, exercise metadata, and onboarding polish.
+v0.1.0 and v0.2.0 are released. v0.3.0 is release-candidate ready on main.
 
 ## Available Exercises
 
@@ -58,6 +58,7 @@ branchdojo new <exercise-name> --path <path>
 branchdojo check --path <path>
 branchdojo check --path <path> --json
 branchdojo check --path <path> --report <file>
+branchdojo check --path <path> --json --report <file>
 branchdojo reset --path <path>
 branchdojo hint --path <path>
 ```
@@ -117,7 +118,7 @@ Detailed design docs are available under `docs/`:
 
 - v0.1: beginner exercises, state file, final-state validation, reset, hints, JSON output, CI.
 - v0.2: stash switching, basic cherry-pick, detached HEAD recovery, final-state validation, warnings for valid but unusual workflow shapes.
-- v0.3 in development: progress-aware hints, optional check reports, richer exercise metadata, onboarding polish.
+- v0.3 release candidate: progress-aware hints, optional Markdown check reports, richer exercise metadata, onboarding polish.
 - v0.4: advanced exercises, classroom foundations, exercise packs, custom definitions.
 - v0.5: GitHub Action mode, binaries, Homebrew, release automation.
 

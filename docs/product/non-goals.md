@@ -12,7 +12,7 @@ It does not visualize commit graphs in v0.1. Users should use Git commands or ex
 
 ## BranchDojo Is Not a Guided Trainer
 
-It does not walk the user through every command. It provides exercise context, static hints, and final validation.
+It does not walk the user through every command. It provides exercise context, progress-aware hints, general hints, and final validation.
 
 ## BranchDojo Is Not a Cheat Sheet
 
@@ -37,3 +37,7 @@ All Git operations must use explicit command arguments.
 ## BranchDojo Does Not Provide Custom Exercises in v0.1
 
 Exercises are hardcoded Rust modules in v0.1. Custom definitions are a later roadmap item.
+
+## BranchDojo Does Not Track Command History
+
+Hints, validation, and reports use observable repository state. They do not inspect shell history or exact command sequences.

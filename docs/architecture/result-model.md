@@ -73,3 +73,7 @@ struct ValidationResult {
 ## Aggregation Rule
 
 Result aggregation should be centralized in `result.rs`, not duplicated across exercise validators.
+
+## Report Use
+
+Markdown check reports summarize this same validation result model. Reports do not change status aggregation, scoring, warning behavior, or JSON output shape.
