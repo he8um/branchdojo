@@ -28,6 +28,7 @@ Available exercises:
   cherry-pick-basic            intermediate  Selective history    15-20 min
   detached-head-recovery       intermediate  Recovery             15-20 min
   interactive-rebase-basic     advanced      History rewriting    20-30 min
+  tag-release-fix              advanced      Release recovery     20-30 min
 ```
 
 ## `branchdojo new <exercise-name> --path <path>`

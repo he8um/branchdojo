@@ -9,6 +9,7 @@ pub mod interactive_rebase_basic;
 pub mod metadata;
 pub mod revert_mistake;
 pub mod stash_switch;
+pub mod tag_release_fix;
 pub mod wrong_branch_commit;
 
 use metadata::ExerciseMetadata;
@@ -29,6 +30,7 @@ pub fn all() -> Vec<&'static Exercise> {
         &cherry_pick_basic::EXERCISE,
         &detached_head_recovery::EXERCISE,
         &interactive_rebase_basic::EXERCISE,
+        &tag_release_fix::EXERCISE,
     ]
 }
 

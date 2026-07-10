@@ -81,6 +81,15 @@ Implemented v0.4 coverage:
 - Markdown report metadata test.
 - Reset test.
 - Metadata/list tests for `advanced` difficulty and `interactive-rebase-basic`.
+- `tag-release-fix` setup tests.
+- Starting-state failure and JSON shape tests for `tag-release-fix`.
+- Annotated-tag passing solution test.
+- Lightweight-tag warning test.
+- Failure tests for missing tag, wrong tag target, wrong branch, dirty working tree, and missing fixed content.
+- Progress-aware hint test.
+- Markdown report metadata test.
+- Reset test.
+- Metadata/list tests for `tag-release-fix`.
 
 Planned v0.4 test areas for remaining candidates:
 

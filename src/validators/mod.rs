@@ -11,6 +11,7 @@ mod detached_head_recovery;
 mod interactive_rebase_basic;
 mod revert_mistake;
 mod stash_switch;
+mod tag_release_fix;
 mod wrong_branch_commit;
 
 pub fn validate(path: &Path, state: &BranchDojoState) -> AppResult<ValidationResult> {
@@ -21,6 +22,7 @@ pub fn validate(path: &Path, state: &BranchDojoState) -> AppResult<ValidationRes
         "interactive-rebase-basic" => interactive_rebase_basic::validate(path, state),
         "revert-mistake" => revert_mistake::validate(path, state),
         "stash-switch" => stash_switch::validate(path, state),
+        "tag-release-fix" => tag_release_fix::validate(path, state),
         "wrong-branch-commit" => wrong_branch_commit::validate(path, state),
         other => Err(AppError::new(
             "BD006",

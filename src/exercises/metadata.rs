@@ -125,6 +125,24 @@ pub const INTERACTIVE_REBASE_BASIC: ExerciseMetadata = ExerciseMetadata {
     introduced_in: "0.4.0",
 };
 
+pub const TAG_RELEASE_FIX: ExerciseMetadata = ExerciseMetadata {
+    name: "tag-release-fix",
+    title: "Fix a release tag after a blocker",
+    summary: "Move a local release tag so it points to the fixed release commit.",
+    difficulty: Difficulty::Advanced,
+    category: "Release recovery",
+    estimated_time: "20-30 min",
+    skills: &[
+        "tagging",
+        "release recovery",
+        "ref inspection",
+        "history verification",
+    ],
+    starting_branch: "main",
+    expected_final_branch: "main",
+    introduced_in: "0.4.0",
+};
+
 const ALL_METADATA: &[&ExerciseMetadata] = &[
     &CONFLICT_BASIC,
     &REVERT_MISTAKE,
@@ -133,6 +151,7 @@ const ALL_METADATA: &[&ExerciseMetadata] = &[
     &CHERRY_PICK_BASIC,
     &DETACHED_HEAD_RECOVERY,
     &INTERACTIVE_REBASE_BASIC,
+    &TAG_RELEASE_FIX,
 ];
 
 pub fn all_metadata() -> &'static [&'static ExerciseMetadata] {
@@ -181,6 +200,7 @@ mod tests {
                 "cherry-pick-basic",
                 "detached-head-recovery",
                 "interactive-rebase-basic",
+                "tag-release-fix",
             ]
         );
     }
@@ -199,6 +219,7 @@ mod tests {
             expected_final_branch_for("interactive-rebase-basic"),
             Some("feature/profile-copy")
         );
+        assert_eq!(expected_final_branch_for("tag-release-fix"), Some("main"));
         assert_eq!(expected_final_branch_for("not-real"), None);
     }
 }

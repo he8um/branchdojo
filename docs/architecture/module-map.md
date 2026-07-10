@@ -141,8 +141,10 @@ Modules touched by v0.4 implementation work so far:
 
 - `src/exercises/metadata.rs`: `advanced` difficulty support and `interactive-rebase-basic` metadata.
 - `src/exercises/interactive_rebase_basic.rs`: setup for the first advanced built-in exercise.
+- `src/exercises/tag_release_fix.rs`: setup for the release tag repair exercise.
 - `src/validators/interactive_rebase_basic.rs`: final-state and history-shape validation for the first advanced exercise.
-- `src/hints.rs`: progress-aware hint routing for `interactive-rebase-basic`.
+- `src/validators/tag_release_fix.rs`: final-state and tag-target validation for the release tag repair exercise.
+- `src/hints.rs`: progress-aware hint routing for `interactive-rebase-basic` and `tag-release-fix`.
 - `src/reports.rs`: Markdown reports remain metadata-backed and require no exercise-specific report code.
 
 Likely modules touched by future v0.4 work:

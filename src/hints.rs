@@ -18,6 +18,10 @@ use crate::exercises::revert_mistake::{CONFIG_FILE, UNSAFE_VALUE};
 use crate::exercises::stash_switch::{
     APP_FILE as STASH_APP_FILE, FEATURE_BRANCH as STASH_FEATURE_BRANCH, SETTINGS_COPY,
 };
+use crate::exercises::tag_release_fix::{
+    APP_FILE as TAG_APP_FILE, BAD_BLOCKER_CONTENT, FIXED_BLOCKER_CONTENT, RELEASE_READY_CONTENT,
+    RELEASE_TAG,
+};
 use crate::exercises::wrong_branch_commit::{
     ACCIDENTAL_CONTENT, ACCIDENTAL_FILE, FEATURE_BRANCH as WRONG_BRANCH_FEATURE,
 };
@@ -139,6 +143,7 @@ fn exercise_hints(path: &Path, context: &HintContext) -> Vec<String> {
         "cherry-pick-basic" => cherry_pick_basic_hints(path, context),
         "detached-head-recovery" => detached_head_recovery_hints(path, context),
         "interactive-rebase-basic" => interactive_rebase_basic_hints(path, context),
+        "tag-release-fix" => tag_release_fix_hints(path, context),
         _ => Vec::new(),
     }
 }
@@ -293,6 +298,39 @@ fn interactive_rebase_basic_hints(path: &Path, context: &HintContext) -> Vec<Str
     hints
 }
 
+fn tag_release_fix_hints(path: &Path, context: &HintContext) -> Vec<String> {
+    let mut hints = Vec::new();
+    if context.current_branch.as_deref() != Some("main") {
+        hints.push("Return to `main` before final validation.".to_string());
+    }
+    if !file_contains(path, TAG_APP_FILE, FIXED_BLOCKER_CONTENT)
+        || !file_contains(path, TAG_APP_FILE, RELEASE_READY_CONTENT)
+    {
+        hints.push("The release blocker fix is missing on `main`. Preserve the fixed release content before moving the tag.".to_string());
+    }
+    if !tag_exists(path, RELEASE_TAG) {
+        hints.push(
+            "The `v1.0.0` tag is missing. Create it on the fixed release commit.".to_string(),
+        );
+        return hints;
+    }
+    if tag_file_contains(path, RELEASE_TAG, TAG_APP_FILE, BAD_BLOCKER_CONTENT)
+        || !tag_file_contains(path, RELEASE_TAG, TAG_APP_FILE, FIXED_BLOCKER_CONTENT)
+        || !tag_file_contains(path, RELEASE_TAG, TAG_APP_FILE, RELEASE_READY_CONTENT)
+    {
+        hints.push(
+            "`v1.0.0` still points to the old release content. Move or recreate it on the fixed commit."
+                .to_string(),
+        );
+    } else if !tag_is_annotated(path, RELEASE_TAG) {
+        hints.push(
+            "`v1.0.0` points to fixed content, but annotated tags are preferred for releases."
+                .to_string(),
+        );
+    }
+    hints
+}
+
 fn active_operation_name(path: &Path) -> Option<String> {
     let git_dir = path.join(".git");
     [
@@ -350,6 +388,23 @@ fn branch_log_has_wip_or_debug(path: &Path, branch: &str) -> bool {
                 lower.contains("wip") || lower.contains("debug")
             })
         })
+        .unwrap_or(false)
+}
+
+fn tag_exists(path: &Path, tag: &str) -> bool {
+    git::run_git(path, ["rev-parse", "--verify", "--quiet", tag]).is_ok()
+}
+
+fn tag_file_contains(path: &Path, tag: &str, file: &str, expected: &str) -> bool {
+    let spec = format!("{tag}:{file}");
+    git::run_git(path, ["show", &spec])
+        .map(|content| normalize(&content).contains(expected))
+        .unwrap_or(false)
+}
+
+fn tag_is_annotated(path: &Path, tag: &str) -> bool {
+    git::run_git(path, ["cat-file", "-t", tag])
+        .map(|kind| kind.trim() == "tag")
         .unwrap_or(false)
 }
 

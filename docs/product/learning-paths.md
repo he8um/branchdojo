@@ -29,9 +29,9 @@ This path practices preserving local changes, selectively moving commits, and re
 Current and planned v0.4 advanced practice:
 
 1. `interactive-rebase-basic` - implemented on main as unreleased v0.4 work.
-2. `bisect-basic`
-3. `merge-vs-rebase`
-4. `tag-release-fix`
+2. `tag-release-fix` - implemented on main as unreleased v0.4 work.
+3. `bisect-basic`
+4. `merge-vs-rebase`
 
 The remaining candidates are design candidates. v0.4 should implement only the candidates that remain deterministic, safe, and compatible with final-state validation.
 

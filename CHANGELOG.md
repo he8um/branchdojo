@@ -9,6 +9,7 @@ This project follows a simple release log format and uses semantic versioning af
 ### Added
 
 - Added `interactive-rebase-basic`, an advanced exercise for cleaning noisy feature branch history while preserving useful work.
+- Added `tag-release-fix`, an advanced exercise for moving a local release tag after a release-blocking fix.
 - Added `advanced` difficulty support for exercise metadata and listing output.
 
 ### Planning

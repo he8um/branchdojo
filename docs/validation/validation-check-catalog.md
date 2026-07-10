@@ -237,3 +237,45 @@ This catalog defines stable check IDs.
 - Exercise: interactive-rebase-basic
 - Severity: warning
 - Warning: final content is valid, but branch history is broader or noisier than expected for review.
+
+### `tag_exists:v1.0.0`
+
+- Exercise: tag-release-fix
+- Severity: required
+- Pass: local tag `v1.0.0` exists.
+
+### `tag_release_blocker_fixed`
+
+- Exercise: tag-release-fix
+- Severity: required
+- Pass: `v1.0.0:app.txt` contains `release_blocker=false`.
+
+### `tag_release_ready`
+
+- Exercise: tag-release-fix
+- Severity: required
+- Pass: `v1.0.0:app.txt` contains `release_ready=true`.
+
+### `tag_bad_blocker_absent`
+
+- Exercise: tag-release-fix
+- Severity: required
+- Pass: `v1.0.0:app.txt` does not contain `release_blocker=true`.
+
+### `release_tag_is_annotated`
+
+- Exercise: tag-release-fix
+- Severity: warning
+- Warning: final tag content is valid, but `v1.0.0` is lightweight instead of annotated.
+
+### `release_tag_message_is_ideal`
+
+- Exercise: tag-release-fix
+- Severity: warning
+- Warning: final tag content is valid, but the tag message is missing or not ideal.
+
+### `release_tag_points_to_fix_commit`
+
+- Exercise: tag-release-fix
+- Severity: warning
+- Warning: final tag content is valid, but `v1.0.0` does not point directly to the seeded fix commit.

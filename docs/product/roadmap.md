@@ -80,14 +80,15 @@ Release criteria:
 In development:
 
 - `interactive-rebase-basic`: implemented on main as unreleased v0.4 work.
-- Advanced built-in exercise candidates still in design: `bisect-basic`, `merge-vs-rebase`, and `tag-release-fix`.
+- `tag-release-fix`: implemented on main as unreleased v0.4 work.
+- Advanced built-in exercise candidates still in design: `bisect-basic` and `merge-vs-rebase`.
 - Learning-path documentation across beginner, intermediate, and advanced practice.
 - Exercise metadata refinements needed for advanced difficulty and clearer grouping.
 - Validator, hint, and report compatibility for new built-in exercises.
 
 Candidate scope:
 
-- Implement 2 or 3 advanced built-in exercises total, not necessarily all four original candidates.
+- Implement 2 or 3 advanced built-in exercises total.
 - `advanced` difficulty support is implemented for the first advanced exercise.
 - Keep learning paths documentation-only unless a small CLI change is separately approved.
 - Research exercise-pack and custom-definition foundations without implementing external loading.

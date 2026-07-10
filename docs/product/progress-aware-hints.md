@@ -24,6 +24,7 @@ Examples:
 - Detached HEAD: mention creating or switching to the expected recovery branch.
 - Missing expected branch: mention creating or restoring the branch.
 - Interactive rebase cleanup: mention remaining debug files, WIP/debug commit subjects, and preserving final profile copy.
+- Release tag repair: mention missing tags, tags pointing at old release content, lightweight tags, and missing release blocker fixes.
 
 ## Constraints
 

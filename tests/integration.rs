@@ -80,11 +80,13 @@ fn list_prints_available_exercises() {
     assert!(output.contains("interactive-rebase-basic"));
     assert!(output.contains("revert-mistake"));
     assert!(output.contains("stash-switch"));
+    assert!(output.contains("tag-release-fix"));
     assert!(output.contains("wrong-branch-commit"));
     assert!(output.contains("advanced"));
     assert!(output.contains("beginner"));
     assert!(output.contains("intermediate"));
     assert!(output.contains("History rewriting"));
+    assert!(output.contains("Release recovery"));
     assert!(output.contains("Merge conflicts"));
     assert!(output.contains("Selective history"));
     assert!(output.contains("Recovery"));
@@ -169,6 +171,7 @@ fn hint_prints_progress_aware_and_general_sections_for_all_exercises() {
         "cherry-pick-basic",
         "detached-head-recovery",
         "interactive-rebase-basic",
+        "tag-release-fix",
     ] {
         let path = temp_path(&format!("hint-{exercise}"));
         let path_arg = path.to_string_lossy().to_string();
@@ -529,6 +532,7 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
         "interactive-rebase-basic",
         "revert-mistake",
         "stash-switch",
+        "tag-release-fix",
         "wrong-branch-commit",
     ] {
         let path = temp_path(exercise);
@@ -554,7 +558,11 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
             "main"
         };
         assert_eq!(state["expected_branch"], expected_branch);
-        assert!(state["expected_files"].as_array().unwrap().len() == 1);
+        let expected_file_count = if exercise == "tag-release-fix" { 2 } else { 1 };
+        assert_eq!(
+            state["expected_files"].as_array().unwrap().len(),
+            expected_file_count
+        );
         assert_eq!(state["validation_policy"], "final-state");
         let created_at = state["created_at"].as_str().unwrap();
         assert!(!created_at.is_empty());
@@ -569,6 +577,262 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
 
         fs::remove_dir_all(path).unwrap();
     }
+}
+
+#[test]
+fn tag_release_fix_new_creates_expected_starting_state() {
+    let path = temp_path("tag-new");
+    let path_arg = path.to_string_lossy().to_string();
+    let output = run(&["new", "tag-release-fix", "--path", &path_arg]);
+    assert!(output.status.success());
+
+    assert!(path.join(".git").exists());
+    assert!(path.join(".branchdojo.json").exists());
+    assert!(path.join("README.branchdojo.md").exists());
+    assert!(path.join("VERSION").exists());
+    assert!(path.join("app.txt").exists());
+    assert_eq!(git_output(&path, &["branch", "--show-current"]), "main");
+    assert!(!git_output(&path, &["rev-parse", "--verify", "main"]).is_empty());
+    assert!(!git_output(&path, &["rev-parse", "--verify", "v1.0.0"]).is_empty());
+    assert_eq!(git_output(&path, &["cat-file", "-t", "v1.0.0"]), "tag");
+    assert!(git_output(&path, &["show", "v1.0.0:app.txt"]).contains("release_blocker=true"));
+    assert!(fs::read_to_string(path.join("app.txt"))
+        .unwrap()
+        .contains("release_blocker=false"));
+    assert!(fs::read_to_string(path.join("app.txt"))
+        .unwrap()
+        .contains("release_ready=true"));
+    assert_eq!(fs::read_to_string(path.join("VERSION")).unwrap(), "1.0.0\n");
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_fails_before_solving_and_json_is_valid_shape() {
+    let path = temp_path("tag-unsolved");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let human = stdout(&output);
+    assert!(human.contains("Status: FAILED"));
+    assert!(human.contains("Tag points to release blocker fix"));
+
+    let json_output = run(&["check", "--path", &path_arg, "--json"]);
+    assert!(json_output.status.success());
+    let json: Value = serde_json::from_slice(&json_output.stdout).unwrap();
+    assert_eq!(json["exercise"], "tag-release-fix");
+    assert_eq!(json["status"], "failed");
+    for check in json["checks"].as_array().unwrap() {
+        let status = check["status"].as_str().unwrap();
+        assert!(matches!(status, "passed" | "warning" | "failed"));
+        let severity = check["severity"].as_str().unwrap();
+        assert!(matches!(severity, "required" | "warning"));
+    }
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_annotated_solution_passes() {
+    let path = temp_path("tag-pass");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["tag", "-d", "v1.0.0"]);
+    git(&path, &["tag", "-a", "v1.0.0", "-m", "Release v1.0.0"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: PASSED"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_lightweight_tag_warns() {
+    let path = temp_path("tag-warning-lightweight");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["tag", "-d", "v1.0.0"]);
+    git(&path, &["tag", "v1.0.0"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: WARNING"));
+    assert!(output.contains("Release tag annotation check"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_missing_tag_fails() {
+    let path = temp_path("tag-missing");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["tag", "-d", "v1.0.0"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Tag `v1.0.0` exists"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_old_tag_target_fails() {
+    let path = temp_path("tag-old-target");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Tagged commit excludes old blocker"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_dirty_working_tree_fails() {
+    let path = temp_path("tag-dirty");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    fs::write(path.join("notes.txt"), "uncommitted release notes\n").unwrap();
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Working tree is clean"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_wrong_branch_fails() {
+    let path = temp_path("tag-wrong-branch");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["switch", "-c", "release/check"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Current branch is main"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_missing_fixed_content_fails() {
+    let path = temp_path("tag-missing-fixed");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    fs::write(path.join("app.txt"), "release_blocker=false\n").unwrap();
+    git(&path, &["add", "app.txt"]);
+    git(&path, &["commit", "-m", "Break release readiness"]);
+    git(&path, &["tag", "-d", "v1.0.0"]);
+    git(&path, &["tag", "-a", "v1.0.0", "-m", "Release v1.0.0"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Main is release ready"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_hint_mentions_tag_target() {
+    let path = temp_path("tag-hint");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["hint", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Hints for tag-release-fix:"));
+    assert!(output.contains("Progress-aware hints:"));
+    assert!(output.contains("v1.0.0"));
+    assert!(output.contains("old release content"));
+    assert!(output.contains("git show v1.0.0"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn tag_release_fix_report_includes_metadata() {
+    let path = temp_path("tag-report");
+    let report = temp_path("tag-report-md").with_extension("md");
+    let path_arg = path.to_string_lossy().to_string();
+    let report_arg = report.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg, "--report", &report_arg]);
+    assert!(output.status.success());
+    assert!(report.exists());
+    let report_text = fs::read_to_string(&report).unwrap();
+    assert!(report_text.contains("- Exercise: `tag-release-fix`"));
+    assert!(report_text.contains("- Title: Fix a release tag after a blocker"));
+    assert!(report_text.contains("- Difficulty: advanced"));
+    assert!(report_text.contains("- Category: Release recovery"));
+
+    fs::remove_dir_all(path).unwrap();
+    fs::remove_file(report).unwrap();
+}
+
+#[test]
+fn tag_release_fix_reset_works() {
+    let path = temp_path("tag-reset");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "tag-release-fix", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["tag", "-d", "v1.0.0"]);
+    git(&path, &["tag", "-a", "v1.0.0", "-m", "Release v1.0.0"]);
+
+    let reset = run(&["reset", "--path", &path_arg]);
+    assert!(reset.status.success());
+    assert_eq!(git_output(&path, &["branch", "--show-current"]), "main");
+    assert!(git_output(&path, &["show", "v1.0.0:app.txt"]).contains("release_blocker=true"));
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
 }
 
 #[test]

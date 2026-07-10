@@ -77,8 +77,8 @@ v0.3 preserves the v0.2 commands and adds:
 
 BranchDojo v0.4 is planned around advanced built-in Git practice and reusable exercise foundations.
 
-- Implemented on main as unreleased v0.4 work: `interactive-rebase-basic`.
-- Remaining advanced exercise candidates: `bisect-basic`, `merge-vs-rebase`, and `tag-release-fix`.
+- Implemented on main as unreleased v0.4 work: `interactive-rebase-basic` and `tag-release-fix`.
+- Remaining advanced exercise candidates: `bisect-basic` and `merge-vs-rebase`.
 - Documentation-only learning paths for beginner, intermediate, and advanced practice.
 - Exercise metadata refinements for advanced difficulty and clearer grouping.
 - Validator, hint, and report compatibility for new built-in exercises.
