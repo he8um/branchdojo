@@ -44,7 +44,7 @@ Out of scope for v0.2:
 
 ## v0.3: Better Feedback and Practice Artifacts
 
-Release-candidate ready:
+Released:
 
 - Progress-aware hints based on current repository state. Implemented.
 - Optional Markdown check reports written only when requested. Implemented.
