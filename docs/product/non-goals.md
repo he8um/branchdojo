@@ -41,3 +41,11 @@ Exercises are hardcoded Rust modules in v0.1. Custom definitions are a later roa
 ## BranchDojo Does Not Track Command History
 
 Hints, validation, and reports use observable repository state. They do not inspect shell history or exact command sequences.
+
+## BranchDojo Does Not Provide Dashboards in v0.4 Planning
+
+Learning-path and classroom use cases can be documented, but dashboards, analytics, telemetry, and remote tracking remain future work.
+
+## BranchDojo Does Not Load External Exercise Packs in v0.4 Planning
+
+Exercise-pack and custom-definition foundations can be researched, but external loading and custom parsers remain out of scope for the v0.4 planning baseline.

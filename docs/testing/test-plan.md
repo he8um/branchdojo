@@ -62,8 +62,23 @@ Implemented v0.3 coverage:
 - Report file safety for existing files, directories, missing parents, and `.git` paths.
 - `--json --report` compatibility with parseable JSON stdout.
 
-Planned v0.3 coverage:
+Future coverage:
 
 - Additional metadata usage tests for future hints and reports.
 - No-regression integration tests for all six released exercises.
 - Output compatibility tests for existing human and JSON check output.
+
+## v0.4 Planned Coverage
+
+Planned v0.4 test areas:
+
+- Advanced exercise setup tests for each selected built-in exercise.
+- Advanced final-state validation tests using temporary real Git repositories.
+- Warning-path tests for valid but non-ideal history shapes.
+- Report compatibility tests for new exercises.
+- Progress-aware hint compatibility tests for new exercises.
+- No-regression tests for all six released exercises.
+- Metadata tests for `advanced` difficulty and any learning-path grouping fields.
+- Deterministic bisect test strategy if `bisect-basic` remains in scope.
+
+`bisect-basic` should only be implemented if the failing/passing behavior can be represented by deterministic local files and explicit Git commands without shell scripts, network access, or external tooling.

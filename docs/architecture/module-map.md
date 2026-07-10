@@ -125,12 +125,27 @@ Each module should:
 - Run exercise-specific checks.
 - Return `ValidationResult`.
 
-## v0.3 Planning Notes
+## v0.3 Notes
 
-Likely modules touched by v0.3 work:
+Modules touched by v0.3 work:
 
 - `src/exercises/metadata.rs`: richer metadata fields support listing output and check reports.
 - `src/hints.rs`: progress-aware hints use shared repository-state analysis and exercise-specific routing.
 - `src/reports.rs`: report file rendering and write safety.
 
 Exercise metadata foundation, progress-aware hints, and Markdown report output are implemented.
+
+## v0.4 Planning Notes
+
+Likely modules touched by v0.4 implementation work:
+
+- `src/exercises/metadata.rs`: add `advanced` difficulty support and any learning-path or grouping metadata that stays small and stable.
+- `src/exercises/`: add setup modules for selected advanced built-in exercises.
+- `src/validators/`: add final-state validators for selected advanced exercises while preserving stable common checks.
+- `src/hints.rs`: add progress-aware hint routing for selected advanced exercises without mutating repositories.
+- `src/reports.rs`: keep Markdown reports compatible with advanced exercises and any new metadata fields.
+
+Possible future areas:
+
+- Learning-path documentation can live under `docs/product/` before any CLI support exists.
+- Exercise-pack or custom-definition modules are deferred. Any future design must preserve workspace safety, deterministic validation, and no command-history tracking.

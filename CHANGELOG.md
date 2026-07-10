@@ -6,7 +6,9 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
-No unreleased changes.
+### Planning
+
+- Started v0.4 planning around advanced Git exercises, learning paths, and future exercise-pack foundations.
 
 ## [0.3.0] - 2026-07-09
 

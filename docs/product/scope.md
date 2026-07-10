@@ -73,6 +73,33 @@ v0.3 preserves the v0.2 commands and adds:
 - TUI or GUI.
 - Release automation.
 
+## v0.4 Planned Scope
+
+BranchDojo v0.4 is planned around advanced built-in Git practice and reusable exercise foundations.
+
+- Advanced exercise candidates: `interactive-rebase-basic`, `bisect-basic`, `merge-vs-rebase`, and `tag-release-fix`.
+- Documentation-only learning paths for beginner, intermediate, and advanced practice.
+- Exercise metadata refinements for advanced difficulty and clearer grouping.
+- Validator, hint, and report compatibility for new built-in exercises.
+- Research for future exercise-pack and custom-definition foundations.
+
+v0.4 should implement only the advanced exercises that remain simple, deterministic, and safe under BranchDojo's final-state validation model.
+
+## Out of Scope for v0.4 Planning
+
+- Implementing v0.4 features in the planning baseline.
+- External exercise pack loading.
+- Custom exercise definitions.
+- YAML, TOML, or JSON exercise parsers.
+- Classroom dashboards.
+- GitHub integration.
+- Remote repository workflows.
+- Telemetry or analytics.
+- GUI or TUI.
+- Report templates.
+- HTML or PDF reports.
+- Command-history or shell-history tracking.
+
 ## Out of Scope for v0.2
 
 - Custom exercise definitions.

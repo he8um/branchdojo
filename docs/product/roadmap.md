@@ -75,17 +75,35 @@ Release criteria:
 - Metadata shown in output and docs matches exercise definitions.
 - `cargo fmt --check`, `cargo clippy -- -D warnings`, and `cargo test` pass.
 
-## v0.4: Advanced Practice and Packs
+## v0.4: Advanced Git Practice and Reusable Foundations
 
-Future ideas:
+Planned:
 
-- `interactive-rebase-basic`.
-- `bisect-basic`.
-- `merge-vs-rebase`.
-- `tag-release-fix`.
-- Classroom mode foundations.
-- Exercise packs and custom definitions.
-- Exercise metadata versioning.
+- Advanced built-in exercise candidates: `interactive-rebase-basic`, `bisect-basic`, `merge-vs-rebase`, and `tag-release-fix`.
+- Learning-path documentation across beginner, intermediate, and advanced practice.
+- Exercise metadata refinements needed for advanced difficulty and clearer grouping.
+- Validator, hint, and report compatibility for new built-in exercises.
+
+Candidate scope:
+
+- Implement 2 or 3 advanced built-in exercises, not necessarily all four candidates.
+- Add `advanced` difficulty support when the first advanced exercise is implemented.
+- Keep learning paths documentation-only unless a small CLI change is separately approved.
+- Research exercise-pack and custom-definition foundations without implementing external loading.
+
+Non-goals:
+
+- No GUI or TUI.
+- No GitHub integration or remote repository workflows.
+- No telemetry, analytics, classroom dashboard, or remote tracking.
+- No external exercise pack loading.
+- No custom exercise definition parser.
+- No YAML, TOML, or JSON exercise definitions.
+- No report templates, PDF reports, or HTML reports.
+- No command-history or shell-history tracking.
+- No global Git configuration changes.
+
+External exercise packs, dashboards, and GitHub integration remain future work.
 
 ## v0.5: Distribution and Automation
 
