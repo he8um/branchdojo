@@ -26,7 +26,7 @@ This path practices preserving local changes, selectively moving commits, and re
 
 ## Advanced Path
 
-v0.4 release-candidate advanced practice:
+v0.4 advanced practice:
 
 1. `interactive-rebase-basic`
 2. `tag-release-fix`

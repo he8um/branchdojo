@@ -68,7 +68,7 @@ Future coverage:
 - No-regression integration tests for all released exercises.
 - Output compatibility tests for existing human and JSON check output.
 
-## v0.4 Release Candidate Coverage
+## v0.4 Coverage
 
 Implemented v0.4 coverage:
 

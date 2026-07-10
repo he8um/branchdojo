@@ -135,7 +135,7 @@ Modules touched by v0.3 work:
 
 Exercise metadata foundation, progress-aware hints, and Markdown report output are implemented.
 
-## v0.4 Release Candidate Notes
+## v0.4 Notes
 
 Modules touched by v0.4 implementation work:
 

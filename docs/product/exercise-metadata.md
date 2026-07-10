@@ -2,7 +2,7 @@
 
 ## Status
 
-Metadata foundation implemented for v0.3. `advanced` difficulty support is included in the v0.4 release candidate.
+Metadata foundation implemented for v0.3. `advanced` difficulty support is included in v0.4.
 
 ## Goal
 

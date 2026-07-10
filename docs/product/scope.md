@@ -73,11 +73,11 @@ v0.3 preserves the v0.2 commands and adds:
 - TUI or GUI.
 - Release automation.
 
-## v0.4 Scope Release Candidate
+## v0.4 Scope
 
-BranchDojo v0.4 is release-candidate ready around advanced built-in Git practice and documentation-only learning paths.
+BranchDojo v0.4 is released around advanced built-in Git practice and documentation-only learning paths.
 
-- Implemented on main: `interactive-rebase-basic`, `tag-release-fix`, and `merge-vs-rebase`.
+- Included exercises: `interactive-rebase-basic`, `tag-release-fix`, and `merge-vs-rebase`.
 - Implemented advanced exercise difficulty support.
 - Deferred to v0.5 or later: `bisect-basic`.
 - Documentation-only learning paths for beginner, intermediate, and advanced practice.

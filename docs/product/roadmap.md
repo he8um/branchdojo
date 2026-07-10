@@ -77,7 +77,7 @@ Release criteria:
 
 ## v0.4: Advanced Git Practice and Reusable Foundations
 
-Release-candidate ready on main:
+Released:
 
 - `interactive-rebase-basic`.
 - `tag-release-fix`.
