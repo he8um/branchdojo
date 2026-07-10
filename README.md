@@ -30,7 +30,7 @@ The tool generates the exercise. The user solves it. The tool validates the fina
 ## Release State
 
 v0.1.0, v0.2.0, and v0.3.0 are released.
-v0.4 is planned around advanced built-in Git exercises and learning-path improvements.
+v0.4.0 is release-candidate ready on `main`; the final tag and GitHub Release have not been created yet.
 
 ## Available Exercises
 
@@ -123,7 +123,7 @@ Detailed design docs are available under `docs/`:
 - v0.1: beginner exercises, state file, final-state validation, reset, hints, JSON output, CI.
 - v0.2: stash switching, basic cherry-pick, detached HEAD recovery, final-state validation, warnings for valid but unusual workflow shapes.
 - v0.3: progress-aware hints, optional Markdown check reports, richer exercise metadata, onboarding polish.
-- v0.4 in development: advanced built-in exercises, learning-path documentation, and exercise foundation refinements. `interactive-rebase-basic`, `tag-release-fix`, and `merge-vs-rebase` are implemented on main.
+- v0.4 release candidate: advanced built-in exercises, advanced difficulty support, and learning-path documentation. `interactive-rebase-basic`, `tag-release-fix`, and `merge-vs-rebase` are implemented on main.
 - v0.5: GitHub Action mode, binaries, Homebrew, release automation.
 
 ## License

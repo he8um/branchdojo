@@ -6,16 +6,32 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [0.4.0] - 2026-07-10
+
 ### Added
 
-- Added `interactive-rebase-basic`, an advanced exercise for cleaning noisy feature branch history while preserving useful work.
-- Added `tag-release-fix`, an advanced exercise for moving a local release tag after a release-blocking fix.
-- Added `merge-vs-rebase`, an advanced exercise for integrating a feature branch with a clean history.
-- Added `advanced` difficulty support for exercise metadata and listing output.
+- Added `advanced` exercise difficulty support.
+- Added `interactive-rebase-basic` for cleaning noisy feature branch history.
+- Added `tag-release-fix` for correcting a local release tag after a blocker fix.
+- Added `merge-vs-rebase` for practicing clean feature branch integration.
+- Added learning-path documentation for beginner, intermediate, and advanced exercise progression.
 
-### Planning
+### Changed
 
-- Started v0.4 planning around advanced Git exercises, learning paths, and future exercise-pack foundations.
+- Expanded the exercise catalog from 6 to 9 exercises.
+- Updated CLI, validation, testing, and product documentation for the advanced exercise set.
+
+### Validation
+
+- Added final-state validation for advanced history rewriting, release tag recovery, and branch integration workflows.
+- Added warning behavior for valid final states with less-preferred history or tag shapes.
+- Kept JSON output schema unchanged.
+
+### Deferred
+
+- `bisect-basic`, external exercise packs, custom exercise definitions, GitHub integration, dashboards, telemetry, report templates, HTML/PDF reports, and release automation remain out of scope.
 
 ## [0.3.0] - 2026-07-09
 

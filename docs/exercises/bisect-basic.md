@@ -2,7 +2,7 @@
 
 ## Status
 
-Design candidate for v0.4. Not implemented.
+Deferred to v0.5 or later. Not implemented in v0.4.
 
 ## Difficulty
 

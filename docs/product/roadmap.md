@@ -77,22 +77,21 @@ Release criteria:
 
 ## v0.4: Advanced Git Practice and Reusable Foundations
 
-In development:
+Release-candidate ready on main:
 
-- `interactive-rebase-basic`: implemented on main as unreleased v0.4 work.
-- `tag-release-fix`: implemented on main as unreleased v0.4 work.
-- `merge-vs-rebase`: implemented on main as unreleased v0.4 work.
-- Advanced built-in exercise candidate still in design: `bisect-basic`.
+- `interactive-rebase-basic`.
+- `tag-release-fix`.
+- `merge-vs-rebase`.
+- `advanced` difficulty support.
 - Learning-path documentation across beginner, intermediate, and advanced practice.
-- Exercise metadata refinements needed for advanced difficulty and clearer grouping.
-- Validator, hint, and report compatibility for new built-in exercises.
+- Validator, hint, and report compatibility for advanced built-in exercises.
+- `bisect-basic` deferred to v0.5 or later.
 
-Candidate scope:
+Frozen scope:
 
-- Implement 2 or 3 advanced built-in exercises total.
-- `advanced` difficulty support is implemented for the first advanced exercise.
-- Keep learning paths documentation-only unless a small CLI change is separately approved.
-- Research exercise-pack and custom-definition foundations without implementing external loading.
+- Three advanced built-in exercises total.
+- Learning paths remain documentation-only.
+- Exercise-pack and custom-definition foundations remain future work without external loading.
 
 Non-goals:
 

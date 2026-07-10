@@ -1,6 +1,6 @@
 [package]
 name = "branchdojo"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 description = "Practice real Git workflows in safe, disposable local repositories."
 authors = ["AmirHesam Piri <amirhesum@gmail.com>"]

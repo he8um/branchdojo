@@ -65,10 +65,10 @@ Implemented v0.3 coverage:
 Future coverage:
 
 - Additional metadata usage tests for future hints and reports.
-- No-regression integration tests for all six released exercises.
+- No-regression integration tests for all released exercises.
 - Output compatibility tests for existing human and JSON check output.
 
-## v0.4 Planned Coverage
+## v0.4 Release Candidate Coverage
 
 Implemented v0.4 coverage:
 
@@ -100,9 +100,8 @@ Implemented v0.4 coverage:
 - Reset test.
 - Metadata/list tests for `merge-vs-rebase`.
 
-Planned v0.4 test areas for remaining candidates:
+Deferred test areas:
 
-- No-regression tests for all six released exercises.
-- Deterministic bisect test strategy if `bisect-basic` remains in scope.
+- Deterministic bisect test strategy if `bisect-basic` is selected for v0.5 or later.
 
 `bisect-basic` should only be implemented if the failing/passing behavior can be represented by deterministic local files and explicit Git commands without shell scripts, network access, or external tooling.

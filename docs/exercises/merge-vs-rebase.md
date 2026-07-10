@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented on main as unreleased v0.4 work.
+Implemented in the v0.4 release candidate.
 
 ## Difficulty
 
