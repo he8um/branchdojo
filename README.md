@@ -42,6 +42,7 @@ v0.4 is planned around advanced built-in Git exercises and learning-path improve
 | `stash-switch` | Intermediate | Local changes | 10-15 min |
 | `cherry-pick-basic` | Intermediate | Selective history | 15-20 min |
 | `detached-head-recovery` | Intermediate | Recovery | 15-20 min |
+| `interactive-rebase-basic` | Advanced | History rewriting | 20-30 min |
 
 ## Installation
 
@@ -120,7 +121,7 @@ Detailed design docs are available under `docs/`:
 - v0.1: beginner exercises, state file, final-state validation, reset, hints, JSON output, CI.
 - v0.2: stash switching, basic cherry-pick, detached HEAD recovery, final-state validation, warnings for valid but unusual workflow shapes.
 - v0.3: progress-aware hints, optional Markdown check reports, richer exercise metadata, onboarding polish.
-- v0.4 planned: advanced built-in exercises, learning-path documentation, and exercise foundation refinements.
+- v0.4 in development: advanced built-in exercises, learning-path documentation, and exercise foundation refinements. `interactive-rebase-basic` is implemented on main.
 - v0.5: GitHub Action mode, binaries, Homebrew, release automation.
 
 ## License

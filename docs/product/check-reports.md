@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented for v0.3 development.
+Implemented for v0.3. Reports are compatible with `interactive-rebase-basic` metadata as unreleased v0.4 work.
 
 ## Goal
 

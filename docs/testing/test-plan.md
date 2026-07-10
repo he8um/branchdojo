@@ -70,7 +70,19 @@ Future coverage:
 
 ## v0.4 Planned Coverage
 
-Planned v0.4 test areas:
+Implemented v0.4 coverage:
+
+- `interactive-rebase-basic` setup tests.
+- Starting-state failure and JSON shape tests for `interactive-rebase-basic`.
+- Clean-history passing solution test.
+- Correct-content but messy-history warning test.
+- Failure tests for wrong branch, dirty working tree, remaining debug content, and missing profile content.
+- Progress-aware hint test.
+- Markdown report metadata test.
+- Reset test.
+- Metadata/list tests for `advanced` difficulty and `interactive-rebase-basic`.
+
+Planned v0.4 test areas for remaining candidates:
 
 - Advanced exercise setup tests for each selected built-in exercise.
 - Advanced final-state validation tests using temporary real Git repositories.

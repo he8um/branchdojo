@@ -207,3 +207,33 @@ This catalog defines stable check IDs.
 - Exercise: detached-head-recovery
 - Severity: warning
 - Warning: final state is valid, but the original detached commit subject is not reachable from `recovery/detached-work`.
+
+### `current_branch_feature_profile_copy`
+
+- Exercise: interactive-rebase-basic
+- Severity: required
+- Pass: current branch is `feature/profile-copy`.
+
+### `debug_file_absent`
+
+- Exercise: interactive-rebase-basic
+- Severity: required
+- Pass: `debug.txt` is absent from `feature/profile-copy`.
+
+### `debug_content_absent`
+
+- Exercise: interactive-rebase-basic
+- Severity: required
+- Pass: temporary debug content is absent from `feature/profile-copy`.
+
+### `wip_debug_commit_reachable`
+
+- Exercise: interactive-rebase-basic
+- Severity: warning
+- Warning: final content is valid, but WIP/debug commit subjects remain reachable from `feature/profile-copy`.
+
+### `reviewable_history_shape`
+
+- Exercise: interactive-rebase-basic
+- Severity: warning
+- Warning: final content is valid, but branch history is broader or noisier than expected for review.

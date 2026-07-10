@@ -8,6 +8,7 @@ mod cherry_pick_basic;
 mod common;
 mod conflict_basic;
 mod detached_head_recovery;
+mod interactive_rebase_basic;
 mod revert_mistake;
 mod stash_switch;
 mod wrong_branch_commit;
@@ -17,6 +18,7 @@ pub fn validate(path: &Path, state: &BranchDojoState) -> AppResult<ValidationRes
         "cherry-pick-basic" => cherry_pick_basic::validate(path, state),
         "conflict-basic" => conflict_basic::validate(path, state),
         "detached-head-recovery" => detached_head_recovery::validate(path, state),
+        "interactive-rebase-basic" => interactive_rebase_basic::validate(path, state),
         "revert-mistake" => revert_mistake::validate(path, state),
         "stash-switch" => stash_switch::validate(path, state),
         "wrong-branch-commit" => wrong_branch_commit::validate(path, state),

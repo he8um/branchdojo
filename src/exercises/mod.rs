@@ -5,6 +5,7 @@ use crate::error::AppResult;
 pub mod cherry_pick_basic;
 pub mod conflict_basic;
 pub mod detached_head_recovery;
+pub mod interactive_rebase_basic;
 pub mod metadata;
 pub mod revert_mistake;
 pub mod stash_switch;
@@ -27,6 +28,7 @@ pub fn all() -> Vec<&'static Exercise> {
         &stash_switch::EXERCISE,
         &cherry_pick_basic::EXERCISE,
         &detached_head_recovery::EXERCISE,
+        &interactive_rebase_basic::EXERCISE,
     ]
 }
 

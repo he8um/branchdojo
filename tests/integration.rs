@@ -77,11 +77,14 @@ fn list_prints_available_exercises() {
     assert!(output.contains("cherry-pick-basic"));
     assert!(output.contains("conflict-basic"));
     assert!(output.contains("detached-head-recovery"));
+    assert!(output.contains("interactive-rebase-basic"));
     assert!(output.contains("revert-mistake"));
     assert!(output.contains("stash-switch"));
     assert!(output.contains("wrong-branch-commit"));
+    assert!(output.contains("advanced"));
     assert!(output.contains("beginner"));
     assert!(output.contains("intermediate"));
+    assert!(output.contains("History rewriting"));
     assert!(output.contains("Merge conflicts"));
     assert!(output.contains("Selective history"));
     assert!(output.contains("Recovery"));
@@ -165,6 +168,7 @@ fn hint_prints_progress_aware_and_general_sections_for_all_exercises() {
         "stash-switch",
         "cherry-pick-basic",
         "detached-head-recovery",
+        "interactive-rebase-basic",
     ] {
         let path = temp_path(&format!("hint-{exercise}"));
         let path_arg = path.to_string_lossy().to_string();
@@ -522,6 +526,7 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
         "cherry-pick-basic",
         "conflict-basic",
         "detached-head-recovery",
+        "interactive-rebase-basic",
         "revert-mistake",
         "stash-switch",
         "wrong-branch-commit",
@@ -543,6 +548,8 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
             "release/current"
         } else if exercise == "detached-head-recovery" {
             "recovery/detached-work"
+        } else if exercise == "interactive-rebase-basic" {
+            "feature/profile-copy"
         } else {
             "main"
         };
@@ -562,6 +569,285 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
 
         fs::remove_dir_all(path).unwrap();
     }
+}
+
+#[test]
+fn interactive_rebase_basic_new_creates_expected_starting_state() {
+    let path = temp_path("rebase-new");
+    let path_arg = path.to_string_lossy().to_string();
+    let output = run(&["new", "interactive-rebase-basic", "--path", &path_arg]);
+    assert!(output.status.success());
+
+    assert!(path.join(".git").exists());
+    assert!(path.join(".branchdojo.json").exists());
+    assert!(path.join("README.branchdojo.md").exists());
+    assert!(path.join("profile.txt").exists());
+    assert!(path.join("debug.txt").exists());
+    assert_eq!(
+        git_output(&path, &["branch", "--show-current"]),
+        "feature/profile-copy"
+    );
+    assert!(!git_output(&path, &["rev-parse", "--verify", "main"]).is_empty());
+    assert!(!git_output(&path, &["rev-parse", "--verify", "feature/profile-copy"]).is_empty());
+    let log = git_output(&path, &["log", "--format=%s"]);
+    assert!(log.contains("Add profile copy draft"));
+    assert!(log.contains("WIP debug profile copy"));
+    assert!(log.contains("Fix profile copy typo"));
+    assert!(log.contains("Polish profile copy"));
+    let profile = fs::read_to_string(path.join("profile.txt")).unwrap();
+    assert!(profile.contains("Profile page"));
+    assert!(profile.contains("Welcome to your profile."));
+    assert!(profile.contains("Manage your account details here."));
+    assert!(fs::read_to_string(path.join("debug.txt"))
+        .unwrap()
+        .contains("temporary debug notes"));
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_fails_before_solving_and_json_is_valid_shape() {
+    let path = temp_path("rebase-unsolved");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let human = stdout(&output);
+    assert!(human.contains("Status: FAILED"));
+    assert!(human.contains("Debug file is absent"));
+
+    let json_output = run(&["check", "--path", &path_arg, "--json"]);
+    assert!(json_output.status.success());
+    let json: Value = serde_json::from_slice(&json_output.stdout).unwrap();
+    assert_eq!(json["exercise"], "interactive-rebase-basic");
+    assert_eq!(json["status"], "failed");
+    for check in json["checks"].as_array().unwrap() {
+        let status = check["status"].as_str().unwrap();
+        assert!(matches!(status, "passed" | "warning" | "failed"));
+        let severity = check["severity"].as_str().unwrap();
+        assert!(matches!(severity, "required" | "warning"));
+    }
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_clean_history_solution_passes() {
+    let path = temp_path("rebase-pass");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    git(&path, &["reset", "--soft", "main"]);
+    fs::remove_file(path.join("debug.txt")).unwrap();
+    fs::write(
+        path.join("profile.txt"),
+        "Profile page\nWelcome to your profile.\nManage your account details here.\n",
+    )
+    .unwrap();
+    git(&path, &["add", "-A"]);
+    git(&path, &["commit", "-m", "Add polished profile copy"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: PASSED"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_content_correct_but_messy_history_warns() {
+    let path = temp_path("rebase-warning");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    fs::remove_file(path.join("debug.txt")).unwrap();
+    git(&path, &["add", "-A"]);
+    git(&path, &["commit", "-m", "Remove debug notes"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: WARNING"));
+    assert!(output.contains("WIP/debug commit cleanup check"));
+    assert!(output.contains("Reviewable history shape check"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_wrong_branch_fails() {
+    let path = temp_path("rebase-wrong-branch");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    git(&path, &["switch", "main"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Current branch is feature/profile-copy"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_dirty_working_tree_fails() {
+    let path = temp_path("rebase-dirty");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    fs::write(path.join("notes.txt"), "uncommitted notes\n").unwrap();
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Working tree is clean"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_debug_content_remaining_fails() {
+    let path = temp_path("rebase-debug-fail");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Debug content is absent"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_missing_profile_content_fails() {
+    let path = temp_path("rebase-missing-content");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    fs::remove_file(path.join("debug.txt")).unwrap();
+    fs::write(
+        path.join("profile.txt"),
+        "Profile page\nWelcome to your profile.\n",
+    )
+    .unwrap();
+    git(&path, &["add", "-A"]);
+    git(&path, &["commit", "-m", "Remove debug notes"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Profile account-management copy exists"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_hint_mentions_history_cleanup() {
+    let path = temp_path("rebase-hint");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    let output = run(&["hint", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Hints for interactive-rebase-basic:"));
+    assert!(output.contains("Progress-aware hints:"));
+    assert!(output.contains("Debug/WIP work"));
+    assert!(output.contains("Clean the branch history"));
+    assert!(output.contains("interactive rebase"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_report_includes_metadata() {
+    let path = temp_path("rebase-report");
+    let report = temp_path("rebase-report-md").with_extension("md");
+    let path_arg = path.to_string_lossy().to_string();
+    let report_arg = report.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    let output = run(&["check", "--path", &path_arg, "--report", &report_arg]);
+    assert!(output.status.success());
+    assert!(report.exists());
+    let report_text = fs::read_to_string(&report).unwrap();
+    assert!(report_text.contains("- Exercise: `interactive-rebase-basic`"));
+    assert!(report_text.contains("- Title: Clean up a feature branch with interactive rebase"));
+    assert!(report_text.contains("- Difficulty: advanced"));
+    assert!(report_text.contains("- Category: History rewriting"));
+
+    fs::remove_dir_all(path).unwrap();
+    fs::remove_file(report).unwrap();
+}
+
+#[test]
+fn interactive_rebase_basic_reset_works() {
+    let path = temp_path("rebase-reset");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(
+        run(&["new", "interactive-rebase-basic", "--path", &path_arg])
+            .status
+            .success()
+    );
+
+    fs::remove_file(path.join("debug.txt")).unwrap();
+    git(&path, &["add", "-A"]);
+    git(&path, &["commit", "-m", "Remove debug notes"]);
+
+    let reset = run(&["reset", "--path", &path_arg]);
+    assert!(reset.status.success());
+    assert_eq!(
+        git_output(&path, &["branch", "--show-current"]),
+        "feature/profile-copy"
+    );
+    assert!(path.join("debug.txt").exists());
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
 }
 
 #[test]

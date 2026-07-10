@@ -6,6 +6,11 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
+### Added
+
+- Added `interactive-rebase-basic`, an advanced exercise for cleaning noisy feature branch history while preserving useful work.
+- Added `advanced` difficulty support for exercise metadata and listing output.
+
 ### Planning
 
 - Started v0.4 planning around advanced Git exercises, learning paths, and future exercise-pack foundations.

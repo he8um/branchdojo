@@ -2,7 +2,7 @@
 
 ## Status
 
-Design candidate for v0.4. Not implemented.
+Implemented on main as unreleased v0.4 work.
 
 ## Difficulty
 
@@ -18,37 +18,41 @@ Practice cleaning up local branch history while preserving the intended final co
 
 ## Starting State
 
-A feature branch contains several small commits, including noisy intermediate commits and at least one commit message that should be cleaned up.
+A feature branch contains useful profile copy, a noisy WIP/debug commit, a debug file, a typo-fix commit, and a final polish commit.
 
 ## User Task
 
-Rewrite the feature branch into a clearer history and keep the intended file changes.
+Clean the feature branch history and keep the intended final profile copy.
 
 ## Expected Final State
 
-The repository is on the expected feature branch, the working tree is clean, the intended content exists, and the branch history has the expected cleaned-up shape.
+The repository is on `feature/profile-copy`, the working tree is clean, `profile.txt` contains the final profile copy, `debug.txt` is absent, and WIP/debug history is not reachable from the final branch.
 
 ## Required Validation Checks
 
 - Metadata exists and is valid.
 - Git repository exists.
-- Current branch is the expected feature branch.
+- Current branch is `feature/profile-copy`.
 - Working tree is clean.
 - No merge, rebase, cherry-pick, or revert operation is active.
-- Expected final content exists.
-- Unwanted intermediate content is absent.
-- Required cleaned-up commit signal exists.
+- `main` exists.
+- `feature/profile-copy` exists.
+- `profile.txt` exists.
+- Expected final profile copy exists.
+- Debug file/content is absent.
 
 ## Warning Conditions
 
-- Final content is correct but history still contains noisy fixup-style commits.
-- Final content is correct but commit messages are less clear than intended.
+- Final content is correct but WIP/debug commit subjects remain reachable.
+- Final content is correct but branch history is broader or noisier than expected.
 
 ## Progress-Aware Hint Ideas
 
 - If a rebase is active, suggest completing or aborting it before checking.
-- If the user is on the wrong branch, mention the expected feature branch.
+- If the user is on the wrong branch, mention `feature/profile-copy`.
 - If the working tree is dirty, suggest resolving or committing pending changes.
+- If debug content remains, mention removing `debug.txt`.
+- If WIP/debug commit subjects remain reachable, mention cleaning branch history.
 
 ## Report Considerations
 
@@ -60,7 +64,7 @@ Validation must not require inspecting command history. It should inspect only r
 
 ## Test Strategy
 
-Add setup tests, starting-state failure tests, a cleaned-history pass case, and a warning case where content is correct but history remains noisy.
+Implemented coverage includes setup tests, starting-state failure tests, a cleaned-history pass case, a warning case where content is correct but history remains noisy, failure cases, hints, report output, and reset.
 
 ## Risks
 
@@ -68,6 +72,5 @@ Interactive rebase can be hard to validate without overfitting to one command se
 
 ## Deferred Questions
 
-- Should this exercise require a specific final commit subject?
-- Should squash and fixup outcomes both pass?
-- Should an amend-only solution warn or fail?
+- Should future versions accept a wider range of clean history shapes without warning?
+- Should `branchdojo list` eventually support filtering advanced exercises?

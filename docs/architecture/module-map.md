@@ -137,13 +137,19 @@ Exercise metadata foundation, progress-aware hints, and Markdown report output a
 
 ## v0.4 Planning Notes
 
-Likely modules touched by v0.4 implementation work:
+Modules touched by v0.4 implementation work so far:
 
-- `src/exercises/metadata.rs`: add `advanced` difficulty support and any learning-path or grouping metadata that stays small and stable.
-- `src/exercises/`: add setup modules for selected advanced built-in exercises.
-- `src/validators/`: add final-state validators for selected advanced exercises while preserving stable common checks.
-- `src/hints.rs`: add progress-aware hint routing for selected advanced exercises without mutating repositories.
-- `src/reports.rs`: keep Markdown reports compatible with advanced exercises and any new metadata fields.
+- `src/exercises/metadata.rs`: `advanced` difficulty support and `interactive-rebase-basic` metadata.
+- `src/exercises/interactive_rebase_basic.rs`: setup for the first advanced built-in exercise.
+- `src/validators/interactive_rebase_basic.rs`: final-state and history-shape validation for the first advanced exercise.
+- `src/hints.rs`: progress-aware hint routing for `interactive-rebase-basic`.
+- `src/reports.rs`: Markdown reports remain metadata-backed and require no exercise-specific report code.
+
+Likely modules touched by future v0.4 work:
+
+- `src/exercises/`: setup modules for any additional selected advanced built-in exercises.
+- `src/validators/`: final-state validators for additional selected advanced exercises.
+- `src/hints.rs`: progress-aware hints for additional selected advanced exercises.
 
 Possible future areas:
 

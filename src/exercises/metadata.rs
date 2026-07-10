@@ -2,6 +2,7 @@
 pub enum Difficulty {
     Beginner,
     Intermediate,
+    Advanced,
 }
 
 impl Difficulty {
@@ -9,6 +10,7 @@ impl Difficulty {
         match self {
             Difficulty::Beginner => "beginner",
             Difficulty::Intermediate => "intermediate",
+            Difficulty::Advanced => "advanced",
         }
     }
 }
@@ -105,6 +107,24 @@ pub const DETACHED_HEAD_RECOVERY: ExerciseMetadata = ExerciseMetadata {
     introduced_in: "0.2.0",
 };
 
+pub const INTERACTIVE_REBASE_BASIC: ExerciseMetadata = ExerciseMetadata {
+    name: "interactive-rebase-basic",
+    title: "Clean up a feature branch with interactive rebase",
+    summary: "Remove noisy WIP history while preserving useful feature work.",
+    difficulty: Difficulty::Advanced,
+    category: "History rewriting",
+    estimated_time: "20-30 min",
+    skills: &[
+        "interactive rebase",
+        "history rewriting",
+        "commit cleanup",
+        "branch review",
+    ],
+    starting_branch: "feature/profile-copy",
+    expected_final_branch: "feature/profile-copy",
+    introduced_in: "0.4.0",
+};
+
 const ALL_METADATA: &[&ExerciseMetadata] = &[
     &CONFLICT_BASIC,
     &REVERT_MISTAKE,
@@ -112,6 +132,7 @@ const ALL_METADATA: &[&ExerciseMetadata] = &[
     &STASH_SWITCH,
     &CHERRY_PICK_BASIC,
     &DETACHED_HEAD_RECOVERY,
+    &INTERACTIVE_REBASE_BASIC,
 ];
 
 pub fn all_metadata() -> &'static [&'static ExerciseMetadata] {
@@ -145,10 +166,11 @@ mod tests {
     fn difficulty_display_values_are_stable() {
         assert_eq!(Difficulty::Beginner.as_str(), "beginner");
         assert_eq!(Difficulty::Intermediate.as_str(), "intermediate");
+        assert_eq!(Difficulty::Advanced.as_str(), "advanced");
     }
 
     #[test]
-    fn metadata_includes_all_released_exercises() {
+    fn metadata_includes_all_available_exercises() {
         assert_eq!(
             exercise_names(),
             vec![
@@ -158,6 +180,7 @@ mod tests {
                 "stash-switch",
                 "cherry-pick-basic",
                 "detached-head-recovery",
+                "interactive-rebase-basic",
             ]
         );
     }
@@ -171,6 +194,10 @@ mod tests {
         assert_eq!(
             expected_final_branch_for("detached-head-recovery"),
             Some("recovery/detached-work")
+        );
+        assert_eq!(
+            expected_final_branch_for("interactive-rebase-basic"),
+            Some("feature/profile-copy")
         );
         assert_eq!(expected_final_branch_for("not-real"), None);
     }

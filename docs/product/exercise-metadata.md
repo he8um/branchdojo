@@ -2,7 +2,7 @@
 
 ## Status
 
-Metadata foundation implemented for v0.3. Progress-aware hints and Markdown check reports are implemented.
+Metadata foundation implemented for v0.3. `advanced` difficulty support is implemented on main as unreleased v0.4 work.
 
 ## Goal
 
@@ -21,9 +21,15 @@ Make exercise definitions richer and more consistent across CLI listing, generat
 - `expected_final_branch`
 - `introduced_in`
 
+## Difficulty Values
+
+- `beginner`
+- `intermediate`
+- `advanced`
+
 ## Internal Representation
 
-Metadata can remain hardcoded in Rust for v0.3. External exercise definitions and exercise packs remain future work.
+Metadata can remain hardcoded in Rust for v0.4. External exercise definitions and exercise packs remain future work.
 
 ## Expected Uses
 
@@ -35,7 +41,7 @@ Metadata can remain hardcoded in Rust for v0.3. External exercise definitions an
 
 ## Constraints
 
-- Do not add custom external exercise packs in v0.3.
+- Do not add custom external exercise packs in v0.4.
 - Do not require network access.
 - Keep metadata stable once released.
 - Keep exercise IDs stable.

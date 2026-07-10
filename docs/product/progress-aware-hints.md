@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented for v0.3 development.
+Implemented for v0.3 and extended for `interactive-rebase-basic` as unreleased v0.4 work.
 
 ## Goal
 
@@ -23,6 +23,7 @@ Examples:
 - Conflict markers: mention resolving markers and committing the result.
 - Detached HEAD: mention creating or switching to the expected recovery branch.
 - Missing expected branch: mention creating or restoring the branch.
+- Interactive rebase cleanup: mention remaining debug files, WIP/debug commit subjects, and preserving final profile copy.
 
 ## Constraints
 

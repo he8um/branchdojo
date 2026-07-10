@@ -10,6 +10,10 @@ use crate::exercises::conflict_basic::{EXPECTED_CTA, FEATURE_BRANCH as CONFLICT_
 use crate::exercises::detached_head_recovery::{
     RECOVERED_CONTENT, RECOVERED_FILE, RECOVERY_BRANCH,
 };
+use crate::exercises::interactive_rebase_basic::{
+    DEBUG_CONTENT, DEBUG_FILE, FEATURE_BRANCH as REBASE_FEATURE_BRANCH, PROFILE_FILE,
+    PROFILE_MANAGE, PROFILE_TITLE, PROFILE_WELCOME,
+};
 use crate::exercises::revert_mistake::{CONFIG_FILE, UNSAFE_VALUE};
 use crate::exercises::stash_switch::{
     APP_FILE as STASH_APP_FILE, FEATURE_BRANCH as STASH_FEATURE_BRANCH, SETTINGS_COPY,
@@ -134,6 +138,7 @@ fn exercise_hints(path: &Path, context: &HintContext) -> Vec<String> {
         "stash-switch" => stash_switch_hints(path, context),
         "cherry-pick-basic" => cherry_pick_basic_hints(path, context),
         "detached-head-recovery" => detached_head_recovery_hints(path, context),
+        "interactive-rebase-basic" => interactive_rebase_basic_hints(path, context),
         _ => Vec::new(),
     }
 }
@@ -257,6 +262,37 @@ fn detached_head_recovery_hints(path: &Path, context: &HintContext) -> Vec<Strin
     hints
 }
 
+fn interactive_rebase_basic_hints(path: &Path, context: &HintContext) -> Vec<String> {
+    let mut hints = Vec::new();
+    if context.current_branch.as_deref() != Some(REBASE_FEATURE_BRANCH) {
+        hints.push("Switch to `feature/profile-copy` before cleaning the branch.".to_string());
+    }
+    if file_contains(path, DEBUG_FILE, DEBUG_CONTENT)
+        || branch_file_contains(path, REBASE_FEATURE_BRANCH, DEBUG_FILE, DEBUG_CONTENT)
+    {
+        hints.push(
+            "Debug/WIP work is still present. Remove `debug.txt` from the final branch."
+                .to_string(),
+        );
+    }
+    if branch_log_has_wip_or_debug(path, REBASE_FEATURE_BRANCH) {
+        hints.push(
+            "The reachable history still contains WIP/debug commit subjects. Clean the branch history before sharing it."
+                .to_string(),
+        );
+    }
+    if !file_contains(path, PROFILE_FILE, PROFILE_TITLE)
+        || !file_contains(path, PROFILE_FILE, PROFILE_WELCOME)
+        || !file_contains(path, PROFILE_FILE, PROFILE_MANAGE)
+    {
+        hints.push(
+            "Keep the useful final profile copy in `profile.txt` while cleaning history."
+                .to_string(),
+        );
+    }
+    hints
+}
+
 fn active_operation_name(path: &Path) -> Option<String> {
     let git_dir = path.join(".git");
     [
@@ -302,6 +338,17 @@ fn branch_file_contains(path: &Path, branch: &str, file: &str, expected: &str) -
             content
                 .map(|value| normalize(&value).contains(expected))
                 .unwrap_or(false)
+        })
+        .unwrap_or(false)
+}
+
+fn branch_log_has_wip_or_debug(path: &Path, branch: &str) -> bool {
+    git::run_git(path, ["log", branch, "--format=%s"])
+        .map(|log| {
+            log.lines().any(|line| {
+                let lower = line.to_ascii_lowercase();
+                lower.contains("wip") || lower.contains("debug")
+            })
         })
         .unwrap_or(false)
 }

@@ -27,6 +27,7 @@ Available exercises:
   stash-switch                 intermediate  Local changes        10-15 min
   cherry-pick-basic            intermediate  Selective history    15-20 min
   detached-head-recovery       intermediate  Recovery             15-20 min
+  interactive-rebase-basic     advanced      History rewriting    20-30 min
 ```
 
 ## `branchdojo new <exercise-name> --path <path>`

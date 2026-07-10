@@ -116,6 +116,8 @@ pub fn active_operation(path: &Path) -> bool {
         "REBASE_HEAD",
         "CHERRY_PICK_HEAD",
         "REVERT_HEAD",
+        "rebase-merge",
+        "rebase-apply",
     ]
     .iter()
     .any(|file| git_dir.join(file).exists())
