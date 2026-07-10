@@ -6,6 +6,7 @@ pub mod cherry_pick_basic;
 pub mod conflict_basic;
 pub mod detached_head_recovery;
 pub mod interactive_rebase_basic;
+pub mod merge_vs_rebase;
 pub mod metadata;
 pub mod revert_mistake;
 pub mod stash_switch;
@@ -31,6 +32,7 @@ pub fn all() -> Vec<&'static Exercise> {
         &detached_head_recovery::EXERCISE,
         &interactive_rebase_basic::EXERCISE,
         &tag_release_fix::EXERCISE,
+        &merge_vs_rebase::EXERCISE,
     ]
 }
 

@@ -90,16 +90,19 @@ Implemented v0.4 coverage:
 - Markdown report metadata test.
 - Reset test.
 - Metadata/list tests for `tag-release-fix`.
+- `merge-vs-rebase` setup tests.
+- Starting-state failure and JSON shape tests for `merge-vs-rebase`.
+- Linear-history passing solution test.
+- Merge-commit warning solution test.
+- Failure tests for wrong branch, dirty working tree, missing pricing content, missing checkout content, and missing feature branch.
+- Progress-aware hint test.
+- Markdown report metadata test.
+- Reset test.
+- Metadata/list tests for `merge-vs-rebase`.
 
 Planned v0.4 test areas for remaining candidates:
 
-- Advanced exercise setup tests for each selected built-in exercise.
-- Advanced final-state validation tests using temporary real Git repositories.
-- Warning-path tests for valid but non-ideal history shapes.
-- Report compatibility tests for new exercises.
-- Progress-aware hint compatibility tests for new exercises.
 - No-regression tests for all six released exercises.
-- Metadata tests for `advanced` difficulty and any learning-path grouping fields.
 - Deterministic bisect test strategy if `bisect-basic` remains in scope.
 
 `bisect-basic` should only be implemented if the failing/passing behavior can be represented by deterministic local files and explicit Git commands without shell scripts, network access, or external tooling.

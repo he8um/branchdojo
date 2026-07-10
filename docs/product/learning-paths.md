@@ -30,10 +30,10 @@ Current and planned v0.4 advanced practice:
 
 1. `interactive-rebase-basic` - implemented on main as unreleased v0.4 work.
 2. `tag-release-fix` - implemented on main as unreleased v0.4 work.
-3. `bisect-basic`
-4. `merge-vs-rebase`
+3. `merge-vs-rebase` - implemented on main as unreleased v0.4 work.
+4. `bisect-basic`
 
-The remaining candidates are design candidates. v0.4 should implement only the candidates that remain deterministic, safe, and compatible with final-state validation.
+The remaining candidate is a design candidate. v0.4 should implement only candidates that remain deterministic, safe, and compatible with final-state validation.
 
 ## Non-Goals
 

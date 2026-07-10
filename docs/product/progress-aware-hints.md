@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented for v0.3 and extended for `interactive-rebase-basic` as unreleased v0.4 work.
+Implemented for v0.3 and extended for v0.4 advanced exercises.
 
 ## Goal
 
@@ -25,6 +25,7 @@ Examples:
 - Missing expected branch: mention creating or restoring the branch.
 - Interactive rebase cleanup: mention remaining debug files, WIP/debug commit subjects, and preserving final profile copy.
 - Release tag repair: mention missing tags, tags pointing at old release content, lightweight tags, and missing release blocker fixes.
+- Branch integration: mention staying on the feature branch, missing mainline or feature content, missing source branches, and merge-commit history shape warnings.
 
 ## Constraints
 

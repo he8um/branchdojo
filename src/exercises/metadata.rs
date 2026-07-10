@@ -143,6 +143,25 @@ pub const TAG_RELEASE_FIX: ExerciseMetadata = ExerciseMetadata {
     introduced_in: "0.4.0",
 };
 
+pub const MERGE_VS_REBASE: ExerciseMetadata = ExerciseMetadata {
+    name: "merge-vs-rebase",
+    title: "Integrate a feature branch with a clean history",
+    summary:
+        "Update and integrate a feature branch while preserving both mainline and feature work.",
+    difficulty: Difficulty::Advanced,
+    category: "Branch integration",
+    estimated_time: "20-30 min",
+    skills: &[
+        "rebase",
+        "merge",
+        "branch integration",
+        "history inspection",
+    ],
+    starting_branch: "feature/pricing-copy",
+    expected_final_branch: "main",
+    introduced_in: "0.4.0",
+};
+
 const ALL_METADATA: &[&ExerciseMetadata] = &[
     &CONFLICT_BASIC,
     &REVERT_MISTAKE,
@@ -152,6 +171,7 @@ const ALL_METADATA: &[&ExerciseMetadata] = &[
     &DETACHED_HEAD_RECOVERY,
     &INTERACTIVE_REBASE_BASIC,
     &TAG_RELEASE_FIX,
+    &MERGE_VS_REBASE,
 ];
 
 pub fn all_metadata() -> &'static [&'static ExerciseMetadata] {
@@ -201,6 +221,7 @@ mod tests {
                 "detached-head-recovery",
                 "interactive-rebase-basic",
                 "tag-release-fix",
+                "merge-vs-rebase",
             ]
         );
     }
@@ -220,6 +241,7 @@ mod tests {
             Some("feature/profile-copy")
         );
         assert_eq!(expected_final_branch_for("tag-release-fix"), Some("main"));
+        assert_eq!(expected_final_branch_for("merge-vs-rebase"), Some("main"));
         assert_eq!(expected_final_branch_for("not-real"), None);
     }
 }

@@ -2,7 +2,7 @@
 
 ## Status
 
-Design candidate for v0.4. Not implemented.
+Implemented on main as unreleased v0.4 work.
 
 ## Difficulty
 
@@ -18,36 +18,44 @@ Practice integrating divergent branches while understanding when history shape m
 
 ## Starting State
 
-`main` and a feature branch have both moved forward from a shared base. The exercise instructions identify the preferred integration style.
+`main` and `feature/pricing-copy` have both moved forward from a shared base:
+
+- `main` contains updated checkout trust copy.
+- `feature/pricing-copy` contains two pricing page commits.
 
 ## User Task
 
-Integrate the required changes and produce the requested final branch state.
+Bring `feature/pricing-copy` up to date with `main`, integrate the pricing work into `main`, preserve both the checkout update and pricing copy, and leave the repository clean on `main`.
 
 ## Expected Final State
 
-The expected branch contains both sets of changes, the working tree is clean, and the history shape matches the requested integration style or produces a warning when content is valid but shape is not ideal.
+The repository is on `main`, the working tree is clean, `main` contains the final pricing and checkout copy, and `feature/pricing-copy` still contains the pricing work. A clean linear integration is preferred.
 
 ## Required Validation Checks
 
 - Metadata exists and is valid.
 - Git repository exists.
-- Current branch is the expected branch.
+- Current branch is `main`.
 - Working tree is clean.
 - No active Git operation remains.
-- Required content from both branches exists.
-- Conflict markers are absent.
+- `main` and `feature/pricing-copy` exist.
+- `main:pricing.txt` contains the pricing title, headline, FAQ title, and FAQ copy.
+- `main:checkout.txt` contains the checkout trust copy.
+- `feature/pricing-copy:pricing.txt` contains the pricing headline and FAQ copy.
 
 ## Warning Conditions
 
-- Final content is correct but the alternate integration style was used.
-- Extra cleanup commits exist but do not break the final content.
+- Final content is correct but a merge commit was used instead of the preferred linear integration.
+- Final content is correct but `feature/pricing-copy` was not updated with the mainline checkout work.
+- Final content is correct but the seeded feature commit subjects are not reachable from `main`.
+- Final content is correct but the expected history order is not ideal.
 
 ## Progress-Aware Hint Ideas
 
-- If a merge or rebase is active, suggest resolving it before checking.
-- If conflict markers remain, suggest resolving them and preserving both required changes.
-- If the user is on the wrong branch, mention the expected final branch.
+- If the user is still on `feature/pricing-copy`, suggest integrating it into `main`.
+- If the source branch is missing, mention restoring `feature/pricing-copy`.
+- If `main` is missing pricing or checkout content, mention the missing side of the integration.
+- If a merge commit exists with valid final content, mention the preferred linear integration.
 
 ## Report Considerations
 
@@ -59,14 +67,8 @@ Validation should avoid requiring a specific command sequence and should use onl
 
 ## Test Strategy
 
-Add tests for preferred integration pass, alternate integration warning, missing content failure, and unresolved conflict failure.
+Integration tests cover setup, starting failure and JSON shape, linear-history pass, merge-commit warning, wrong branch, dirty working tree, missing pricing content, missing checkout content, missing feature branch, hints, reports, and reset.
 
 ## Risks
 
-A single exercise may be less clear than two separate exercises if it tries to teach both workflows at once.
-
-## Deferred Questions
-
-- Should this be one exercise or two?
-- Should the preferred workflow be merge-first or rebase-first?
-- Should alternate valid history shape warn or fail?
+History-shape validation must stay tolerant enough to accept equivalent final repository states while still warning for non-preferred integration shape.

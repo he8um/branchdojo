@@ -279,3 +279,69 @@ This catalog defines stable check IDs.
 - Exercise: tag-release-fix
 - Severity: warning
 - Warning: final tag content is valid, but `v1.0.0` does not point directly to the seeded fix commit.
+
+### `main_pricing_title`
+
+- Exercise: merge-vs-rebase
+- Severity: required
+- Pass: `main:pricing.txt` contains the pricing title.
+
+### `main_pricing_headline`
+
+- Exercise: merge-vs-rebase
+- Severity: required
+- Pass: `main:pricing.txt` contains the pricing headline.
+
+### `main_pricing_faq_title`
+
+- Exercise: merge-vs-rebase
+- Severity: required
+- Pass: `main:pricing.txt` contains the pricing FAQ title.
+
+### `main_pricing_faq_copy`
+
+- Exercise: merge-vs-rebase
+- Severity: required
+- Pass: `main:pricing.txt` contains the pricing FAQ copy.
+
+### `main_checkout_trust_copy`
+
+- Exercise: merge-vs-rebase
+- Severity: required
+- Pass: `main:checkout.txt` contains the checkout trust copy.
+
+### `feature_pricing_headline`
+
+- Exercise: merge-vs-rebase
+- Severity: required
+- Pass: `feature/pricing-copy:pricing.txt` contains the pricing headline.
+
+### `feature_pricing_faq_copy`
+
+- Exercise: merge-vs-rebase
+- Severity: required
+- Pass: `feature/pricing-copy:pricing.txt` contains the pricing FAQ copy.
+
+### `merge_commit_integration`
+
+- Exercise: merge-vs-rebase
+- Severity: warning
+- Warning: final content is valid, but `main` includes a merge commit.
+
+### `feature_branch_updated_with_main`
+
+- Exercise: merge-vs-rebase
+- Severity: warning
+- Warning: final content is valid, but `feature/pricing-copy` does not contain the mainline checkout update.
+
+### `feature_commits_reachable`
+
+- Exercise: merge-vs-rebase
+- Severity: warning
+- Warning: final content is valid, but the seeded feature commit subjects are not reachable from `main`.
+
+### `linear_history_order`
+
+- Exercise: merge-vs-rebase
+- Severity: warning
+- Warning: final content is valid, but history order is not the preferred checkout update followed by pricing commits.

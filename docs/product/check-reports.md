@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented for v0.3. Reports are compatible with `interactive-rebase-basic` and `tag-release-fix` metadata as unreleased v0.4 work.
+Implemented for v0.3. Reports are compatible with v0.4 advanced exercise metadata as unreleased v0.4 work.
 
 ## Goal
 

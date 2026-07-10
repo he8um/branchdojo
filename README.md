@@ -44,6 +44,7 @@ v0.4 is planned around advanced built-in Git exercises and learning-path improve
 | `detached-head-recovery` | Intermediate | Recovery | 15-20 min |
 | `interactive-rebase-basic` | Advanced | History rewriting | 20-30 min |
 | `tag-release-fix` | Advanced | Release recovery | 20-30 min |
+| `merge-vs-rebase` | Advanced | Branch integration | 20-30 min |
 
 ## Installation
 
@@ -122,7 +123,7 @@ Detailed design docs are available under `docs/`:
 - v0.1: beginner exercises, state file, final-state validation, reset, hints, JSON output, CI.
 - v0.2: stash switching, basic cherry-pick, detached HEAD recovery, final-state validation, warnings for valid but unusual workflow shapes.
 - v0.3: progress-aware hints, optional Markdown check reports, richer exercise metadata, onboarding polish.
-- v0.4 in development: advanced built-in exercises, learning-path documentation, and exercise foundation refinements. `interactive-rebase-basic` and `tag-release-fix` are implemented on main.
+- v0.4 in development: advanced built-in exercises, learning-path documentation, and exercise foundation refinements. `interactive-rebase-basic`, `tag-release-fix`, and `merge-vs-rebase` are implemented on main.
 - v0.5: GitHub Action mode, binaries, Homebrew, release automation.
 
 ## License

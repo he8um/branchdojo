@@ -78,6 +78,7 @@ fn list_prints_available_exercises() {
     assert!(output.contains("conflict-basic"));
     assert!(output.contains("detached-head-recovery"));
     assert!(output.contains("interactive-rebase-basic"));
+    assert!(output.contains("merge-vs-rebase"));
     assert!(output.contains("revert-mistake"));
     assert!(output.contains("stash-switch"));
     assert!(output.contains("tag-release-fix"));
@@ -86,6 +87,7 @@ fn list_prints_available_exercises() {
     assert!(output.contains("beginner"));
     assert!(output.contains("intermediate"));
     assert!(output.contains("History rewriting"));
+    assert!(output.contains("Branch integration"));
     assert!(output.contains("Release recovery"));
     assert!(output.contains("Merge conflicts"));
     assert!(output.contains("Selective history"));
@@ -171,6 +173,7 @@ fn hint_prints_progress_aware_and_general_sections_for_all_exercises() {
         "cherry-pick-basic",
         "detached-head-recovery",
         "interactive-rebase-basic",
+        "merge-vs-rebase",
         "tag-release-fix",
     ] {
         let path = temp_path(&format!("hint-{exercise}"));
@@ -530,6 +533,7 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
         "conflict-basic",
         "detached-head-recovery",
         "interactive-rebase-basic",
+        "merge-vs-rebase",
         "revert-mistake",
         "stash-switch",
         "tag-release-fix",
@@ -558,7 +562,11 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
             "main"
         };
         assert_eq!(state["expected_branch"], expected_branch);
-        let expected_file_count = if exercise == "tag-release-fix" { 2 } else { 1 };
+        let expected_file_count = if matches!(exercise, "tag-release-fix" | "merge-vs-rebase") {
+            2
+        } else {
+            1
+        };
         assert_eq!(
             state["expected_files"].as_array().unwrap().len(),
             expected_file_count
@@ -577,6 +585,295 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
 
         fs::remove_dir_all(path).unwrap();
     }
+}
+
+#[test]
+fn merge_vs_rebase_new_creates_expected_starting_state() {
+    let path = temp_path("merge-rebase-new");
+    let path_arg = path.to_string_lossy().to_string();
+    let output = run(&["new", "merge-vs-rebase", "--path", &path_arg]);
+    assert!(output.status.success());
+
+    assert!(path.join(".git").exists());
+    assert!(path.join(".branchdojo.json").exists());
+    assert!(path.join("README.branchdojo.md").exists());
+    assert!(path.join("pricing.txt").exists());
+    assert!(path.join("checkout.txt").exists());
+    assert_eq!(
+        git_output(&path, &["branch", "--show-current"]),
+        "feature/pricing-copy"
+    );
+    assert!(!git_output(&path, &["rev-parse", "--verify", "main"]).is_empty());
+    assert!(!git_output(&path, &["rev-parse", "--verify", "feature/pricing-copy"]).is_empty());
+    assert!(
+        git_output(&path, &["show", "main:checkout.txt"]).contains("Your payment is protected.")
+    );
+    assert!(
+        git_output(&path, &["show", "feature/pricing-copy:pricing.txt"])
+            .contains("You can change plans at any time.")
+    );
+    assert!(
+        !git_output(&path, &["show", "feature/pricing-copy:checkout.txt"])
+            .contains("Your payment is protected.")
+    );
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_fails_before_solving_and_json_is_valid_shape() {
+    let path = temp_path("merge-rebase-unsolved");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let human = stdout(&output);
+    assert!(human.contains("Status: FAILED"));
+    assert!(human.contains("Current branch is main"));
+
+    let json_output = run(&["check", "--path", &path_arg, "--json"]);
+    assert!(json_output.status.success());
+    let json: Value = serde_json::from_slice(&json_output.stdout).unwrap();
+    assert_eq!(json["exercise"], "merge-vs-rebase");
+    assert_eq!(json["status"], "failed");
+    for check in json["checks"].as_array().unwrap() {
+        let status = check["status"].as_str().unwrap();
+        assert!(matches!(status, "passed" | "warning" | "failed"));
+        let severity = check["severity"].as_str().unwrap();
+        assert!(matches!(severity, "required" | "warning"));
+    }
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_linear_solution_passes() {
+    let path = temp_path("merge-rebase-pass");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["rebase", "main"]);
+    git(&path, &["switch", "main"]);
+    git(&path, &["merge", "--ff-only", "feature/pricing-copy"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: PASSED"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_merge_commit_solution_warns() {
+    let path = temp_path("merge-rebase-warning");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["switch", "main"]);
+    git(
+        &path,
+        &[
+            "merge",
+            "--no-ff",
+            "feature/pricing-copy",
+            "-m",
+            "Merge pricing copy",
+        ],
+    );
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: WARNING"));
+    assert!(output.contains("Merge commit integration check"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_wrong_branch_fails() {
+    let path = temp_path("merge-rebase-wrong-branch");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Current branch is main"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_dirty_working_tree_fails() {
+    let path = temp_path("merge-rebase-dirty");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    fs::write(path.join("notes.txt"), "integration notes\n").unwrap();
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Working tree is clean"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_missing_pricing_content_fails() {
+    let path = temp_path("merge-rebase-missing-pricing");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["switch", "main"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Main has pricing headline"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_missing_checkout_content_fails() {
+    let path = temp_path("merge-rebase-missing-checkout");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["rebase", "main"]);
+    git(&path, &["switch", "main"]);
+    git(&path, &["merge", "--ff-only", "feature/pricing-copy"]);
+    fs::write(
+        path.join("checkout.txt"),
+        "Checkout\nStandard payment flow.\n",
+    )
+    .unwrap();
+    git(&path, &["add", "checkout.txt"]);
+    git(&path, &["commit", "-m", "Remove checkout trust copy"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Main has checkout trust copy"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_missing_feature_branch_fails() {
+    let path = temp_path("merge-rebase-missing-feature");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["rebase", "main"]);
+    git(&path, &["switch", "main"]);
+    git(&path, &["merge", "--ff-only", "feature/pricing-copy"]);
+    git(&path, &["branch", "-d", "feature/pricing-copy"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Branch `feature/pricing-copy` exists"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_hint_mentions_integration() {
+    let path = temp_path("merge-rebase-hint");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["hint", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Hints for merge-vs-rebase:"));
+    assert!(output.contains("Progress-aware hints:"));
+    assert!(output.contains("feature/pricing-copy"));
+    assert!(output.contains("integrate it into `main`"));
+    assert!(output.contains("git log --oneline --decorate --graph --all"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_report_includes_metadata() {
+    let path = temp_path("merge-rebase-report");
+    let report = temp_path("merge-rebase-report-md").with_extension("md");
+    let path_arg = path.to_string_lossy().to_string();
+    let report_arg = report.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg, "--report", &report_arg]);
+    assert!(output.status.success());
+    assert!(report.exists());
+    let report_text = fs::read_to_string(&report).unwrap();
+    assert!(report_text.contains("- Exercise: `merge-vs-rebase`"));
+    assert!(report_text.contains("- Title: Integrate a feature branch with a clean history"));
+    assert!(report_text.contains("- Difficulty: advanced"));
+    assert!(report_text.contains("- Category: Branch integration"));
+
+    fs::remove_dir_all(path).unwrap();
+    fs::remove_file(report).unwrap();
+}
+
+#[test]
+fn merge_vs_rebase_reset_works() {
+    let path = temp_path("merge-rebase-reset");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "merge-vs-rebase", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["rebase", "main"]);
+    git(&path, &["switch", "main"]);
+    git(&path, &["merge", "--ff-only", "feature/pricing-copy"]);
+
+    let reset = run(&["reset", "--path", &path_arg]);
+    assert!(reset.status.success());
+    assert_eq!(
+        git_output(&path, &["branch", "--show-current"]),
+        "feature/pricing-copy"
+    );
+    assert!(
+        git_output(&path, &["show", "main:checkout.txt"]).contains("Your payment is protected.")
+    );
+    assert!(
+        !git_output(&path, &["show", "feature/pricing-copy:checkout.txt"])
+            .contains("Your payment is protected.")
+    );
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
 }
 
 #[test]

@@ -81,7 +81,8 @@ In development:
 
 - `interactive-rebase-basic`: implemented on main as unreleased v0.4 work.
 - `tag-release-fix`: implemented on main as unreleased v0.4 work.
-- Advanced built-in exercise candidates still in design: `bisect-basic` and `merge-vs-rebase`.
+- `merge-vs-rebase`: implemented on main as unreleased v0.4 work.
+- Advanced built-in exercise candidate still in design: `bisect-basic`.
 - Learning-path documentation across beginner, intermediate, and advanced practice.
 - Exercise metadata refinements needed for advanced difficulty and clearer grouping.
 - Validator, hint, and report compatibility for new built-in exercises.

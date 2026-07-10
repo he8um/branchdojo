@@ -14,6 +14,11 @@ use crate::exercises::interactive_rebase_basic::{
     DEBUG_CONTENT, DEBUG_FILE, FEATURE_BRANCH as REBASE_FEATURE_BRANCH, PROFILE_FILE,
     PROFILE_MANAGE, PROFILE_TITLE, PROFILE_WELCOME,
 };
+use crate::exercises::merge_vs_rebase::{
+    CHECKOUT_FILE as MERGE_CHECKOUT_FILE, CHECKOUT_TRUST_COPY,
+    FEATURE_BRANCH as MERGE_FEATURE_BRANCH, PRICING_FAQ_COPY, PRICING_FILE as MERGE_PRICING_FILE,
+    PRICING_HEADLINE,
+};
 use crate::exercises::revert_mistake::{CONFIG_FILE, UNSAFE_VALUE};
 use crate::exercises::stash_switch::{
     APP_FILE as STASH_APP_FILE, FEATURE_BRANCH as STASH_FEATURE_BRANCH, SETTINGS_COPY,
@@ -144,6 +149,7 @@ fn exercise_hints(path: &Path, context: &HintContext) -> Vec<String> {
         "detached-head-recovery" => detached_head_recovery_hints(path, context),
         "interactive-rebase-basic" => interactive_rebase_basic_hints(path, context),
         "tag-release-fix" => tag_release_fix_hints(path, context),
+        "merge-vs-rebase" => merge_vs_rebase_hints(path, context),
         _ => Vec::new(),
     }
 }
@@ -331,6 +337,44 @@ fn tag_release_fix_hints(path: &Path, context: &HintContext) -> Vec<String> {
     hints
 }
 
+fn merge_vs_rebase_hints(path: &Path, context: &HintContext) -> Vec<String> {
+    let mut hints = Vec::new();
+    if context.current_branch.as_deref() == Some(MERGE_FEATURE_BRANCH) {
+        hints.push(
+            "You are still on `feature/pricing-copy`. Bring it up to date, then integrate it into `main`."
+                .to_string(),
+        );
+    } else if context.current_branch.as_deref() != Some("main") {
+        hints.push("End this exercise on `main` after integrating the feature branch.".to_string());
+    }
+    if !git::branch_exists(path, MERGE_FEATURE_BRANCH).unwrap_or(false) {
+        hints.push("The source branch `feature/pricing-copy` is missing.".to_string());
+    }
+    if !branch_file_contains(path, "main", MERGE_CHECKOUT_FILE, CHECKOUT_TRUST_COPY) {
+        hints.push(
+            "`main` is missing the checkout trust copy. Preserve the mainline update.".to_string(),
+        );
+    }
+    if !branch_file_contains(path, "main", MERGE_PRICING_FILE, PRICING_HEADLINE)
+        || !branch_file_contains(path, "main", MERGE_PRICING_FILE, PRICING_FAQ_COPY)
+    {
+        hints.push(
+            "`main` is missing the pricing feature work. Integrate `feature/pricing-copy`."
+                .to_string(),
+        );
+    }
+    if branch_has_merge_commit(path, "main")
+        && branch_file_contains(path, "main", MERGE_PRICING_FILE, PRICING_FAQ_COPY)
+        && branch_file_contains(path, "main", MERGE_CHECKOUT_FILE, CHECKOUT_TRUST_COPY)
+    {
+        hints.push(
+            "Final content is present, but this exercise prefers a cleaner linear integration over a merge commit."
+                .to_string(),
+        );
+    }
+    hints
+}
+
 fn active_operation_name(path: &Path) -> Option<String> {
     let git_dir = path.join(".git");
     [
@@ -388,6 +432,12 @@ fn branch_log_has_wip_or_debug(path: &Path, branch: &str) -> bool {
                 lower.contains("wip") || lower.contains("debug")
             })
         })
+        .unwrap_or(false)
+}
+
+fn branch_has_merge_commit(path: &Path, branch: &str) -> bool {
+    git::run_git(path, ["log", branch, "--merges", "--format=%H"])
+        .map(|log| !log.trim().is_empty())
         .unwrap_or(false)
 }
 

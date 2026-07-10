@@ -9,6 +9,7 @@ mod common;
 mod conflict_basic;
 mod detached_head_recovery;
 mod interactive_rebase_basic;
+mod merge_vs_rebase;
 mod revert_mistake;
 mod stash_switch;
 mod tag_release_fix;
@@ -20,6 +21,7 @@ pub fn validate(path: &Path, state: &BranchDojoState) -> AppResult<ValidationRes
         "conflict-basic" => conflict_basic::validate(path, state),
         "detached-head-recovery" => detached_head_recovery::validate(path, state),
         "interactive-rebase-basic" => interactive_rebase_basic::validate(path, state),
+        "merge-vs-rebase" => merge_vs_rebase::validate(path, state),
         "revert-mistake" => revert_mistake::validate(path, state),
         "stash-switch" => stash_switch::validate(path, state),
         "tag-release-fix" => tag_release_fix::validate(path, state),
