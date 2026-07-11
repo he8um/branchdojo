@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented for v0.3. Reports are compatible with v0.4 advanced exercise metadata and unreleased v0.5 `bisect-basic` metadata.
+Implemented for v0.3. Reports are compatible with v0.4 advanced exercise metadata and v0.5 `bisect-basic` metadata.
 
 ## Goal
 

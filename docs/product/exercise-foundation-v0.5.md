@@ -2,7 +2,7 @@
 
 ## Status
 
-In development. `bisect-basic` is implemented on `main` as unreleased v0.5 work; broad external exercise foundation work remains deferred.
+Release-candidate ready. `bisect-basic` is implemented on `main`; broad external exercise foundation work remains deferred.
 
 ## Objective
 
@@ -26,29 +26,20 @@ Identify the smallest internal foundation hardening that can support `bisect-bas
 - Tag, merge, branch, and ancestry checks need consistent error handling.
 - Future debugging exercises may need active bisect-state detection.
 
-## Candidate Internal Helpers
+## Implemented Foundation Alignment
 
-- Ref content checks for files at branches, tags, or commits.
-- Reachable commit subject checks.
-- Merge commit checks.
-- Tag object type checks.
-- Branch ancestry checks.
-- Known good/bad commit marker checks.
-- Active bisect-state checks.
-- Text normalization helpers for cross-platform fixture content.
+- Reused existing common validator checks for metadata, branch, working tree, active Git operations, file existence, and fixture markers.
+- Kept `bisect-basic`-specific commit hash resolution, culprit reachability, and active bisect-state checks inside the exercise validator.
+- Preserved the existing hint and Markdown report systems without adding new report formats or templates.
 
-These helpers should live only where they reduce real duplication or make validation less brittle.
+## Test Coverage
 
-## Candidate Test Helpers
-
-- Create deterministic linear histories.
-- Read file contents at refs.
-- Assert branch and tag existence.
-- Assert JSON output shape.
-- Assert report creation and cleanup.
-- Assert active Git operation state for bisect-like workflows.
-
-Test helpers should remain local to tests unless production code has the same need.
+- Deterministic linear history setup.
+- Initial missing diagnosis failure.
+- Subject-based passing diagnosis.
+- Hash-only diagnosis warning.
+- Wrong culprit, dirty working tree, wrong branch, active bisect state, and missing fixture failures.
+- JSON shape, Markdown report, hint, reset, metadata, and list coverage.
 
 ## What Not To Build Yet
 

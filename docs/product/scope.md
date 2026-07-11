@@ -102,20 +102,21 @@ v0.4 is frozen to the implemented scope above.
 - New report formats.
 - Command-history or shell-history tracking.
 
-## v0.5 Development Scope
+## v0.5 Release-Candidate Scope
 
-BranchDojo v0.5 is in development around deterministic debugging practice and small exercise foundation hardening.
+BranchDojo v0.5 scope is frozen around deterministic debugging practice and minimal exercise foundation alignment.
 
-- Implemented exercise on `main`: `bisect-basic`.
+- Included exercise: `bisect-basic`.
 - Category: Debugging.
 - Difficulty: Advanced.
 - Deterministic local regression fixture design.
 - Validation of final state and recorded diagnosis, not command sequence.
 - Progress-aware hints for bisect-style workflows.
 - Markdown report compatibility through the existing report renderer.
-- Small internal Git helper hardening only where it directly reduces duplication or risk.
+- No CLI command changes.
+- No JSON schema changes.
 
-`bisect-basic` appears in `branchdojo list` as unreleased v0.5 work. v0.5 is not released yet.
+`bisect-basic` appears in `branchdojo list`. v0.5.0 is release-candidate ready on `main`; the final tag and GitHub Release have not been created yet.
 
 ## Out of Scope for v0.5
 
@@ -134,6 +135,7 @@ BranchDojo v0.5 is in development around deterministic debugging practice and sm
 - Shell-history inspection.
 - Global Git config changes.
 - Release automation.
+- Fix-after-bisect exercise.
 
 ## Out of Scope for v0.2
 

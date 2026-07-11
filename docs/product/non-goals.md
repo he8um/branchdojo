@@ -52,4 +52,4 @@ Exercise-pack and custom-definition foundations are deferred. External loading a
 
 ## BranchDojo Does Not Load External Exercise Packs in v0.5
 
-v0.5 can harden internal exercise foundations, but external exercise pack loading, custom parsers, remote registries, dashboards, telemetry, and GitHub integration remain future work.
+v0.5 freezes scope around `bisect-basic` and deterministic debugging practice. External exercise pack loading, custom parsers, remote registries, dashboards, telemetry, GitHub integration, new report formats, and fix-after-bisect workflows remain future work.

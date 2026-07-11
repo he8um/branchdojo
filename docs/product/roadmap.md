@@ -109,13 +109,13 @@ External exercise packs, dashboards, and GitHub integration remain future work.
 
 ## v0.5: Deterministic Debugging Practice
 
-In development:
+Release-candidate ready:
 
-- `bisect-basic`: implemented on `main` as unreleased advanced debugging practice for identifying a regression-introducing commit.
+- `bisect-basic`: implemented advanced debugging practice for identifying a regression-introducing commit.
 - Deterministic local regression fixture design.
-- Small internal exercise foundation hardening where it directly supports `bisect-basic`.
+- Minimal internal exercise foundation alignment where it directly supports `bisect-basic`.
 - Progress-aware hints and Markdown report compatibility for the new exercise.
-- No-regression coverage for all nine released exercises and the unreleased v0.5 exercise.
+- No-regression coverage for all nine previously released exercises and the v0.5 exercise.
 
 Non-goals:
 

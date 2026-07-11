@@ -2,7 +2,7 @@
 
 ## Status
 
-Metadata foundation implemented for v0.3. `advanced` difficulty support is included in v0.4.
+Metadata foundation implemented for v0.3. `advanced` difficulty support is included in v0.4, and `bisect-basic` metadata is included for v0.5.
 
 ## Goal
 
@@ -29,7 +29,7 @@ Make exercise definitions richer and more consistent across CLI listing, generat
 
 ## Internal Representation
 
-Metadata can remain hardcoded in Rust for v0.4. External exercise definitions and exercise packs remain future work.
+Metadata remains hardcoded in Rust for v0.5. External exercise definitions and exercise packs remain future work.
 
 ## Expected Uses
 
@@ -41,7 +41,7 @@ Metadata can remain hardcoded in Rust for v0.4. External exercise definitions an
 
 ## Constraints
 
-- Do not add custom external exercise packs in v0.5 planning.
+- Do not add custom external exercise packs in v0.5.
 - Do not require network access.
 - Keep metadata stable once released.
 - Keep exercise IDs stable.

@@ -154,9 +154,9 @@ Possible future areas:
 - Learning-path documentation can live under `docs/product/` before any CLI support exists.
 - Exercise-pack or custom-definition modules are deferred. Any future design must preserve workspace safety, deterministic validation, and no command-history tracking.
 
-## v0.5 Development Notes
+## v0.5 Release-Candidate Notes
 
-Modules touched by unreleased v0.5 `bisect-basic` implementation work:
+Modules touched by v0.5 `bisect-basic` implementation work:
 
 - `src/exercises/metadata.rs`: `bisect-basic` metadata.
 - `src/exercises/bisect_basic.rs`: setup for a deterministic debugging exercise.

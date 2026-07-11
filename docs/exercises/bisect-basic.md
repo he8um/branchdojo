@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented on `main` as unreleased v0.5 work.
+Release-candidate ready for v0.5.
 
 ## Difficulty
 
@@ -72,7 +72,7 @@ The regression does not need to be fixed for this exercise.
 - A bisect or other Git operation remains active.
 - Expected files, fixture markers, or metadata are missing.
 
-## Progress-Aware Hint Ideas
+## Progress-Aware Hints
 
 - If the repository is in bisect state, suggest continuing or resetting bisect before checking.
 - If HEAD is detached, suggest returning to the expected branch after recording the answer.
@@ -87,9 +87,9 @@ Reports should clearly separate diagnosis checks from cleanup checks such as bra
 
 The exercise should avoid requiring `git bisect run` or shell scripts. The regression signal should be represented by files in the repository, with no network access or external dependencies.
 
-## Test Strategy
+## Test Coverage
 
-Add tests for deterministic setup, missing diagnosis, wrong diagnosis, correct diagnosis, dirty working tree, wrong branch policy, active bisect state, JSON output, Markdown reports, hints, reset, and no regression for the existing released exercises.
+Covered by tests for deterministic setup, missing diagnosis, wrong diagnosis, correct diagnosis, dirty working tree, wrong branch policy, active bisect state, JSON output, Markdown reports, hints, reset, and no regression for the existing released exercises.
 
 ## Risks
 
@@ -99,5 +99,4 @@ Hash-only answers can be brittle if fixture history changes during development.
 
 ## Deferred Questions
 
-- Should the answer be recorded by commit hash, subject, or both?
 - Should a fix-after-bisect workflow become a separate future exercise?

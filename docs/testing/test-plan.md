@@ -102,7 +102,7 @@ Implemented v0.4 coverage:
 
 ## v0.5 Coverage
 
-Implemented coverage for unreleased `bisect-basic`:
+Implemented coverage for v0.5 `bisect-basic`:
 
 - Setup creates a deterministic linear regression history.
 - Initial check fails with a missing diagnosis artifact.
@@ -117,4 +117,4 @@ Implemented coverage for unreleased `bisect-basic`:
 - Markdown report output remains compatible.
 - Progress-aware hint output mentions missing diagnosis, active bisect state, or detached HEAD cleanup.
 - Reset recreates the exercise.
-- No-regression tests continue covering all nine released exercises plus unreleased `bisect-basic`.
+- No-regression tests continue covering all nine previously released exercises plus `bisect-basic`.

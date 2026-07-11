@@ -31,6 +31,7 @@ The tool generates the exercise. The user solves it. The tool validates the fina
 
 v0.1.0, v0.2.0, and v0.3.0 are released.
 v0.4.0 is released.
+v0.5.0 is release-candidate ready on `main`; the final tag and GitHub Release have not been created yet.
 
 ## Available Exercises
 
@@ -125,7 +126,7 @@ Detailed design docs are available under `docs/`:
 - v0.2: stash switching, basic cherry-pick, detached HEAD recovery, final-state validation, warnings for valid but unusual workflow shapes.
 - v0.3: progress-aware hints, optional Markdown check reports, richer exercise metadata, onboarding polish.
 - v0.4: advanced built-in exercises, advanced difficulty support, and learning-path documentation. `interactive-rebase-basic`, `tag-release-fix`, and `merge-vs-rebase` are implemented.
-- v0.5 in development: deterministic debugging practice through `bisect-basic`, implemented on `main` as unreleased work.
+- v0.5 release candidate: deterministic debugging practice through `bisect-basic`, final-state diagnosis validation, and existing hint/report compatibility.
 
 ## License
 

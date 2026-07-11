@@ -32,7 +32,7 @@ Released v0.4 advanced practice:
 2. `tag-release-fix`
 3. `merge-vs-rebase`
 
-Unreleased v0.5 advanced debugging practice on `main`:
+v0.5 release-candidate advanced debugging practice:
 
 1. `bisect-basic` - identify a regression-introducing commit.
 

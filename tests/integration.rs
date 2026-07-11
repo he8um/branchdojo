@@ -127,7 +127,7 @@ fn root_help_succeeds() {
 fn root_version_succeeds() {
     let output = run(&["--version"]);
     assert!(output.status.success());
-    assert_eq!(stdout(&output), "branchdojo 0.4.0\n");
+    assert_eq!(stdout(&output), "branchdojo 0.5.0\n");
 }
 
 #[test]

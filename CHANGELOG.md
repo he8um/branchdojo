@@ -6,13 +6,35 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [0.5.0] - 2026-07-11
+
 ### Added
 
 - Added `bisect-basic`, an advanced debugging exercise for identifying the commit that introduced a deterministic regression.
+- Added deterministic file-based regression fixture coverage for bisect-style practice.
+- Added validation for final-state diagnosis through `diagnosis.md`.
+- Added progress-aware hints for bisect-style debugging state, missing diagnosis artifacts, fixture marker problems, and active bisect cleanup.
+- Added test coverage for subject-based diagnosis, hash-only diagnosis warnings, wrong culprit detection, active bisect state, fixture integrity, reports, hints, and reset.
 
-### Planning
+### Changed
 
-- Started v0.5 planning around deterministic debugging practice, `bisect-basic`, and exercise foundation hardening.
+- Expanded the exercise catalog from 9 to 10 exercises.
+- Updated README, CLI, validation, testing, and product documentation for the v0.5 debugging exercise.
+- Kept v0.5 focused on regression identification rather than bug repair.
+
+### Validation
+
+- `bisect-basic` validates final repository state and diagnosis evidence, not command history.
+- Correct hash-only diagnoses may produce warnings when supporting subject/detail is missing.
+- Active bisect state, dirty working tree, wrong branch, wrong culprit, missing diagnosis, and missing fixture files fail validation.
+- JSON output schema remains unchanged.
+- Markdown reports continue to use the existing report renderer.
+
+### Deferred
+
+- Fix-after-bisect workflows, external exercise packs, custom exercise definitions, GitHub integration, dashboards, telemetry, report templates, HTML/PDF reports, new report formats, and release automation remain out of scope.
 
 ## [0.4.0] - 2026-07-10
 

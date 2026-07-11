@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented for v0.3 and extended for v0.4 advanced exercises and unreleased v0.5 `bisect-basic`.
+Implemented for v0.3 and extended for v0.4 advanced exercises and v0.5 `bisect-basic`.
 
 ## Goal
 
