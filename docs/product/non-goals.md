@@ -49,3 +49,7 @@ Learning-path and classroom use cases can be documented, but dashboards, analyti
 ## BranchDojo Does Not Load External Exercise Packs in v0.4
 
 Exercise-pack and custom-definition foundations are deferred. External loading and custom parsers remain out of scope for v0.4.
+
+## BranchDojo Does Not Load External Exercise Packs in v0.5 Planning
+
+v0.5 planning can harden internal exercise foundations, but external exercise pack loading, custom parsers, remote registries, dashboards, telemetry, and GitHub integration remain future work.

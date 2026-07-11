@@ -345,3 +345,16 @@ This catalog defines stable check IDs.
 - Exercise: merge-vs-rebase
 - Severity: warning
 - Warning: final content is valid, but history order is not the preferred checkout update followed by pricing commits.
+
+## v0.5 Planned Checks
+
+Potential `bisect-basic` check IDs should be finalized during implementation, not in this planning pass. Candidate areas:
+
+- `diagnosis_file_exists`: required diagnosis artifact exists.
+- `diagnosis_identifies_culprit`: recorded culprit matches the seeded regression-introducing commit.
+- `current_branch_main`: repository ends on `main` if that remains the final branch policy.
+- `no_active_git_operation`: no bisect, merge, rebase, cherry-pick, or revert state remains active.
+- `working_tree_clean`: no uncommitted diagnostic work remains.
+- `detached_head_cleanup`: warning if the answer is valid but the repository is left detached, if final design allows that shape.
+
+The final validator should keep existing JSON output shape and validate final state plus evidence, not command history.

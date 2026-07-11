@@ -105,3 +105,20 @@ Deferred test areas:
 - Deterministic bisect test strategy if `bisect-basic` is selected for v0.5 or later.
 
 `bisect-basic` should only be implemented if the failing/passing behavior can be represented by deterministic local files and explicit Git commands without shell scripts, network access, or external tooling.
+
+## v0.5 Planned Coverage
+
+Planned coverage for `bisect-basic`:
+
+- Setup creates a deterministic linear regression history.
+- Initial check fails or reports a missing diagnosis artifact.
+- Valid diagnosis passes.
+- Wrong culprit diagnosis fails.
+- Dirty working tree fails.
+- Wrong branch policy is enforced or warned according to final design.
+- Active bisect state is detected.
+- JSON output shape remains unchanged.
+- Markdown report output remains compatible.
+- Progress-aware hint output mentions missing diagnosis, active bisect state, or detached HEAD cleanup.
+- Reset recreates the exercise.
+- No-regression tests continue covering all nine released exercises.

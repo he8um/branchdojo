@@ -124,7 +124,7 @@ Detailed design docs are available under `docs/`:
 - v0.2: stash switching, basic cherry-pick, detached HEAD recovery, final-state validation, warnings for valid but unusual workflow shapes.
 - v0.3: progress-aware hints, optional Markdown check reports, richer exercise metadata, onboarding polish.
 - v0.4: advanced built-in exercises, advanced difficulty support, and learning-path documentation. `interactive-rebase-basic`, `tag-release-fix`, and `merge-vs-rebase` are implemented.
-- v0.5: GitHub Action mode, binaries, Homebrew, release automation.
+- v0.5 planned: deterministic debugging practice through `bisect-basic` and small exercise foundation hardening.
 
 ## License
 

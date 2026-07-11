@@ -6,7 +6,9 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
-No unreleased changes.
+### Planning
+
+- Started v0.5 planning around deterministic debugging practice, `bisect-basic`, and exercise foundation hardening.
 
 ## [0.4.0] - 2026-07-10
 

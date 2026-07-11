@@ -153,3 +153,16 @@ Possible future areas:
 
 - Learning-path documentation can live under `docs/product/` before any CLI support exists.
 - Exercise-pack or custom-definition modules are deferred. Any future design must preserve workspace safety, deterministic validation, and no command-history tracking.
+
+## v0.5 Planning Notes
+
+Likely modules for a future `bisect-basic` implementation:
+
+- `src/exercises/metadata.rs`: add `bisect-basic` metadata only when implementation begins.
+- `src/exercises/bisect_basic.rs`: setup for a deterministic debugging exercise.
+- `src/validators/bisect_basic.rs`: final-state validation for a recorded diagnosis.
+- `src/hints.rs`: progress-aware hints for active bisect state, detached HEAD cleanup, and missing diagnosis artifacts.
+- `src/reports.rs`: no exercise-specific report code should be needed.
+- `src/git.rs` and `src/validators/common.rs`: possible small helper hardening for ref content, reachability, ancestry, and known good/bad commit checks.
+
+External exercise packs, custom parsers, remote registries, dashboards, telemetry, and GitHub integration remain deferred.

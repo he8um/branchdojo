@@ -41,7 +41,7 @@ Metadata can remain hardcoded in Rust for v0.4. External exercise definitions an
 
 ## Constraints
 
-- Do not add custom external exercise packs in v0.4.
+- Do not add custom external exercise packs in v0.5 planning.
 - Do not require network access.
 - Keep metadata stable once released.
 - Keep exercise IDs stable.

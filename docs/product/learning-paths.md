@@ -26,13 +26,15 @@ This path practices preserving local changes, selectively moving commits, and re
 
 ## Advanced Path
 
-v0.4 advanced practice:
+Released v0.4 advanced practice:
 
 1. `interactive-rebase-basic`
 2. `tag-release-fix`
 3. `merge-vs-rebase`
 
-`bisect-basic` is deferred to v0.5 or later.
+Planned v0.5 advanced debugging practice:
+
+1. `bisect-basic` - planned, not available yet.
 
 ## Non-Goals
 

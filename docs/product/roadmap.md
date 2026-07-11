@@ -107,10 +107,32 @@ Non-goals:
 
 External exercise packs, dashboards, and GitHub integration remain future work.
 
-## v0.5: Distribution and Automation
+## v0.5: Deterministic Debugging Practice
+
+Planned:
+
+- `bisect-basic`: advanced debugging practice for identifying a regression-introducing commit.
+- Deterministic local regression fixture design.
+- Small internal exercise foundation hardening where it directly supports `bisect-basic`.
+- Progress-aware hints and Markdown report compatibility for the new exercise.
+- No-regression coverage for all nine released exercises.
+
+Non-goals:
+
+- No external exercise pack loading.
+- No custom exercise definition parser.
+- No dashboards, telemetry, or GitHub integration.
+- No GUI or TUI.
+- No new report formats.
+- No release automation unless separately planned.
+
+## v0.6 and Later
 
 - GitHub Action mode.
 - Prebuilt binaries.
 - Homebrew installation.
 - Release automation.
-- Signed release artifacts if needed.
+- External exercise packs.
+- Classroom dashboards.
+- GitHub integration.
+- TUI or GUI.
