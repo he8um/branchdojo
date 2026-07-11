@@ -2,7 +2,7 @@
 
 ## Status
 
-Design candidate for v0.5. Not implemented.
+Implemented on `main` as unreleased v0.5 work.
 
 ## Difficulty
 
@@ -35,11 +35,13 @@ The regression is represented by local files. For example, `check.txt` or `app.t
 
 ## User Task
 
-Identify the regression-introducing commit and record the answer in an artifact such as `diagnosis.md` or `culprit.txt`.
+Identify the regression-introducing commit and record the answer in `diagnosis.md`.
 
 ## Expected Final State
 
-The repository is on the expected final branch, likely `main`, the working tree is clean, no active bisect or other Git operation remains, and the diagnosis artifact identifies the seeded culprit commit.
+The repository is on `main`, the working tree is clean, no active bisect or other Git operation remains, and `diagnosis.md` identifies the seeded culprit commit.
+
+The regression does not need to be fixed for this exercise.
 
 ## Required Validation Checks
 
@@ -48,15 +50,18 @@ The repository is on the expected final branch, likely `main`, the working tree 
 - Current branch is the expected branch.
 - Working tree is clean.
 - No bisect, merge, rebase, cherry-pick, or revert operation is active.
-- Diagnosis artifact exists.
-- Recorded culprit matches the expected regression-introducing commit by stable evidence.
+- `app.txt` contains `discount_total=incorrect`.
+- `check.txt` contains `expected_discount_total=correct`.
+- `diagnosis.md` exists.
+- Recorded culprit matches `Introduce discount regression` by subject, stable regression marker, or resolvable commit hash.
+- The culprit commit is reachable from `main`.
 - Expected files remain present.
 
 ## Warning Conditions
 
-- The bad commit is correct but the repository is left on a detached HEAD.
-- Extra diagnostic files exist but do not affect the required answer.
-- The answer is correct but uses less-preferred evidence, if final design allows multiple answer forms.
+- The answer is correct but uses a valid hash without the commit subject.
+- The answer is correct but lacks supporting detail.
+- A diagnostic branch exists even though the final branch is correctly `main`.
 
 ## Failure Conditions
 
@@ -65,7 +70,7 @@ The repository is on the expected final branch, likely `main`, the working tree 
 - Working tree is dirty.
 - Repository is on the wrong branch if final design requires `main`.
 - A bisect or other Git operation remains active.
-- Expected files or metadata are missing.
+- Expected files, fixture markers, or metadata are missing.
 
 ## Progress-Aware Hint Ideas
 
@@ -84,7 +89,7 @@ The exercise should avoid requiring `git bisect run` or shell scripts. The regre
 
 ## Test Strategy
 
-Add tests for deterministic setup, missing diagnosis, wrong diagnosis, correct diagnosis, dirty working tree, wrong branch policy, active bisect state, JSON output, Markdown reports, hints, reset, and no regression for all nine released exercises.
+Add tests for deterministic setup, missing diagnosis, wrong diagnosis, correct diagnosis, dirty working tree, wrong branch policy, active bisect state, JSON output, Markdown reports, hints, reset, and no regression for the existing released exercises.
 
 ## Risks
 
@@ -95,7 +100,4 @@ Hash-only answers can be brittle if fixture history changes during development.
 ## Deferred Questions
 
 - Should the answer be recorded by commit hash, subject, or both?
-- Should a detached HEAD final state fail or warn?
-- Should the exercise include instructions for manual bisect only?
-- Should v0.5 require only identification, or identification plus a fix?
 - Should a fix-after-bisect workflow become a separate future exercise?

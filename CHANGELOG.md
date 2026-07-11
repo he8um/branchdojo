@@ -6,6 +6,10 @@ This project follows a simple release log format and uses semantic versioning af
 
 ## [Unreleased]
 
+### Added
+
+- Added `bisect-basic`, an advanced debugging exercise for identifying the commit that introduced a deterministic regression.
+
 ### Planning
 
 - Started v0.5 planning around deterministic debugging practice, `bisect-basic`, and exercise foundation hardening.

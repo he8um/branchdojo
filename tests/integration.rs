@@ -68,6 +68,21 @@ fn git_output(path: &Path, args: &[&str]) -> String {
     String::from_utf8_lossy(&output.stdout).trim().to_string()
 }
 
+fn bisect_basic_culprit_hash(path: &Path) -> String {
+    git_output(
+        path,
+        &[
+            "log",
+            "main",
+            "--format=%H",
+            "--grep",
+            "^Introduce discount regression$",
+            "-n",
+            "1",
+        ],
+    )
+}
+
 #[test]
 fn list_prints_available_exercises() {
     let output = run(&["list"]);
@@ -79,6 +94,7 @@ fn list_prints_available_exercises() {
     assert!(output.contains("detached-head-recovery"));
     assert!(output.contains("interactive-rebase-basic"));
     assert!(output.contains("merge-vs-rebase"));
+    assert!(output.contains("bisect-basic"));
     assert!(output.contains("revert-mistake"));
     assert!(output.contains("stash-switch"));
     assert!(output.contains("tag-release-fix"));
@@ -92,6 +108,7 @@ fn list_prints_available_exercises() {
     assert!(output.contains("Merge conflicts"));
     assert!(output.contains("Selective history"));
     assert!(output.contains("Recovery"));
+    assert!(output.contains("Debugging"));
 }
 
 #[test]
@@ -175,6 +192,7 @@ fn hint_prints_progress_aware_and_general_sections_for_all_exercises() {
         "interactive-rebase-basic",
         "merge-vs-rebase",
         "tag-release-fix",
+        "bisect-basic",
     ] {
         let path = temp_path(&format!("hint-{exercise}"));
         let path_arg = path.to_string_lossy().to_string();
@@ -537,6 +555,7 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
         "revert-mistake",
         "stash-switch",
         "tag-release-fix",
+        "bisect-basic",
         "wrong-branch-commit",
     ] {
         let path = temp_path(exercise);
@@ -562,7 +581,9 @@ fn generated_exercises_include_metadata_readme_and_local_identity() {
             "main"
         };
         assert_eq!(state["expected_branch"], expected_branch);
-        let expected_file_count = if matches!(exercise, "tag-release-fix" | "merge-vs-rebase") {
+        let expected_file_count = if exercise == "bisect-basic" {
+            3
+        } else if matches!(exercise, "tag-release-fix" | "merge-vs-rebase") {
             2
         } else {
             1
@@ -871,6 +892,301 @@ fn merge_vs_rebase_reset_works() {
         !git_output(&path, &["show", "feature/pricing-copy:checkout.txt"])
             .contains("Your payment is protected.")
     );
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_new_creates_expected_starting_state() {
+    let path = temp_path("bisect-new");
+    let path_arg = path.to_string_lossy().to_string();
+    let output = run(&["new", "bisect-basic", "--path", &path_arg]);
+    assert!(output.status.success());
+
+    assert!(path.join(".git").exists());
+    assert!(path.join(".branchdojo.json").exists());
+    assert!(path.join("README.branchdojo.md").exists());
+    assert!(path.join("README.debug.md").exists());
+    assert!(path.join("app.txt").exists());
+    assert!(path.join("check.txt").exists());
+    assert!(!path.join("diagnosis.md").exists());
+    assert_eq!(git_output(&path, &["branch", "--show-current"]), "main");
+    let log = git_output(&path, &["log", "--format=%s"]);
+    assert!(log.contains("Initialize sample app"));
+    assert!(log.contains("Add stable login flow"));
+    assert!(log.contains("Add checkout calculation"));
+    assert!(log.contains("Introduce discount regression"));
+    assert!(log.contains("Update copy text"));
+    assert!(log.contains("Refactor display labels"));
+    assert!(fs::read_to_string(path.join("app.txt"))
+        .unwrap()
+        .contains("discount_total=incorrect"));
+    assert!(fs::read_to_string(path.join("check.txt"))
+        .unwrap()
+        .contains("expected_discount_total=correct"));
+    assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_fails_before_solving_and_json_is_valid_shape() {
+    let path = temp_path("bisect-unsolved");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let human = stdout(&output);
+    assert!(human.contains("Status: FAILED"));
+    assert!(human.contains("diagnosis.md exists"));
+
+    let json_output = run(&["check", "--path", &path_arg, "--json"]);
+    assert!(json_output.status.success());
+    let json: Value = serde_json::from_slice(&json_output.stdout).unwrap();
+    assert_eq!(json["exercise"], "bisect-basic");
+    assert_eq!(json["status"], "failed");
+    for check in json["checks"].as_array().unwrap() {
+        let status = check["status"].as_str().unwrap();
+        assert!(matches!(status, "passed" | "warning" | "failed"));
+        let severity = check["severity"].as_str().unwrap();
+        assert!(matches!(severity, "required" | "warning"));
+    }
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_subject_solution_passes() {
+    let path = temp_path("bisect-pass");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    fs::write(
+        path.join("diagnosis.md"),
+        "Culprit: Introduce discount regression\nEvidence: discount_total=incorrect\n",
+    )
+    .unwrap();
+    git(&path, &["add", "diagnosis.md"]);
+    git(&path, &["commit", "-m", "Record regression diagnosis"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    assert!(stdout(&output).contains("Status: PASSED"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_hash_solution_warns() {
+    let path = temp_path("bisect-warning-hash");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let culprit = bisect_basic_culprit_hash(&path);
+    fs::write(path.join("diagnosis.md"), format!("{culprit}\n")).unwrap();
+    git(&path, &["add", "diagnosis.md"]);
+    git(&path, &["commit", "-m", "Record regression diagnosis"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: WARNING"));
+    assert!(output.contains("Diagnosis includes culprit subject"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_wrong_culprit_fails() {
+    let path = temp_path("bisect-wrong");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    fs::write(path.join("diagnosis.md"), "Culprit: Update copy text\n").unwrap();
+    git(&path, &["add", "diagnosis.md"]);
+    git(&path, &["commit", "-m", "Record wrong diagnosis"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Diagnosis identifies culprit commit"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_dirty_working_tree_fails() {
+    let path = temp_path("bisect-dirty");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    fs::write(
+        path.join("diagnosis.md"),
+        "Culprit: Introduce discount regression\n",
+    )
+    .unwrap();
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Working tree is clean"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_wrong_branch_fails() {
+    let path = temp_path("bisect-wrong-branch");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    git(&path, &["switch", "-c", "debug/bisect-result"]);
+    fs::write(
+        path.join("diagnosis.md"),
+        "Culprit: Introduce discount regression\n",
+    )
+    .unwrap();
+    git(&path, &["add", "diagnosis.md"]);
+    git(&path, &["commit", "-m", "Record regression diagnosis"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Current branch is main"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_active_bisect_state_fails() {
+    let path = temp_path("bisect-active-state");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let first_commit = git_output(&path, &["rev-list", "--max-parents=0", "main"]);
+    git(&path, &["bisect", "start"]);
+    git(&path, &["bisect", "bad", "main"]);
+    git(&path, &["bisect", "good", &first_commit]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("No active bisect state is present"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_missing_fixture_fails() {
+    let path = temp_path("bisect-missing-fixture");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    fs::write(
+        path.join("diagnosis.md"),
+        "Culprit: Introduce discount regression\n",
+    )
+    .unwrap();
+    fs::write(path.join("app.txt"), "discount_total=correct\n").unwrap();
+    git(&path, &["add", "diagnosis.md", "app.txt"]);
+    git(&path, &["commit", "-m", "Break regression fixture"]);
+
+    let output = run(&["check", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Status: FAILED"));
+    assert!(output.contains("Current app has discount regression"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_hint_mentions_diagnosis() {
+    let path = temp_path("bisect-hint");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["hint", "--path", &path_arg]);
+    assert!(output.status.success());
+    let output = stdout(&output);
+    assert!(output.contains("Hints for bisect-basic:"));
+    assert!(output.contains("Progress-aware hints:"));
+    assert!(output.contains("diagnosis.md"));
+    assert!(output.contains("git log --oneline --decorate"));
+
+    fs::remove_dir_all(path).unwrap();
+}
+
+#[test]
+fn bisect_basic_report_includes_metadata() {
+    let path = temp_path("bisect-report");
+    let report = temp_path("bisect-report-md").with_extension("md");
+    let path_arg = path.to_string_lossy().to_string();
+    let report_arg = report.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    let output = run(&["check", "--path", &path_arg, "--report", &report_arg]);
+    assert!(output.status.success());
+    assert!(report.exists());
+    let report_text = fs::read_to_string(&report).unwrap();
+    assert!(report_text.contains("- Exercise: `bisect-basic`"));
+    assert!(report_text.contains("- Title: Identify a regression with bisect-style debugging"));
+    assert!(report_text.contains("- Difficulty: advanced"));
+    assert!(report_text.contains("- Category: Debugging"));
+
+    fs::remove_dir_all(path).unwrap();
+    fs::remove_file(report).unwrap();
+}
+
+#[test]
+fn bisect_basic_reset_works() {
+    let path = temp_path("bisect-reset");
+    let path_arg = path.to_string_lossy().to_string();
+    assert!(run(&["new", "bisect-basic", "--path", &path_arg])
+        .status
+        .success());
+
+    fs::write(
+        path.join("diagnosis.md"),
+        "Culprit: Introduce discount regression\n",
+    )
+    .unwrap();
+    git(&path, &["add", "diagnosis.md"]);
+    git(&path, &["commit", "-m", "Record regression diagnosis"]);
+
+    let reset = run(&["reset", "--path", &path_arg]);
+    assert!(reset.status.success());
+    assert_eq!(git_output(&path, &["branch", "--show-current"]), "main");
+    assert!(!path.join("diagnosis.md").exists());
+    assert!(fs::read_to_string(path.join("app.txt"))
+        .unwrap()
+        .contains("discount_total=incorrect"));
     assert!(git_output(&path, &["status", "--porcelain"]).is_empty());
 
     fs::remove_dir_all(path).unwrap();

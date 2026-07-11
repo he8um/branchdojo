@@ -346,15 +346,52 @@ This catalog defines stable check IDs.
 - Severity: warning
 - Warning: final content is valid, but history order is not the preferred checkout update followed by pricing commits.
 
-## v0.5 Planned Checks
+### `no_active_bisect_state`
 
-Potential `bisect-basic` check IDs should be finalized during implementation, not in this planning pass. Candidate areas:
+- Exercise: bisect-basic
+- Severity: required
+- Pass: no active `.git/BISECT_*` state remains.
 
-- `diagnosis_file_exists`: required diagnosis artifact exists.
-- `diagnosis_identifies_culprit`: recorded culprit matches the seeded regression-introducing commit.
-- `current_branch_main`: repository ends on `main` if that remains the final branch policy.
-- `no_active_git_operation`: no bisect, merge, rebase, cherry-pick, or revert state remains active.
-- `working_tree_clean`: no uncommitted diagnostic work remains.
-- `detached_head_cleanup`: warning if the answer is valid but the repository is left detached, if final design allows that shape.
+### `file_contains:current_discount_regression`
 
-The final validator should keep existing JSON output shape and validate final state plus evidence, not command history.
+- Exercise: bisect-basic
+- Severity: required
+- Pass: current `app.txt` contains `discount_total=incorrect`.
+
+### `file_contains:expected_discount_total`
+
+- Exercise: bisect-basic
+- Severity: required
+- Pass: `check.txt` contains `expected_discount_total=correct`.
+
+### `diagnosis_identifies_culprit`
+
+- Exercise: bisect-basic
+- Severity: required
+- Pass: `diagnosis.md` identifies the seeded culprit by subject, stable regression marker, or resolvable hash.
+
+### `culprit_commit_reachable`
+
+- Exercise: bisect-basic
+- Severity: required
+- Pass: the `Introduce discount regression` commit is reachable from `main`.
+
+### `diagnosis_lacks_subject`
+
+- Exercise: bisect-basic
+- Severity: warning
+- Warning: final diagnosis is valid but does not include the culprit commit subject.
+
+### `diagnosis_lacks_explanation`
+
+- Exercise: bisect-basic
+- Severity: warning
+- Warning: final diagnosis is valid but lacks supporting detail.
+
+### `diagnostic_branch_exists`
+
+- Exercise: bisect-basic
+- Severity: warning
+- Warning: final diagnosis is valid and the repository is on `main`, but an optional diagnostic branch remains.
+
+The v0.5 validator keeps the existing JSON output shape and validates final state plus evidence, not command history.

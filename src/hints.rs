@@ -2,6 +2,11 @@ use std::fs;
 use std::path::Path;
 
 use crate::error::AppResult;
+use crate::exercises::bisect_basic::{
+    APP_FILE as BISECT_APP_FILE, BAD_MARKER as BISECT_BAD_MARKER, CHECK_FILE as BISECT_CHECK_FILE,
+    CULPRIT_COMMIT_MESSAGE as BISECT_CULPRIT_COMMIT_MESSAGE,
+    DIAGNOSIS_FILE as BISECT_DIAGNOSIS_FILE, EXPECTED_MARKER as BISECT_EXPECTED_MARKER,
+};
 use crate::exercises::cherry_pick_basic::{
     APP_FILE as CHERRY_APP_FILE, BUGFIX_CONTENT, LEGACY_CONTENT, LEGACY_FILE, RELEASE_BRANCH,
     SUPPORT_BRANCH,
@@ -146,6 +151,7 @@ fn exercise_hints(path: &Path, context: &HintContext) -> Vec<String> {
         "wrong-branch-commit" => wrong_branch_commit_hints(path, context),
         "stash-switch" => stash_switch_hints(path, context),
         "cherry-pick-basic" => cherry_pick_basic_hints(path, context),
+        "bisect-basic" => bisect_basic_hints(path, context),
         "detached-head-recovery" => detached_head_recovery_hints(path, context),
         "interactive-rebase-basic" => interactive_rebase_basic_hints(path, context),
         "tag-release-fix" => tag_release_fix_hints(path, context),
@@ -244,6 +250,41 @@ fn cherry_pick_basic_hints(path: &Path, context: &HintContext) -> Vec<String> {
     if !git::branch_exists(path, SUPPORT_BRANCH).unwrap_or(false) {
         hints.push(
             "The support branch is missing. Restore `support/legacy-fix` before checking."
+                .to_string(),
+        );
+    }
+    hints
+}
+
+fn bisect_basic_hints(path: &Path, context: &HintContext) -> Vec<String> {
+    let mut hints = Vec::new();
+    if context.current_branch.as_deref() != Some("main") {
+        hints.push("Return to `main` after recording the regression diagnosis.".to_string());
+    }
+    if bisect_state_exists(path) {
+        hints.push(
+            "A bisect session appears to be active. Finish it or run `git bisect reset` before checking."
+                .to_string(),
+        );
+    }
+    if !path.join(BISECT_DIAGNOSIS_FILE).exists() {
+        hints.push(
+            "Create `diagnosis.md` and record the commit that introduced the regression."
+                .to_string(),
+        );
+    } else if !file_contains(path, BISECT_DIAGNOSIS_FILE, BISECT_CULPRIT_COMMIT_MESSAGE)
+        && !file_contains(path, BISECT_DIAGNOSIS_FILE, BISECT_BAD_MARKER)
+    {
+        hints.push(
+            "`diagnosis.md` should identify the culprit commit subject or a stable culprit marker."
+                .to_string(),
+        );
+    }
+    if !file_contains(path, BISECT_APP_FILE, BISECT_BAD_MARKER)
+        || !file_contains(path, BISECT_CHECK_FILE, BISECT_EXPECTED_MARKER)
+    {
+        hints.push(
+            "The regression fixture files are missing expected markers. Reset the exercise if needed."
                 .to_string(),
         );
     }
@@ -394,6 +435,13 @@ fn active_operation_name(path: &Path) -> Option<String> {
         (git_dir.join("rebase-merge").exists() || git_dir.join("rebase-apply").exists())
             .then(|| "rebase".to_string())
     })
+}
+
+fn bisect_state_exists(path: &Path) -> bool {
+    let git_dir = path.join(".git");
+    ["BISECT_LOG", "BISECT_START", "BISECT_NAMES", "BISECT_TERMS"]
+        .iter()
+        .any(|file| git_dir.join(file).exists())
 }
 
 fn has_conflict_markers(path: &Path, files: &[String]) -> bool {

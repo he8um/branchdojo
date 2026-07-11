@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented for v0.3. Reports are compatible with v0.4 advanced exercise metadata.
+Implemented for v0.3. Reports are compatible with v0.4 advanced exercise metadata and unreleased v0.5 `bisect-basic` metadata.
 
 ## Goal
 
@@ -49,7 +49,7 @@ Reports should serialize the existing validation result. They must not change ch
 
 Reports do not track command history or shell history.
 
-Future v0.5 work should keep `bisect-basic` reports on the same Markdown renderer. Reports may show diagnosis checks and cleanup warnings, but should not add JSON report files, HTML/PDF output, or templates.
+`bisect-basic` reports use the same Markdown renderer. Reports may show diagnosis checks and cleanup warnings, but do not add JSON report files, HTML/PDF output, or templates.
 
 ## Testing
 

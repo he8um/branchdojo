@@ -2,6 +2,7 @@ use std::path::Path;
 
 use crate::error::AppResult;
 
+pub mod bisect_basic;
 pub mod cherry_pick_basic;
 pub mod conflict_basic;
 pub mod detached_head_recovery;
@@ -33,6 +34,7 @@ pub fn all() -> Vec<&'static Exercise> {
         &interactive_rebase_basic::EXERCISE,
         &tag_release_fix::EXERCISE,
         &merge_vs_rebase::EXERCISE,
+        &bisect_basic::EXERCISE,
     ]
 }
 

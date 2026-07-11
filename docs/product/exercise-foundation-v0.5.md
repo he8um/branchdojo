@@ -2,7 +2,7 @@
 
 ## Status
 
-Planning only. No foundation changes are implemented yet.
+In development. `bisect-basic` is implemented on `main` as unreleased v0.5 work; broad external exercise foundation work remains deferred.
 
 ## Objective
 

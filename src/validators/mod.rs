@@ -4,6 +4,7 @@ use crate::error::{AppError, AppResult};
 use crate::result::ValidationResult;
 use crate::state::BranchDojoState;
 
+mod bisect_basic;
 mod cherry_pick_basic;
 mod common;
 mod conflict_basic;
@@ -18,6 +19,7 @@ mod wrong_branch_commit;
 pub fn validate(path: &Path, state: &BranchDojoState) -> AppResult<ValidationResult> {
     match state.exercise.as_str() {
         "cherry-pick-basic" => cherry_pick_basic::validate(path, state),
+        "bisect-basic" => bisect_basic::validate(path, state),
         "conflict-basic" => conflict_basic::validate(path, state),
         "detached-head-recovery" => detached_head_recovery::validate(path, state),
         "interactive-rebase-basic" => interactive_rebase_basic::validate(path, state),

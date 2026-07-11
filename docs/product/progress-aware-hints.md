@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented for v0.3 and extended for v0.4 advanced exercises.
+Implemented for v0.3 and extended for v0.4 advanced exercises and unreleased v0.5 `bisect-basic`.
 
 ## Goal
 
@@ -26,7 +26,7 @@ Examples:
 - Interactive rebase cleanup: mention remaining debug files, WIP/debug commit subjects, and preserving final profile copy.
 - Release tag repair: mention missing tags, tags pointing at old release content, lightweight tags, and missing release blocker fixes.
 - Branch integration: mention staying on the feature branch, missing mainline or feature content, missing source branches, and merge-commit history shape warnings.
-- Future bisect debugging: mention active bisect state, detached HEAD cleanup, missing diagnosis artifacts, and expected final branch policy if `bisect-basic` is implemented.
+- Bisect debugging: mention active bisect state, missing diagnosis artifacts, fixture marker problems, and the expected final branch.
 
 ## Constraints
 

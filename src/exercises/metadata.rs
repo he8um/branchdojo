@@ -162,6 +162,24 @@ pub const MERGE_VS_REBASE: ExerciseMetadata = ExerciseMetadata {
     introduced_in: "0.4.0",
 };
 
+pub const BISECT_BASIC: ExerciseMetadata = ExerciseMetadata {
+    name: "bisect-basic",
+    title: "Identify a regression with bisect-style debugging",
+    summary: "Find the commit that introduced a deterministic regression.",
+    difficulty: Difficulty::Advanced,
+    category: "Debugging",
+    estimated_time: "20-30 min",
+    skills: &[
+        "bisect",
+        "debugging",
+        "history inspection",
+        "regression analysis",
+    ],
+    starting_branch: "main",
+    expected_final_branch: "main",
+    introduced_in: "0.5.0",
+};
+
 const ALL_METADATA: &[&ExerciseMetadata] = &[
     &CONFLICT_BASIC,
     &REVERT_MISTAKE,
@@ -172,6 +190,7 @@ const ALL_METADATA: &[&ExerciseMetadata] = &[
     &INTERACTIVE_REBASE_BASIC,
     &TAG_RELEASE_FIX,
     &MERGE_VS_REBASE,
+    &BISECT_BASIC,
 ];
 
 pub fn all_metadata() -> &'static [&'static ExerciseMetadata] {
@@ -222,6 +241,7 @@ mod tests {
                 "interactive-rebase-basic",
                 "tag-release-fix",
                 "merge-vs-rebase",
+                "bisect-basic",
             ]
         );
     }
@@ -242,6 +262,7 @@ mod tests {
         );
         assert_eq!(expected_final_branch_for("tag-release-fix"), Some("main"));
         assert_eq!(expected_final_branch_for("merge-vs-rebase"), Some("main"));
+        assert_eq!(expected_final_branch_for("bisect-basic"), Some("main"));
         assert_eq!(expected_final_branch_for("not-real"), None);
     }
 }

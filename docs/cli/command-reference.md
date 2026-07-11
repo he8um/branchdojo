@@ -30,6 +30,7 @@ Available exercises:
   interactive-rebase-basic     advanced      History rewriting    20-30 min
   tag-release-fix              advanced      Release recovery     20-30 min
   merge-vs-rebase              advanced      Branch integration   20-30 min
+  bisect-basic                 advanced      Debugging            20-30 min
 ```
 
 ## `branchdojo new <exercise-name> --path <path>`

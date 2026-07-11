@@ -100,25 +100,21 @@ Implemented v0.4 coverage:
 - Reset test.
 - Metadata/list tests for `merge-vs-rebase`.
 
-Deferred test areas:
+## v0.5 Coverage
 
-- Deterministic bisect test strategy if `bisect-basic` is selected for v0.5 or later.
-
-`bisect-basic` should only be implemented if the failing/passing behavior can be represented by deterministic local files and explicit Git commands without shell scripts, network access, or external tooling.
-
-## v0.5 Planned Coverage
-
-Planned coverage for `bisect-basic`:
+Implemented coverage for unreleased `bisect-basic`:
 
 - Setup creates a deterministic linear regression history.
-- Initial check fails or reports a missing diagnosis artifact.
-- Valid diagnosis passes.
+- Initial check fails with a missing diagnosis artifact.
+- Valid diagnosis with the culprit subject passes.
+- Valid diagnosis with only the culprit hash warns.
 - Wrong culprit diagnosis fails.
 - Dirty working tree fails.
-- Wrong branch policy is enforced or warned according to final design.
+- Wrong branch policy is enforced.
 - Active bisect state is detected.
+- Missing fixture marker fails.
 - JSON output shape remains unchanged.
 - Markdown report output remains compatible.
 - Progress-aware hint output mentions missing diagnosis, active bisect state, or detached HEAD cleanup.
 - Reset recreates the exercise.
-- No-regression tests continue covering all nine released exercises.
+- No-regression tests continue covering all nine released exercises plus unreleased `bisect-basic`.

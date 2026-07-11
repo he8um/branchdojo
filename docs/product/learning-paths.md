@@ -32,9 +32,9 @@ Released v0.4 advanced practice:
 2. `tag-release-fix`
 3. `merge-vs-rebase`
 
-Planned v0.5 advanced debugging practice:
+Unreleased v0.5 advanced debugging practice on `main`:
 
-1. `bisect-basic` - planned, not available yet.
+1. `bisect-basic` - identify a regression-introducing commit.
 
 ## Non-Goals
 
